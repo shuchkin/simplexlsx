@@ -34,20 +34,20 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	list($num_cols, $num_rows) = $xlsx->dimension(2);
 	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
-v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out
-v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)
-v0.6.7 (2013-08-10) fixed unzip (mac), added $debug param to _constructor to display errors
-v0.6.6 (2013-06-03) +entryExists(),
-v0.6.5 (2013-03-18) fixed sheetName()
-v0.6.4 (2013-03-13) rowsEx(), _parse(): fixed date column type & format detection
-v0.6.3 (2013-03-13) rowsEx(): fixed formulas, added date type 'd', added format 'format'
-					dimension(): fixed empty sheet dimension
-                    + sheetNames() - returns array( sheet_id => sheet_name, sheet_id2 => sheet_name2 ...)
-v0.6.2 (2012-10-04) fixed empty cells, rowsEx() returns type and formulas now
-v0.6.1 (2012-09-14) removed "raise exception" and fixed _unzip
-v0.6 (2012-09-13) success(), error(), __constructor( $filename, $is_data = false )
-v0.5.1 (2012-09-13) sheetName() fixed
-v0.5 (2012-09-12) sheetName()
-v0.4 sheets(), sheetsCount(), unixstamp( $excelDateTime )
-v0.3 - fixed empty cells (Gonzo patch)
+v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out<br />
+v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)<br />
+v0.6.7 (2013-08-10) fixed unzip (mac), added $debug param to _constructor to display errors<br />
+v0.6.6 (2013-06-03) +entryExists()<br />
+v0.6.5 (2013-03-18) fixed sheetName()<br />
+v0.6.4 (2013-03-13) rowsEx(), _parse(): fixed date column type & format detection<br />
+v0.6.3 (2013-03-13) rowsEx(): fixed formulas, added date type 'd', added format 'format'<br />
+					dimension(): fixed empty sheet dimension<br />
+                    + sheetNames() - returns array( sheet_id => sheet_name, sheet_id2 => sheet_name2 ...)<br />
+v0.6.2 (2012-10-04) fixed empty cells, rowsEx() returns type and formulas now<br />
+v0.6.1 (2012-09-14) removed "raise exception" and fixed _unzip<br />
+v0.6 (2012-09-13) success(), error(), __constructor( $filename, $is_data = false )<br />
+v0.5.1 (2012-09-13) sheetName() fixed<br />
+v0.5 (2012-09-12) sheetName()<br />
+v0.4 sheets(), sheetsCount(), unixstamp( $excelDateTime )<br />
+v0.3 - fixed empty cells (Gonzo patch)<br />
 
