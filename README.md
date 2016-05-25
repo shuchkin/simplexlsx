@@ -2,7 +2,7 @@
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader
 
-	Example 1:
+	**Example 1:**
 	$xlsx = new SimpleXLSX('book.xlsx');
 	print_r( $xlsx->rows() );
 	
