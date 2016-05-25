@@ -2,37 +2,37 @@
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader
 
-Example 1:
-$xlsx = new SimpleXLSX('book.xlsx');
-print_r( $xlsx->rows() );
-
-Example 2: 
-$xlsx = new SimpleXLSX('book.xlsx');
-print_r( $xlsx->rowsEx() );
-
-Example 3: 
-$xlsx = new SimpleXLSX('book.xlsx');
-print_r( $xlsx->rows(2) ); // second worksheet
-
-Example 4.1:
-$xlsx = new SimpleXLSX('book.xlsx');
-print_r( $xlsx->sheetNames() ); // array( 1 => 'Sheet 1', 3 => 'Catalog' );
-
-Example 4.2:
-$xlsx = new SimpleXLSX('book.xlsx');	
-echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
-
-Example 5:
-$xlsx = new SimpleXLSX('book.xlsx');
-if ($xslx->success())
+	Example 1:
+	$xlsx = new SimpleXLSX('book.xlsx');
 	print_r( $xlsx->rows() );
-else
-	echo 'xlsx error: '.$xslx->error();
-
-Example 6:
-$xslx = new SimpleXLSX( file_get_contents('http://www.example.com/example.xlsx'), true); // load data
-list($num_cols, $num_rows) = $xlsx->dimension(2);
-echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
+	
+	Example 2: 
+	$xlsx = new SimpleXLSX('book.xlsx');
+	print_r( $xlsx->rowsEx() );
+	
+	Example 3: 
+	$xlsx = new SimpleXLSX('book.xlsx');
+	print_r( $xlsx->rows(2) ); // second worksheet
+	
+	Example 4.1:
+	$xlsx = new SimpleXLSX('book.xlsx');
+	print_r( $xlsx->sheetNames() ); // array( 1 => 'Sheet 1', 3 => 'Catalog' );
+	
+	Example 4.2:
+	$xlsx = new SimpleXLSX('book.xlsx');	
+	echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
+	
+	Example 5:
+	$xlsx = new SimpleXLSX('book.xlsx');
+	if ($xslx->success())
+		print_r( $xlsx->rows() );
+	else
+		echo 'xlsx error: '.$xslx->error();
+	
+	Example 6:
+	$xslx = new SimpleXLSX( file_get_contents('http://www.example.com/example.xlsx'), true); // load data
+	list($num_cols, $num_rows) = $xlsx->dimension(2);
+	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
 v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out
 v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)
