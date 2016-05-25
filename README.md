@@ -34,6 +34,7 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	list($num_cols, $num_rows) = $xlsx->dimension(2);
 	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
+##History
 v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out<br />
 v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)<br />
 v0.6.7 (2013-08-10) fixed unzip (mac), added $debug param to _constructor to display errors<br />
