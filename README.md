@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.6.9
+# SimpleXLSX class 0.6.9 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader
 
