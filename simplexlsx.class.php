@@ -1,7 +1,8 @@
 <?php
 /*
-	SimpleXLSX php class v0.6.8
+	SimpleXLSX php class v0.6.10
 	MS Excel 2007 workbooks reader
+	https://github.com/shuchkin/simplexlsx/
 
 	Example 1: 
 	$xlsx = new SimpleXLSX('book.xlsx');
@@ -35,6 +36,7 @@
 	list($num_cols, $num_rows) = $xlsx->dimension(2);
 	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
+	v0.6.10 (2016-06-10) fixed search entries (UPPERCASE)
 	v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out
 	v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)
 	v0.6.7 (2013-08-10) fixed unzip (mac), added $debug param to _constructor to display errors
@@ -54,7 +56,7 @@
 */
 
 class SimpleXLSX {
-	// Don't remove this string! Created by Sergey Schuchkin from http://www.sibvision.ru - professional php developers team 2010-2013
+	// Don't remove this string! Created by Sergey Shuchkin http://www.shuchkin.ru/simplexlsx/ 2010-2016
 	private $workbook;
 	private $sheets = array();
 	private $styles;
@@ -575,18 +577,18 @@ class SimpleXLSX {
 		return $this->package;
 	}
 	public function entryExists( $name ) { // 0.6.6
-		$dir = dirname( $name );
-		$name = basename( $name );
+		$dir = strtoupper(dirname( $name ));
+		$name = strtoupper(basename( $name ));
 		foreach( $this->package['entries'] as $entry)
-			if ( $entry['path'] == $dir && $entry['name'] == $name)
+			if ( strtoupper( $entry['path'] ) == $dir && strtoupper( $entry['name'] ) == $name)
 				return true;
 		return false;
 	}
 	public function getEntryData( $name ) {
-		$dir = dirname( $name );
-		$name = basename( $name );
+		$dir = strtoupper( dirname( $name ) );
+		$name = strtoupper( basename( $name ) );
 		foreach( $this->package['entries'] as $entry)
-			if ( $entry['path'] == $dir && $entry['name'] == $name)
+			if ( strtoupper( $entry['path']) == $dir && strtoupper( $entry['name'] ) == $name)
 				return $entry['data'];
 		$this->error('Unknown format');
 		return false;
@@ -603,11 +605,11 @@ class SimpleXLSX {
 	public function error( $set = false ) {
 		if ($set) {
 			$this->error = $set;
-			if ($this->debug)
-				trigger_error( __CLASS__.': '.$set, E_USER_WARNING );
-		} else {
-			return $this->error;
+			if ($this->debug) {
+				trigger_error(__CLASS__ . ': ' . $set, E_USER_WARNING);
+			}
 		}
+		return $this->error;
 	}
 	public function success() {
 		return !$this->error;
@@ -659,9 +661,7 @@ class SimpleXLSX {
 //										echo '<pre>'.htmlspecialchars( print_r( $sheet, true ) ).'</pre>';
 									}
 													
-								} else if ($workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_SHAREDSTRINGS && $this->entryExists( $path )) { // 0.6.6
-									
-//									echo 'sharedstrings<br />';
+								} else if ( $workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_SHAREDSTRINGS && $this->entryExists( $path )) { // 0.6.6
 									
 									if ( $sharedStrings = $this->getEntryXML( $path ) ) {
 										foreach ($sharedStrings->si as $val) {
@@ -673,6 +673,7 @@ class SimpleXLSX {
 										}
 									}
 								} else if ($workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_STYLES) {
+
 									$this->styles = $this->getEntryXML( $path );
 									
 									$nf = array();
@@ -683,13 +684,15 @@ class SimpleXLSX {
 									if ( $this->styles->cellXfs->xf != NULL )	
 										foreach( $this->styles->cellXfs->xf as $v ) {
 											$v = (array) $v->attributes();
-											$v = $v['@attributes'];
-											if (isset($this->cell_formats[ $v['numFmtId'] ]) ) {
-												$v['format'] = $this->cell_formats[$v['numFmtId']];
-											} else if (isset($nf[ $v['numFmtId'] ])) {
-												$v['format'] = $nf[$v['numFmtId']];
-											} else {
-												$v['format'] = '';
+											$v['format'] = '';
+
+											if ( isset($v['@attributes']['numFmtId'])) {
+												$v = $v['@attributes'];
+												if (isset($this->cell_formats[$v['numFmtId']])) {
+													$v['format'] = $this->cell_formats[$v['numFmtId']];
+												} else if (isset($nf[$v['numFmtId']])) {
+													$v['format'] = $nf[$v['numFmtId']];
+												}
 											}
 											$this->workbook_cell_formats[] = $v;
 										}
