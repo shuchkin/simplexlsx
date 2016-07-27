@@ -618,8 +618,8 @@ class SimpleXLSX {
 		$d = floor( $excelDateTime ); // seconds since 1900
 		$t = $excelDateTime - $d;
 //		echo "d=".$d." t=".$t."\r\n";
-//		return ($d > 0) ? ( $d - 25569 ) * 86400 + $t * 86400 : $t * 86400;
-		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
+		return (abs($d) > 0) ? ( $d - 25569 ) * 86400 + $t * 86400 : $t * 86400;
+//		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
 	}
 
 	private function _parse() {
