@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.6.10 (Official)
+# SimpleXLSX class 0.6.11 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader
 
@@ -37,6 +37,7 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
 ##History
+v0.6.11 (2016-07-27) fixed timestamp()<br />
 v0.6.10 (2016-06-10) fixed search entries (UPPERCASE)<br />
 v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out<br />
 v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)<br />

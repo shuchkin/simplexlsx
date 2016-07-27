@@ -1,6 +1,6 @@
 <?php
 /*
-	SimpleXLSX php class v0.6.10
+	SimpleXLSX php class v0.6.11
 	MS Excel 2007 workbooks reader
 	https://github.com/shuchkin/simplexlsx/
 
@@ -36,6 +36,7 @@
 	list($num_cols, $num_rows) = $xlsx->dimension(2);
 	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
+	v0.6.11 (2016-07-27) fixed timestamp()
 	v0.6.10 (2016-06-10) fixed search entries (UPPERCASE)
 	v0.6.9 (2015-04-12) $xlsx->datetime_format to force dates out
 	v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)
