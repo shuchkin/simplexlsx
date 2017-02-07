@@ -62,13 +62,7 @@ class SimpleXLSX {
 	private $sheets = array();
 	private $styles;
 	private $hyperlinks;
-	private $package = array(
-		'filename' => '',
-		'mtime' => 0,
-		'size' => 0,
-		'comment' => '',
-		'entries' => array()
-	);
+	private $package;
 	private $datasec;
 	private $sharedstrings;
 	private $error = false;
@@ -119,7 +113,7 @@ class SimpleXLSX {
 		0x30 => '%1.0f');   //"##0.0E0";
 	// }}}
 */
-	private $cell_formats = array(
+	public static $CF = array( // Cell formats
 		0 => 'General',
 		1 => '0',
 		2 => '0.00',
@@ -169,8 +163,15 @@ class SimpleXLSX {
 	);
 	public $datetime_format = 'Y-m-d H:i:s';
 	
-	function __construct( $filename, $is_data = false, $debug = false ) {
+	public function __construct( $filename, $is_data = false, $debug = false ) {
 		$this->debug = $debug;
+		$this->package = array(
+			'filename' => '',
+			'mtime' => 0,
+			'size' => 0,
+			'comment' => '',
+			'entries' => array()
+		);
 		if ( $this->_unzip( $filename, $is_data ) ) {
 			$this->_parse();
 		}
@@ -178,8 +179,7 @@ class SimpleXLSX {
 	// sheets numeration: 1,2,3....
 	public function rows( $worksheet_id = 1 ) {
 
-		if (($ws = $this->worksheet( $worksheet_id)) === false)
-			return false;
+		if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
 
 		$rows = array();
 		$curR = 0;
@@ -194,8 +194,9 @@ class SimpleXLSX {
 				$rows[ $curR ][ $curC ] = $this->value($c);
 			}
 			for ($i = 0; $i < $cols; $i++)
-				if (!isset($rows[$curR][$i]))
-					$rows[ $curR ][ $i ] = '';
+				if (!isset($rows[$curR][$i])) {
+					$rows[$curR][$i] = '';
+				}
 
 			ksort( $rows[ $curR ] );
 
@@ -205,8 +206,7 @@ class SimpleXLSX {
 	}
 	public function rowsEx( $worksheet_id = 1 ) {
 
-		if (($ws = $this->worksheet( $worksheet_id)) === false)
-			return false;
+		if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
 
 		$rows = array();
 		$curR = 0;
@@ -220,10 +220,12 @@ class SimpleXLSX {
 				$s = (int)$c['s'];
 				if ($s > 0 && isset($this->workbook_cell_formats[ $s ])) {
 					$format = $this->workbook_cell_formats[ $s ]['format'];
-					if ( strpos($format,'m') !== false )
+					if ( strpos($format,'m') !== false ) {
 						$t = 'd';
-				} else
+					}
+				} else {
 					$format = '';
+				}
 
 				$rows[ $curR ][ $curC ] = array(
 					'type' => $t,
@@ -239,7 +241,7 @@ class SimpleXLSX {
 				if ( !isset($rows[$curR][$i]) ) {
 
 					// 0.6.8
-					for ($c = '', $j = $i; $j >= 0; $j = intval($j / 26) - 1)
+					for ($c = '', $j = $i; $j >= 0; $j = (int) ($j / 26) - 1)
 						$c = chr( $j % 26 + 65 ) . $c;
 
 					$rows[ $curR ][$i] = array(
@@ -268,11 +270,14 @@ class SimpleXLSX {
 		return count($this->sheets);
 	}
 	public function sheetName( $worksheet_id) {
-		if ( !isset( $this->workbook->sheets->sheet) ) return false;
+		if ( !isset( $this->workbook->sheets->sheet) ) {
+			return false;
+		}
 		foreach( $this->workbook->sheets->sheet as $s ) {
 			/* @var SimpleXMLElement $s */
-			if ( $s->attributes('r',true)->id == 'rId'.$worksheet_id)
-				return (string) $s['name'];
+			if ( $s->attributes('r',true)->id === 'rId'.$worksheet_id) {
+				return (string)$s['name'];
+			}
 
 		}
 		return false;
@@ -308,22 +313,25 @@ class SimpleXLSX {
 	}
 	public function dimension( $worksheet_id = 1 ) {
 		
-		if (($ws = $this->worksheet( $worksheet_id)) === false)
+		if (($ws = $this->worksheet( $worksheet_id)) === false) {
 			return false;
+		}
 		/* @var SimpleXMLElement $ws */
 		$ref = (string) $ws->dimension['ref'];
 		
 		if( strpos( $ref, ':') !== false ) {
 			$d = explode(':', $ref);
-			if(!isset($d[1]))
-				return array(0,0);
+			if(!isset($d[1])) {
+				return array(0, 0);
+			}
 			$index = $this->_columnIndex( $d[1] );		
 			return array( $index[0]+1, $index[1]+1);
-		} else if ( strlen( $ref ) ) { // 0.6.8
+		} else if ( $ref !== '' ) { // 0.6.8
 			$index = $this->_columnIndex( $ref );		
 			return array( $index[0]+1, $index[1]+1);
-		} else
-			return array(0,0);
+		} else {
+			return array(0, 0);
+		}
 
 	}
 
@@ -345,7 +353,7 @@ class SimpleXLSX {
 			case "s":
 				// Value is a shared string
 				if ((string)$cell->v != '') {
-					$value = $this->sharedstrings[intval($cell->v)];
+					$value = $this->sharedstrings[ (int) $cell->v ];
 				} else {
 					$value = '';
 				}
@@ -391,9 +399,12 @@ class SimpleXLSX {
 				$value = (string)$cell->v;
 								
 				// Check for numeric values
-				if (is_numeric($value) && $dataType != 's') {
-					if ($value == (int)$value) $value = (int)$value;
-					elseif ($value == (float)$value) $value = (float)$value;
+				if (is_numeric($value) && $dataType !== 's') {
+					if ($value == (int)$value) {
+						$value = (int)$value;
+					} elseif ($value == (float)$value) {
+						$value = (float)$value;
+					}
 				}
 		}
 		return $value;
@@ -486,21 +497,22 @@ class SimpleXLSX {
 				$aP['UCS'] = $aP1['UCS'];
 				// 2013-08-10
 				$vZ = substr($vZ, 0, -12);
-				if (substr($vZ,-4) === "\x50\x4b\x07\x08")
+				if (substr($vZ,-4) === "\x50\x4b\x07\x08") {
 					$vZ = substr($vZ, 0, -4);
+				}
 			}
 
 			// Getting stored filename
 			$aI['N'] = substr($vZ, 26, $nF);
 
-			if (substr($aI['N'], -1) == '/') {
+			if (substr($aI['N'], -1) === '/') {
 				// is a directory entry - will be skipped
 				continue;
 			}
 
 			// Truncate full filename in path and filename
 			$aI['P'] = dirname($aI['N']);
-			$aI['P'] = $aI['P'] == '.' ? '' : $aI['P'];
+			$aI['P'] = $aI['P'] === '.' ? '' : $aI['P'];
 			$aI['N'] = basename($aI['N']);
 
 			$vZ = substr($vZ, 26 + $nF + $mF);
@@ -689,8 +701,8 @@ class SimpleXLSX {
 
 											if ( isset($v['@attributes']['numFmtId'])) {
 												$v = $v['@attributes'];
-												if (isset($this->cell_formats[$v['numFmtId']])) {
-													$v['format'] = $this->cell_formats[$v['numFmtId']];
+												if (isset( self::$CF[$v['numFmtId']])) {
+													$v['format'] = self::$CF[$v['numFmtId']];
 												} else if (isset($nf[$v['numFmtId']])) {
 													$v['format'] = $nf[$v['numFmtId']];
 												}
@@ -725,8 +737,9 @@ class SimpleXLSX {
 				$index += (ord($col{$i}) - 64) * pow(26, $colLen-$i-1);
 
 			return array($index-1, $row-1);
-		} else
+		} else {
 			throw new Exception("Invalid cell index.");
+		}
 	}
     private function _parseRichText($is = null) {
         $value = array();
