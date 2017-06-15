@@ -97,7 +97,7 @@ class SimpleXLSX {
 	const SCHEMA_REL_SHAREDSTRINGS =  'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
 	const SCHEMA_REL_WORKSHEET =  'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
 	const SCHEMA_REL_STYLES = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles';
-	
+
 	public $workbook_cell_formats = array();
 
 /*
@@ -158,25 +158,25 @@ class SimpleXLSX {
 		20 => 'h:mm',
 		21 => 'h:mm:ss',
 		22 => 'm/d/yy h:mm',
-		
+
 		37 => '#,##0 ;(#,##0)',
 		38 => '#,##0 ;[Red](#,##0)',
 		39 => '#,##0.00;(#,##0.00)',
 		40 => '#,##0.00;[Red](#,##0.00)',
-		
+
 		44 => '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)',
 		45 => 'mm:ss',
 		46 => '[h]:mm:ss',
 		47 => 'mmss.0',
 		48 => '##0.0E+0',
 		49 => '@',
-		
+
 		27 => '[$-404]e/m/d',
 		30 => 'm/d/yy',
 		36 => '[$-404]e/m/d',
 		50 => '[$-404]e/m/d',
 		57 => '[$-404]e/m/d',
-		
+
 		59 => 't0',
 		60 => 't0.00',
 		61 => 't#,##0',
@@ -187,7 +187,7 @@ class SimpleXLSX {
 		70 => 't# ??/??',
 	);
 	public $datetime_format = 'Y-m-d H:i:s';
-	
+
 	public function __construct( $filename, $is_data = false, $debug = false ) {
 		$this->debug = $debug;
 		$this->package = array(
@@ -201,6 +201,31 @@ class SimpleXLSX {
 			$this->_parse();
 		}
 	}
+
+	/** Example: xlsx->getCell(2,'B87', 0);
+	 *	Get cell B87 from 2nd worksheet, formatted by General (see $CF for all formats).
+	 *	It's useful when we need to get a cell that has the wrong format,
+	 *	Or just for direct cell reading.
+	**/
+	public function getCell( $worksheet_id = 1, $cell = 'A1', $format = false ) {
+
+		if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
+
+		$curC = $this->_columnIndex((string) $cell)[0];
+		$curR = $this->_columnIndex((string) $cell)[1];
+
+		$c = $ws->sheetData->row[$curR]->c[$curC];
+			$c['s'] = ($format !== false) ? (int)$format : $c['s'];
+			$s = (int)$c['s'];
+			if ($s > 0 && isset($this->workbook_cell_formats[ $s ])) {
+				$format = $this->workbook_cell_formats[ $s ]['format'];
+			} else {
+				$format = '';
+			}
+		$c = $this->value($c, $format);
+		return $c;
+	}
+
 	// sheets numeration: 1,2,3....
 	public function rows( $worksheet_id = 1 ) {
 
@@ -308,7 +333,7 @@ class SimpleXLSX {
 		return false;
 	}
 	public function sheetNames() {
-		
+
 		$result = array();
 
 		foreach( $this->workbook->sheets->sheet as $s ) {
@@ -322,14 +347,14 @@ class SimpleXLSX {
 
 		if ( isset( $this->sheets[ $worksheet_id ] ) ) {
 			$ws = $this->sheets[ $worksheet_id ];
-			
+
 			if (isset($ws->hyperlinks)) {
 				$this->hyperlinks = array();
 				foreach( $ws->hyperlinks->hyperlink as $hyperlink ) {
 					$this->hyperlinks[ (string) $hyperlink['ref'] ] = (string) $hyperlink['display'];
 				}
 			}
-			
+
 			return $ws;
 		} else {
 			$this->error( 'Worksheet '.$worksheet_id.' not found.');
@@ -337,22 +362,22 @@ class SimpleXLSX {
 		}
 	}
 	public function dimension( $worksheet_id = 1 ) {
-		
+
 		if (($ws = $this->worksheet( $worksheet_id)) === false) {
 			return false;
 		}
 		/* @var SimpleXMLElement $ws */
 		$ref = (string) $ws->dimension['ref'];
-		
+
 		if( strpos( $ref, ':') !== false ) {
 			$d = explode(':', $ref);
 			if(!isset($d[1])) {
 				return array(0, 0);
 			}
-			$index = $this->_columnIndex( $d[1] );		
+			$index = $this->_columnIndex( $d[1] );
 			return array( $index[0]+1, $index[1]+1);
 		} else if ( $ref !== '' ) { // 0.6.8
-			$index = $this->_columnIndex( $ref );		
+			$index = $this->_columnIndex( $ref );
 			return array( $index[0]+1, $index[1]+1);
 		} else {
 			return array(0, 0);
@@ -384,7 +409,7 @@ class SimpleXLSX {
 				}
 
 				break;
-				
+
 			case "b":
 				// Value is boolean
 				$value = (string)$cell->v;
@@ -397,13 +422,13 @@ class SimpleXLSX {
 				}
 
 				break;
-				
+
 			case "inlineStr":
 				// Value is rich text inline
 				$value = $this->_parseRichText($cell->is);
-							
+
 				break;
-				
+
 			case "e":
 				// Value is an error message
 				if ((string)$cell->v != '') {
@@ -422,7 +447,7 @@ class SimpleXLSX {
 			default:
 				// Value is a string
 				$value = (string)$cell->v;
-								
+
 				// Check for numeric values
 				if (is_numeric($value) && $dataType !== 's') {
 					if ($value == (int)$value) {
@@ -441,24 +466,24 @@ class SimpleXLSX {
 		return $this->styles;
 	}
 	private function _unzip( $filename, $is_data = false ) {
-		
+
 		// Clear current file
 		$this->datasec = array();
-			
+
 		if ($is_data) {
 
 			$this->package['filename'] = 'default.xlsx';
 			$this->package['mtime'] = time();
 			$this->package['size'] = strlen( $filename );
-			
+
 			$vZ = $filename;
 		} else {
-			
+
 			if (!is_readable($filename)) {
 				$this->error( 'File not found '.$filename );
 				return false;
 			}
-			
+
 			// Package information
 			$this->package['filename'] = $filename;
 			$this->package['mtime'] = filemtime( $filename );
@@ -469,7 +494,7 @@ class SimpleXLSX {
 		}
 		// Cut end of central directory
 /*		$aE = explode("\x50\x4b\x05\x06", $vZ);
-		
+
 		if (count($aE) == 1) {
 			$this->error('Unknown format');
 			return false;
@@ -636,7 +661,7 @@ class SimpleXLSX {
 			&&  ($entry_xmlobj = simplexml_load_string( $entry_xml )))
 			return $entry_xmlobj;
 
-			
+
 		$this->error('Entry not found: '.$name );
 		return false;
 	}
@@ -668,39 +693,39 @@ class SimpleXLSX {
 
 		// Read relations and search for officeDocument
 		if ( $relations = $this->getEntryXML("_rels/.rels" ) ) {
-			
+
 			foreach ($relations->Relationship as $rel) {
-				
+
 				if ($rel["Type"] == SimpleXLSX::SCHEMA_REL_OFFICEDOCUMENT) {
-					
+
 //						echo 'workbook found<br />';
 					// Found office document! Read workbook & relations...
-					
+
 					// Workbook
 					if ( $this->workbook = $this->getEntryXML( $rel['Target'] )) {
-						
+
 //						echo 'workbook read<br />';
-						
+
 						if ( $workbookRelations = $this->getEntryXML( dirname($rel['Target']) . '/_rels/workbook.xml.rels' )) {
-							
+
 //							echo 'workbook relations<br />';
-		
+
 							// Loop relations for workbook and extract sheets...
 							foreach ($workbookRelations->Relationship as $workbookRelation) {
 
 								$path = dirname($rel['Target']) . '/' . $workbookRelation['Target'];
-								
+
 								if ($workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_WORKSHEET) { // Sheets
-								
+
 //									echo 'sheet<br />';
-								
+
 									if ( $sheet = $this->getEntryXML( $path ) ) {
 										$this->sheets[ str_replace( 'rId', '', (string) $workbookRelation['Id']) ] = $sheet;
 //										echo '<pre>'.htmlspecialchars( print_r( $sheet, true ) ).'</pre>';
 									}
-													
+
 								} else if ( $workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_SHAREDSTRINGS && $this->entryExists( $path )) { // 0.6.6
-									
+
 									if ( $sharedStrings = $this->getEntryXML( $path ) ) {
 										foreach ($sharedStrings->si as $val) {
 											if (isset($val->t)) {
@@ -713,13 +738,13 @@ class SimpleXLSX {
 								} else if ($workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_STYLES) {
 
 									$this->styles = $this->getEntryXML( $path );
-									
+
 									$nf = array();
 									if ( $this->styles->numFmts->numFmt != NULL )
 										foreach( $this->styles->numFmts->numFmt as $v )
 											$nf[ (int) $v['numFmtId'] ] = (string) $v['formatCode'];
 
-									if ( $this->styles->cellXfs->xf != NULL )	
+									if ( $this->styles->cellXfs->xf != NULL )
 										foreach( $this->styles->cellXfs->xf as $v ) {
 											$v = (array) $v->attributes();
 											$v['format'] = '';
@@ -737,7 +762,7 @@ class SimpleXLSX {
 //									print_r( $this->workbook_cell_formats );
 								}
 							}
-							
+
 							break;
 						}
 					}
