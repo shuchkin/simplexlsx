@@ -29,37 +29,39 @@
 /** Examples & Changelog
 
 Example 1:
-$xlsx = new SimpleXLSX('book.xlsx');
+$xlsx = SimpleXLSX::parse('book.xlsx');
 print_r( $xlsx->rows() );
 
 Example 2:
-$xlsx = new SimpleXLSX('book.xlsx');
+$xlsx = SimpleXLSX::parse('book.xlsx');
 print_r( $xlsx->rowsEx() );
 
 Example 3:
-$xlsx = new SimpleXLSX('book.xlsx');
+$xlsx = SimpleXLSX::parse('book.xlsx');
 print_r( $xlsx->rows(2) ); // second worksheet
 
 Example 4.1:
-$xlsx = new SimpleXLSX('book.xlsx');
+$xlsx = SimpleXLSX::parse('book.xlsx');
 print_r( $xlsx->sheetNames() ); // array( 1 => 'Sheet 1', 3 => 'Catalog' );
 
 Example 4.2:
-$xlsx = new SimpleXLSX('book.xlsx');
+$xlsx = SimpleXLSX::parse('book.xlsx');
 echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
 
 Example 5:
 $xlsx = new SimpleXLSX('book.xlsx');
-if ($xslx->success())
+if ( $xlsx->success() ) {
 	print_r( $xlsx->rows() );
-else
+} else {
 	echo 'xlsx error: '.$xslx->error();
+}
 
 Example 6:
 $xslx = new SimpleXLSX( file_get_contents('http://www.example.com/example.xlsx'), true);
 list($num_cols, $num_rows) = $xlsx->dimension(2);
 echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
+v0.7.2 (2017-05-13) ::parse( $filename ) helper method
 v0.7.1 (2017-03-29) License added
 v0.6.11 (2016-07-27) fixed timestamp()
 v0.6.10 (2016-06-10) fixed search entries (UPPERCASE)
@@ -91,7 +93,7 @@ class SimpleXLSX {
 	private $datasec;
 	private $sharedstrings;
 	private $error = false;
-	private $debug = false;
+	private $debug;
 	// scheme
 	const SCHEMA_REL_OFFICEDOCUMENT  =  'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument';
 	const SCHEMA_REL_SHAREDSTRINGS =  'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
@@ -187,7 +189,16 @@ class SimpleXLSX {
 		70 => 't# ??/??',
 	);
 	public $datetime_format = 'Y-m-d H:i:s';
-	
+
+	public static function parse( $filename, $is_data = false, $debug = false )
+	{
+		$xlsx = new SimpleXLSX( $filename, $is_data, $debug );
+		if ( $xlsx->success() ) {
+			return $xlsx;
+		}
+		return false;
+	}
+
 	public function __construct( $filename, $is_data = false, $debug = false ) {
 		$this->debug = $debug;
 		$this->package = array(
@@ -218,10 +229,12 @@ class SimpleXLSX {
 
 				$rows[ $curR ][ $curC ] = $this->value($c);
 			}
-			for ($i = 0; $i < $cols; $i++)
+
+			for ($i = 0; $i < $cols; $i++) {
 				if (!isset($rows[$curR][$i])) {
 					$rows[$curR][$i] = '';
 				}
+			}
 
 			ksort( $rows[ $curR ] );
 
@@ -261,13 +274,15 @@ class SimpleXLSX {
 					'format' => $format
 				);
 			}
+
 			for ($i = 0; $i < $cols; $i++) {
 
 				if ( !isset($rows[$curR][$i]) ) {
 
 					// 0.6.8
-					for ($c = '', $j = $i; $j >= 0; $j = (int) ($j / 26) - 1)
-						$c = chr( $j % 26 + 65 ) . $c;
+					for ($c = '', $j = $i; $j >= 0; $j = (int) ($j / 26) - 1) {
+						$c = chr($j % 26 + 65) . $c;
+					}
 
 					$rows[ $curR ][$i] = array(
 						'type' => '',
@@ -331,10 +346,9 @@ class SimpleXLSX {
 			}
 			
 			return $ws;
-		} else {
-			$this->error( 'Worksheet '.$worksheet_id.' not found.');
-			return false;
 		}
+		$this->error( 'Worksheet '.$worksheet_id.' not found.');
+		return false;
 	}
 	public function dimension( $worksheet_id = 1 ) {
 		
@@ -351,13 +365,12 @@ class SimpleXLSX {
 			}
 			$index = $this->_columnIndex( $d[1] );		
 			return array( $index[0]+1, $index[1]+1);
-		} else if ( $ref !== '' ) { // 0.6.8
+		}
+		if ( $ref !== '' ) { // 0.6.8
 			$index = $this->_columnIndex( $ref );		
 			return array( $index[0]+1, $index[1]+1);
-		} else {
-			return array(0, 0);
 		}
-
+		return array(0, 0);
 	}
 
 	public function value( $cell, $format = null ) {
@@ -375,9 +388,9 @@ class SimpleXLSX {
 		}
 
 		switch ($dataType) {
-			case "s":
+			case 's':
 				// Value is a shared string
-				if ((string)$cell->v != '') {
+				if ((string)$cell->v !== '') {
 					$value = $this->sharedstrings[ (int) $cell->v ];
 				} else {
 					$value = '';
@@ -385,12 +398,12 @@ class SimpleXLSX {
 
 				break;
 				
-			case "b":
+			case 'b':
 				// Value is boolean
 				$value = (string)$cell->v;
-				if ($value == '0') {
+				if ($value === '0') {
 					$value = false;
-				} else if ($value == '1') {
+				} else if ($value === '1') {
 					$value = true;
 				} else {
 					$value = (bool)$cell->v;
@@ -398,15 +411,15 @@ class SimpleXLSX {
 
 				break;
 				
-			case "inlineStr":
+			case 'inlineStr':
 				// Value is rich text inline
 				$value = $this->_parseRichText($cell->is);
 							
 				break;
 				
-			case "e":
+			case 'e':
 				// Value is an error message
-				if ((string)$cell->v != '') {
+				if ((string)$cell->v !== '') {
 					$value = (string)$cell->v;
 				} else {
 					$value = '';
@@ -415,7 +428,7 @@ class SimpleXLSX {
 				break;
 			case 'd':
 				// Value is a date
-				$value = ( $this->datetime_format ) ? gmdate( $this->datetime_format, $this->unixstamp( (float)$cell->v )) : (float) $cell->v ;
+				$value = $this->datetime_format ? gmdate( $this->datetime_format, $this->unixstamp( (float)$cell->v )) : (float) $cell->v ;
 				break;
 
 
@@ -542,7 +555,7 @@ class SimpleXLSX {
 
 			$vZ = substr($vZ, 26 + $nF + $mF);
 
-			if ( strlen($vZ) != $aP['CS'] ) { // check only if availabled
+			if ( strlen($vZ) !== (int) $aP['CS'] ) { // check only if availabled
 			  $aI['E']  = 1;
 			  $aI['EM'] = 'Compressed size is not equal with the value in header information.';
 			} else {
@@ -562,7 +575,7 @@ class SimpleXLSX {
 								$vZ = bzdecompress($vZ);
 							} else {
 								$aI['E']  = 7;
-								$aI['EM'] = "PHP BZIP2 extension not available.";
+								$aI['EM'] = 'PHP BZIP2 extension not available.';
 							}
 							break;
 						default:
@@ -574,11 +587,11 @@ class SimpleXLSX {
 							$aI['E']  = 2;
 							$aI['EM'] = 'Decompression of data failed.';
 						} else {
-							if (strlen($vZ) != $aP['UCS']) {
+							if (strlen($vZ) !== (int) $aP['UCS']) {
 								$aI['E']  = 3;
 								$aI['EM'] = 'Uncompressed size is not equal with the value in header information.';
 							} else {
-								if (crc32($vZ) != $aP['CRC']) {
+								if ( crc32($vZ) !== $aP['CRC']) {
 									$aI['E']  = 4;
 									$aI['EM'] = 'CRC32 checksum is not equal with the value in header information.';
 								}
@@ -592,11 +605,11 @@ class SimpleXLSX {
 
 			// DOS to UNIX timestamp
 			$aI['T'] = mktime(($aP['FT']  & 0xf800) >> 11,
-							  ($aP['FT']  & 0x07e0) >>  5,
-							  ($aP['FT']  & 0x001f) <<  1,
-							  ($aP['FD']  & 0x01e0) >>  5,
-							  ($aP['FD']  & 0x001f),
-							  (($aP['FD'] & 0xfe00) >>  9) + 1980);
+				($aP['FT']  & 0x07e0) >>  5,
+				($aP['FT']  & 0x001f) <<  1,
+				($aP['FD']  & 0x01e0) >>  5,
+				$aP['FD']  & 0x001f,
+				(($aP['FD'] & 0xfe00) >>  9) + 1980);
 
 			//$this->Entries[] = &new SimpleUnzipEntry($aI);
 			$this->package['entries'][] = array(
@@ -617,26 +630,30 @@ class SimpleXLSX {
 	public function entryExists( $name ) { // 0.6.6
 		$dir = strtoupper(dirname( $name ));
 		$name = strtoupper(basename( $name ));
-		foreach( $this->package['entries'] as $entry)
-			if ( strtoupper( $entry['path'] ) == $dir && strtoupper( $entry['name'] ) == $name)
+		foreach( $this->package['entries'] as $entry) {
+			if (strtoupper($entry['path']) === $dir && strtoupper($entry['name']) === $name) {
 				return true;
+			}
+		}
 		return false;
 	}
 	public function getEntryData( $name ) {
 		$dir = strtoupper( dirname( $name ) );
 		$name = strtoupper( basename( $name ) );
-		foreach( $this->package['entries'] as $entry)
-			if ( strtoupper( $entry['path']) == $dir && strtoupper( $entry['name'] ) == $name)
+		foreach( $this->package['entries'] as $entry) {
+			if (strtoupper($entry['path']) === $dir && strtoupper($entry['name']) === $name) {
 				return $entry['data'];
+			}
+		}
 		$this->error('Unknown format');
 		return false;
 	}
 	public function getEntryXML( $name ) {
 		if ( ($entry_xml = $this->getEntryData( $name ))
 			&&  ($entry_xmlobj = simplexml_load_string( $entry_xml )))
+		{
 			return $entry_xmlobj;
-
-			
+		}
 		$this->error('Entry not found: '.$name );
 		return false;
 	}
@@ -656,7 +673,7 @@ class SimpleXLSX {
 		$d = floor( $excelDateTime ); // seconds since 1900
 		$t = $excelDateTime - $d;
 //		echo "d=".$d." t=".$t."\r\n";
-		return (abs($d) > 0) ? ( $d - 25569 ) * 86400 + $t * 86400 : $t * 86400;
+		return (abs($d) > 0) ? ( $d - 25569 ) * 86400 + round($t * 86400) : round($t * 86400);
 //		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
 	}
 
@@ -667,11 +684,11 @@ class SimpleXLSX {
 //		$this->styles = array();
 
 		// Read relations and search for officeDocument
-		if ( $relations = $this->getEntryXML("_rels/.rels" ) ) {
+		if ( $relations = $this->getEntryXML('_rels/.rels') ) {
 			
 			foreach ($relations->Relationship as $rel) {
 				
-				if ($rel["Type"] == SimpleXLSX::SCHEMA_REL_OFFICEDOCUMENT) {
+				if ($rel['Type'] === SimpleXLSX::SCHEMA_REL_OFFICEDOCUMENT) {
 					
 //						echo 'workbook found<br />';
 					// Found office document! Read workbook & relations...
@@ -690,7 +707,7 @@ class SimpleXLSX {
 
 								$path = dirname($rel['Target']) . '/' . $workbookRelation['Target'];
 								
-								if ($workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_WORKSHEET) { // Sheets
+								if ($workbookRelation['Type'] === SimpleXLSX::SCHEMA_REL_WORKSHEET) { // Sheets
 								
 //									echo 'sheet<br />';
 								
@@ -699,7 +716,7 @@ class SimpleXLSX {
 //										echo '<pre>'.htmlspecialchars( print_r( $sheet, true ) ).'</pre>';
 									}
 													
-								} else if ( $workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_SHAREDSTRINGS && $this->entryExists( $path )) { // 0.6.6
+								} else if ( $workbookRelation['Type'] === SimpleXLSX::SCHEMA_REL_SHAREDSTRINGS && $this->entryExists( $path )) { // 0.6.6
 									
 									if ( $sharedStrings = $this->getEntryXML( $path ) ) {
 										foreach ($sharedStrings->si as $val) {
@@ -710,7 +727,7 @@ class SimpleXLSX {
 											}
 										}
 									}
-								} else if ($workbookRelation['Type'] == SimpleXLSX::SCHEMA_REL_STYLES) {
+								} else if ($workbookRelation['Type'] === SimpleXLSX::SCHEMA_REL_STYLES) {
 
 									$this->styles = $this->getEntryXML( $path );
 									
@@ -750,21 +767,20 @@ class SimpleXLSX {
 	// thx Gonzo
 	private function _columnIndex( $cell = 'A1' ) {
 
-		if (preg_match("/([A-Z]+)(\d+)/", $cell, $matches)) {
-
-			$col = $matches[1];
-			$row = $matches[2];
+		if (preg_match("/([A-Z]+)(\d+)/", $cell, $m)) {
+			list( $col, $row ) = $m;
 
 			$colLen = strlen($col);
 			$index = 0;
 
-			for ($i = $colLen-1; $i >= 0; $i--)
-				$index += (ord($col{$i}) - 64) * pow(26, $colLen-$i-1);
+			for ($i = $colLen-1; $i >= 0; $i--) {
+				$index += (ord($col{$i}) - 64) * pow(26, $colLen - $i - 1);
+			}
 
 			return array($index-1, $row-1);
-		} else {
-			throw new Exception("Invalid cell index.");
 		}
+		$this->error('Invalid cell index '.$cell);
+		return false;
 	}
     private function _parseRichText($is = null) {
         $value = array();
