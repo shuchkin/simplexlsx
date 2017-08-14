@@ -32,31 +32,39 @@
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * print_r( $xlsx->rows() );
  *
- * Example 2:
+ * Example 2: html table
+ * $xlsx = SimpleXLSX::parse('book.xlsx');
+ * echo '<table>';
+ * foreach( $xlsx->rows() as $r ) {
+ *  echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
+ * }
+ * echo '</table>';
+ *
+ * Example 3: rowsEx
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * print_r( $xlsx->rowsEx() );
  *
- * Example 3:
+ * Example 4: select worksheet
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * print_r( $xlsx->rows(2) ); // second worksheet
  *
- * Example 4.1:
+ * Example 5: IDs and worksheet names
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * print_r( $xlsx->sheetNames() ); // array( 1 => 'Sheet 1', 3 => 'Catalog' );
  *
- * Example 4.2:
+ * Example 6: get sheet name by id
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
  *
- * Example 5:
+ * Example 7:
  * $xlsx = new SimpleXLSX('book.xlsx');
  * if ( $xlsx->success() ) {
- * print_r( $xlsx->rows() );
+ *   print_r( $xlsx->rows() );
  * } else {
- * echo 'xlsx error: '.$xslx->error();
+ *   echo 'xlsx error: '.$xslx->error();
  * }
  *
- * Example 6:
+ * Example 8: read data
  * $xslx = new SimpleXLSX( file_get_contents('http://www.example.com/example.xlsx'), true);
  * list($num_cols, $num_rows) = $xlsx->dimension(2);
  * echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
@@ -558,6 +566,9 @@ class SimpleXLSX {
 		$curR = 0;
 
 		list( $cols, ) = $this->dimension( $worksheet_id );
+
+		echo $cols.'<br/>';
+
 		/* @var SimpleXMLElement $ws */
 		foreach ( $ws->sheetData->row as $row ) {
 
@@ -610,9 +621,6 @@ class SimpleXLSX {
 
 		if ( strpos( $ref, ':' ) !== false ) {
 			$d = explode( ':', $ref );
-			if ( ! isset( $d[1] ) ) {
-				return array( 0, 0 );
-			}
 			$index = $this->_columnIndex( $d[1] );
 
 			return array( $index[0] + 1, $index[1] + 1 );
@@ -628,8 +636,8 @@ class SimpleXLSX {
 
 	private function _columnIndex( $cell = 'A1' ) {
 
-		if ( preg_match( "/([A-Z]+)(\d+)/", $cell, $m ) ) {
-			list( $col, $row ) = $m;
+		if ( preg_match( '/([A-Z]+)(\d+)/', $cell, $m ) ) {
+			list( ,$col, $row ) = $m;
 
 			$colLen = strlen( $col );
 			$index  = 0;
