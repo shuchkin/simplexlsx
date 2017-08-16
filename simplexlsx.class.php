@@ -567,8 +567,6 @@ class SimpleXLSX {
 
 		list( $cols, ) = $this->dimension( $worksheet_id );
 
-		echo $cols.'<br/>';
-
 		/* @var SimpleXMLElement $ws */
 		foreach ( $ws->sheetData->row as $row ) {
 
