@@ -6,20 +6,20 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 
 	Example 1:
 	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
-	  print_r( $xlsx->rows() );
+		print_r( $xlsx->rows() );
 	} else {
-	  echo SimpleXLSX::parse_error();
+		echo SimpleXLSX::parse_error();
 	}
 	
 	Example 2: html table
  	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
- 	  echo '<table>';
- 	  foreach( $xlsx->rows() as $r ) {
- 	    echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
- 	  }
- 	  echo '</table>';
+ 		echo '<table>';
+ 		foreach( $xlsx->rows() as $r ) {
+ 			echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
+ 		}
+ 		echo '</table>';
  	} else {
- 	  echo SimpleXLSX::parse_error();
+ 		echo SimpleXLSX::parse_error();
  	}
 	
 	Example 3: rowsEx() 
@@ -41,8 +41,8 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	Example 8: parse data
 	$data = file_get_contents('http://www.example.com/example.xlsx');
 	if ( $xslx = SimpleXLSX::parse( $data, true) ) {
-	  list($num_cols, $num_rows) = $xlsx->dimension(2);
-	  echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
+		list($num_cols, $num_rows) = $xlsx->dimension(2);
+		echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 	} else {
 		echo SimpleXLSX::parse_error();
 	}
