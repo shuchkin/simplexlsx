@@ -10,6 +10,7 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	} else {
 	  echo SimpleXLSX::parse_error();
 	}
+	
 	Example 2: html table
  	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
  	  echo '<table>';
