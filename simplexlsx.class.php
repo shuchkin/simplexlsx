@@ -435,9 +435,7 @@ class SimpleXLSX {
 								$wrel_type = trim( $workbookRelation['Type'] );
 								$wrel_path = dirname( trim( $rel['Target'] ) ) . '/' . trim( $workbookRelation['Target'] );
 								if ( ! $this->entryExists( $wrel_path ) ) {
-									$this->error( $wrel_path . ' not found!' );
-
-									return false;
+									continue;
 								}
 
 
@@ -509,7 +507,7 @@ class SimpleXLSX {
 		     && ( $entry_xmlobj = simplexml_load_string( $entry_xml ) ) ) {
 			return $entry_xmlobj;
 		}
-		$this->error( 'Entry not found: ' . $name );
+		$this->error( 'XML-entry not found: ' . $name );
 
 		return false;
 	}
@@ -522,7 +520,7 @@ class SimpleXLSX {
 				return $entry['data'];
 			}
 		}
-		$this->error( 'Unknown format' );
+		$this->error( 'Entry not found: '.$name );
 
 		return false;
 	}
