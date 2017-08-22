@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.3
+ *    SimpleXLSX php class v0.7.4
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2017 SimpleXLSX
@@ -23,22 +23,28 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2017 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    0.7.3, 2017-08-14
+ * @version    0.7.4, 2017-08-14
  */
 
 /** Examples & Changelog
  *
  * Example 1:
- * $xlsx = SimpleXLSX::parse('book.xlsx');
- * print_r( $xlsx->rows() );
+ * if ( $xlsx = SimpleXLSX::parse('book.xlsx')) {
+ *   print_r( $xlsx->rows() );
+ * } else {
+ *   echo SimpleXLSX::parse_error();
+ * }
  *
  * Example 2: html table
- * $xlsx = SimpleXLSX::parse('book.xlsx');
- * echo '<table>';
- * foreach( $xlsx->rows() as $r ) {
- *  echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
+ * if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+ *   echo '<table>';
+ *   foreach( $xlsx->rows() as $r ) {
+ *     echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
+ *   }
+ *   echo '</table>';
+ * } else {
+ *   echo SimpleXLSX::parse_error();
  * }
- * echo '</table>';
  *
  * Example 3: rowsEx
  * $xlsx = SimpleXLSX::parse('book.xlsx');
@@ -56,7 +62,15 @@
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
  *
- * Example 7:
+ * Example 7: read data
+ * if ( $xslx = SimpleXLSX::parse( file_get_contents('http://www.example.com/example.xlsx'), true) ) {
+ *   list($num_cols, $num_rows) = $xlsx->dimension(2);
+ *   echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
+ * } else {
+ *   echo SimpleXLSX::parse_error();
+ * }
+ *
+ * Example 8: old style
  * $xlsx = new SimpleXLSX('book.xlsx');
  * if ( $xlsx->success() ) {
  *   print_r( $xlsx->rows() );
@@ -64,11 +78,7 @@
  *   echo 'xlsx error: '.$xslx->error();
  * }
  *
- * Example 8: read data
- * $xslx = new SimpleXLSX( file_get_contents('http://www.example.com/example.xlsx'), true);
- * list($num_cols, $num_rows) = $xlsx->dimension(2);
- * echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
- *
+ * v0.7.4 (2017-08-22) ::parse_error() - get last error in "static style"
  * v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading
  * v0.7.2 (2017-05-13) ::parse( $filename ) helper method
  * v0.7.1 (2017-03-29) License added
@@ -544,12 +554,17 @@ class SimpleXLSX {
 	}
 
 	public static function parse( $filename, $is_data = false, $debug = false ) {
-		$xlsx = new SimpleXLSX( $filename, $is_data, $debug );
+		$xlsx = new self( $filename, $is_data, $debug );
 		if ( $xlsx->success() ) {
 			return $xlsx;
 		}
+		self::parse_error( $xlsx->error() );
 
 		return false;
+	}
+	public static function parse_error( $set = false ) {
+		static $error = false;
+		return ($set) ? $error = $set : $error;
 	}
 
 	public function success() {

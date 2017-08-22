@@ -1,20 +1,25 @@
-# SimpleXLSX class 0.7.3 (Official)
+# SimpleXLSX class 0.7.4 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2017
 
 	Example 1:
-	$xlsx = SimpleXLSX::parse('book.xlsx');	
-	print_r( $xlsx->rows() );
-	
+	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+	  print_r( $xlsx->rows() );
+	} else {
+	  echo SimpleXLSX::parse_error();
+	}
 	Example 2: html table
- 	$xlsx = SimpleXLSX::parse('book.xlsx');
- 	echo '<table>';
- 	foreach( $xlsx->rows() as $r ) {
- 		echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
+ 	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+ 	  echo '<table>';
+ 	  foreach( $xlsx->rows() as $r ) {
+ 	    echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
+ 	  }
+ 	  echo '</table>';
+ 	} else {
+ 	  echo SimpleXLSX::parse_error();
  	}
- 	echo '</table>';
 	
 	Example 3: rowsEx() 
 	$xlsx = SimpleXLSX::parse('book.xlsx');
@@ -31,8 +36,17 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	Example 6: sheet by id
 	$xlsx = SimpleXLSX::parse('book.xlsx');	
 	echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
+
+	Example 8: parse data
+	$data = file_get_contents('http://www.example.com/example.xlsx');
+	if ( $xslx = SimpleXLSX::parse( $data, true) ) {
+	  list($num_cols, $num_rows) = $xlsx->dimension(2);
+	  echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
+	} else {
+		echo SimpleXLSX::parse_error();
+	}
 	
-	Example 7: old school
+	Example 7: old style
 	$xlsx = new SimpleXLSX('book.xlsx');
 	if ($xslx->success()) {
 		print_r( $xlsx->rows() );
@@ -40,12 +54,9 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 		echo 'xlsx error: '.$xslx->error();
 	}
 	
-	Example 8: parse data
-	$xslx = new SimpleXLSX( file_get_contents('http://www.example.com/example.xlsx'), true);
-	list($num_cols, $num_rows) = $xlsx->dimension(2);
-	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 
 ##History
+v0.7.4 (2017-08-22) ::parse_error() - to get last error in "static style"
 v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading 
 v0.7.2 (2017-05-13) ::parse( $filename ) helper method
 v0.7.1 (2017-03-29) License added<br/>
