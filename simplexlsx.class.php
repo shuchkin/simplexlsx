@@ -75,7 +75,7 @@
  * if ( $xlsx->success() ) {
  *   print_r( $xlsx->rows() );
  * } else {
- *   echo 'xlsx error: '.$xslx->error();
+ *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
  * v0.7.4 (2017-08-22) ::parse_error() - get last error in "static style"

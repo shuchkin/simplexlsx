@@ -52,7 +52,7 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	if ($xslx->success()) {
 		print_r( $xlsx->rows() );
 	} else {
-		echo 'xlsx error: '.$xslx->error();
+		echo 'xlsx error: '.$xlsx->error();
 	}
 	
 
