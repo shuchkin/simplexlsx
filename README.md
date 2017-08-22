@@ -57,9 +57,9 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	
 
 ## History
-v0.7.4 (2017-08-22) ::parse_error() - to get last error in "static style"
-v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading 
-v0.7.2 (2017-05-13) ::parse( $filename ) helper method
+v0.7.4 (2017-08-22) ::parse_error() - to get last error in "static style"<br/>
+v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading<br/>
+v0.7.2 (2017-05-13) ::parse( $filename ) helper method<br/>
 v0.7.1 (2017-03-29) License added<br/>
 v0.6.11 (2016-07-27) fixed timestamp()<br />
 v0.6.10 (2016-06-10) fixed search entries (UPPERCASE)<br />
