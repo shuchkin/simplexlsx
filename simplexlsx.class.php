@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.4
+ *    SimpleXLSX php class v0.7.5
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2017 SimpleXLSX
@@ -23,13 +23,13 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2017 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    0.7.4, 2017-08-14
+ * @version    0.7.5, 2017-09-10
  */
 
 /** Examples & Changelog
  *
  * Example 1:
- * if ( $xlsx = SimpleXLSX::parse('book.xlsx')) {
+ * if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
  *   print_r( $xlsx->rows() );
  * } else {
  *   echo SimpleXLSX::parse_error();
@@ -816,25 +816,18 @@ class SimpleXLSX {
 	 *
 	 * @param int $worksheet_id
 	 * @param string $cell
-	 * @param bool $format
+	 * @param null|int $format
 	 *
 	 * @return mixed
 	 */
 	public function getCell( $worksheet_id = 1, $cell = 'A1', $format = null ) {
 
-	if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
+		if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
 
-		$curC = $this->_columnIndex((string) $cell)[0];
-		$curR = $this->_columnIndex((string) $cell)[1];
+		list($curC, $curR) = $this->_columnIndex((string) $cell);
 
 		$c = $ws->sheetData->row[$curR]->c[$curC];
-		$c['s'] = ($format !== false) ? (int)$format : $c['s'];
-		$s = (int)$c['s'];
-		if ($s > 0 && isset($this->workbook_cell_formats[ $s ])) {
-			$format = $this->workbook_cell_formats[ $s ]['format'];
-		}
-        $c = $this->value($c, $format);
-        return $c;
+        return $this->value($c, $format);
     }
 
 	public function href( $cell ) {
