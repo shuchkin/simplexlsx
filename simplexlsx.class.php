@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.5
+ *    SimpleXLSX php class v0.7.6
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2017 SimpleXLSX
@@ -78,6 +78,8 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)
+ * v0.7.5 (2017-09-10) ->getCell() - fixed
  * v0.7.4 (2017-08-22) ::parse_error() - get last error in "static style"
  * v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading
  * v0.7.2 (2017-05-13) ::parse( $filename ) helper method
@@ -569,7 +571,7 @@ class SimpleXLSX {
 		return ! $this->error;
 	}
 
-	public function rows( $worksheet_id = 1 ) {
+	public function rows( $worksheet_id = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheet_id ) ) === false ) {
 			return false;
@@ -605,6 +607,11 @@ class SimpleXLSX {
 
 	public function worksheet( $worksheet_id ) {
 
+		if ( $worksheet_id === 0 ) {
+			reset( $this->sheets );
+			$worksheet_id = key( $this->sheets );
+		}
+
 		if ( isset( $this->sheets[ $worksheet_id ] ) ) {
 			$ws = $this->sheets[ $worksheet_id ];
 
@@ -622,7 +629,7 @@ class SimpleXLSX {
 		return false;
 	}
 
-	public function dimension( $worksheet_id = 1 ) {
+	public function dimension( $worksheet_id = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheet_id ) ) === false ) {
 			return false;
@@ -744,7 +751,7 @@ class SimpleXLSX {
 //		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
 	}
 
-	public function rowsEx( $worksheet_id = 1 ) {
+	public function rowsEx( $worksheet_id = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheet_id ) ) === false ) {
 			return false;
@@ -820,7 +827,7 @@ class SimpleXLSX {
 	 *
 	 * @return mixed
 	 */
-	public function getCell( $worksheet_id = 1, $cell = 'A1', $format = null ) {
+	public function getCell( $worksheet_id = 0, $cell = 'A1', $format = null ) {
 
 		if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
 
