@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.7.6 (Official)
+# SimpleXLSX class 0.7.7 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader
 
@@ -57,6 +57,7 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 	
 
 ## History
+v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
 v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)  
 v0.7.5 (2017-09-10) ->getCell() - fixed
 v0.7.4 (2017-08-22) ::parse_error() - to get last error in "static style"<br/>

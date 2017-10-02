@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.6
+ *    SimpleXLSX php class v0.7.7
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2017 SimpleXLSX
@@ -78,6 +78,7 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
  * v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)
  * v0.7.5 (2017-09-10) ->getCell() - fixed
  * v0.7.4 (2017-08-22) ::parse_error() - get last error in "static style"
@@ -505,12 +506,19 @@ class SimpleXLSX {
 	}
 
 	public function getEntryXML( $name ) {
-		if ( ( $entry_xml = $this->getEntryData( $name ) )
-		     && ( $entry_xmlobj = simplexml_load_string( $entry_xml ) ) ) {
-			return $entry_xmlobj;
+		if ( $entry_xml = $this->getEntryData( $name ) ) {
+			// XML External Entity (XXE) Prevention
+			$_old = libxml_disable_entity_loader(true);
+			$entry_xmlobj = simplexml_load_string( $entry_xml );
+			libxml_disable_entity_loader($_old);
+			if ( $entry_xmlobj ) {
+				return $entry_xmlobj;
+			}
+			$e = libxml_get_last_error();
+			$this->error( 'XML-entry ' . $name.' parser error '.$e->message.' line '.$e->line );
+		} else {
+			$this->error( 'XML-entry not found: ' . $name );
 		}
-		$this->error( 'XML-entry not found: ' . $name );
-
 		return false;
 	}
 
