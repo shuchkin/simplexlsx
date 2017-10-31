@@ -40,7 +40,7 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 
 	Example 8: parse data
 	$data = file_get_contents('http://www.example.com/example.xlsx');
-	if ( $xslx = SimpleXLSX::parse( $data, true) ) {
+	if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
 		list($num_cols, $num_rows) = $xlsx->dimension(2);
 		echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
 	} else {
