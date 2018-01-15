@@ -4,56 +4,92 @@ Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reade
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2018
 
-	Example 1: basic usage
-	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
-		print_r( $xlsx->rows() );
-	} else {
-		echo SimpleXLSX::parse_error();
-	}
-	
-	Example 2: xlsx to html table
- 	if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
- 		echo '<table>';
- 		foreach( $xlsx->rows() as $r ) {
- 			echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
- 		}
- 		echo '</table>';
- 	} else {
- 		echo SimpleXLSX::parse_error();
- 	}
-	
-	Example 3: rowsEx() 
-	$xlsx = SimpleXLSX::parse('book.xlsx');
-	print_r( $xlsx->rowsEx() );
-	
-	Example 4: select sheet
-	$xlsx = SimpleXLSX::parse('book.xlsx');
-	print_r( $xlsx->rows(2) ); // second worksheet
-	
-	Example 5: list sheets
-	$xlsx = SimpleXLSX::parse('book.xlsx');
-	print_r( $xlsx->sheetNames() ); // array( 1 => 'Sheet 1', 3 => 'Catalog' );
-	
-	Example 6: sheet by id
-	$xlsx = SimpleXLSX::parse('book.xlsx');	
-	echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
+## Basic Usage
+```php
+if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+	print_r( $xlsx->rows() );
+} else {
+	echo SimpleXLSX::parse_error();
+}
+```
+```
+Array
+(
+    [0] => Array
+        (
+            [0] => ISBN
+            [1] => title
+            [2] => author
+            [3] => publisher
+            [4] => ctry
+        )
 
-	Example 8: parse data
-	$data = file_get_contents('http://www.example.com/example.xlsx');
-	if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
-		list($num_cols, $num_rows) = $xlsx->dimension(2);
-		echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
-	} else {
-		echo SimpleXLSX::parse_error();
+    [1] => Array
+        (
+            [0] => 618260307
+            [1] => The Hobbit
+            [2] => J. R. R. Tolkien
+            [3] => Houghton Mifflin
+            [4] => USA
+        )
+
+    [2] => Array
+        (
+            [0] => 908606664
+            [1] => Slinky Malinki
+            [2] => Lynley Dodd
+            [3] => Mallinson Rendel
+            [4] => NZ
+        )
+
+)
+```
+## Examples
+```php
+// XLSX to html table
+if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+	echo '<table>';
+	foreach( $xlsx->rows() as $r ) {
+		echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
 	}
-	
-	Example 7: old style
-	$xlsx = new SimpleXLSX('book.xlsx');
-	if ($xslx->success()) {
-		print_r( $xlsx->rows() );
-	} else {
-		echo 'xlsx error: '.$xlsx->error();
-	}
+	echo '</table>';
+} else {
+	echo SimpleXLSX::parse_error();
+}
+
+// rowsEx() 
+$xlsx = SimpleXLSX::parse('book.xlsx');
+print_r( $xlsx->rowsEx() );
+
+// Select Sheet
+$xlsx = SimpleXLSX::parse('book.xlsx');
+print_r( $xlsx->rows(2) ); // second worksheet
+
+// List sheets
+$xlsx = SimpleXLSX::parse('book.xlsx');
+print_r( $xlsx->sheetNames() ); // array( 1 => 'Sheet 1', 3 => 'Catalog' );
+
+// Sheet by id
+$xlsx = SimpleXLSX::parse('book.xlsx');	
+echo 'Sheet Name 2 = '.$xlsx->sheetName(2);
+
+// XLSX::parse remote data 
+$data = file_get_contents('http://www.example.com/example.xlsx');
+if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
+	list($num_cols, $num_rows) = $xlsx->dimension(2);
+	echo $xlsx->sheetName(2).':'.$num_cols.'x'.$num_rows;
+} else {
+	echo SimpleXLSX::parse_error();
+}
+
+// Classic OOP style 
+$xlsx = new SimpleXLSX('book.xlsx');
+if ($xslx->success()) {
+	print_r( $xlsx->rows() );
+} else {
+	echo 'xlsx error: '.$xlsx->error();
+}
+```
 	
 
 ## History
