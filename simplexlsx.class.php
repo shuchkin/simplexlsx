@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.7
+ *    SimpleXLSX php class v0.7.8
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2017 SimpleXLSX
@@ -78,6 +78,7 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.8 (2018-01-15) remove namespace prefixes (hardcoded)
  * v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
  * v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)
  * v0.7.5 (2017-09-10) ->getCell() - fixed
@@ -423,20 +424,23 @@ class SimpleXLSX {
 
 			foreach ( $relations->Relationship as $rel ) {
 
-				if ( trim( $rel['Type'] ) === self::SCHEMA_REL_OFFICEDOCUMENT ) {
+				$rel_type = trim( (string) $rel['Type'] );
+				$rel_target = trim( (string) $rel['Target'] );
+
+				if ( $rel_type === self::SCHEMA_REL_OFFICEDOCUMENT ) {
 
 					// Found office document! Read workbook & relations...
 
 					// Workbook
-					if ( $this->workbook = $this->getEntryXML( $rel['Target'] ) ) {
+					if ( $this->workbook = $this->getEntryXML( $rel_target ) ) {
 
-						if ( $workbookRelations = $this->getEntryXML( dirname( $rel['Target'] ) . '/_rels/workbook.xml.rels' ) ) {
+						if ( $workbookRelations = $this->getEntryXML( dirname( $rel_target ) . '/_rels/workbook.xml.rels' ) ) {
 
 							// Loop relations for workbook and extract sheets...
 							foreach ( $workbookRelations->Relationship as $workbookRelation ) {
 
-								$wrel_type = trim( $workbookRelation['Type'] );
-								$wrel_path = dirname( trim( $rel['Target'] ) ) . '/' . trim( $workbookRelation['Target'] );
+								$wrel_type = trim( (string) $workbookRelation['Type'] );
+								$wrel_path = dirname( trim( (string) $rel['Target'] ) ) . '/' . trim( (string) $workbookRelation['Target'] );
 								if ( ! $this->entryExists( $wrel_path ) ) {
 									continue;
 								}
@@ -507,9 +511,18 @@ class SimpleXLSX {
 
 	public function getEntryXML( $name ) {
 		if ( $entry_xml = $this->getEntryData( $name ) ) {
+			// dirty remove namespace prefixes
+			$entry_xml = preg_replace('/xmlns[^=]*="[^"]*"/i','', $entry_xml ); // remove namespaces
+			$entry_xml = preg_replace('/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/','$1$2', $entry_xml ); // remove namespaced attrs
+			$entry_xml = preg_replace('/<[a-zA-Z0-9]+:([^>]+)>/', '<$1>', $entry_xml); // fix namespaced openned tags
+			$entry_xml = preg_replace('/<\/[a-zA-Z0-9]+:([^>]+)>/', '</$1>', $entry_xml); // fix namespaced closed tags
+
+//			echo '<pre>'.$name."\r\n".htmlspecialchars( $entry_xml ).'</pre>'.
+
 			// XML External Entity (XXE) Prevention
 			$_old = libxml_disable_entity_loader(true);
 			$entry_xmlobj = simplexml_load_string( $entry_xml );
+//			echo '<pre>'.print_r( $entry_xmlobj, true).'</pre>';
 			libxml_disable_entity_loader($_old);
 			if ( $entry_xmlobj ) {
 				return $entry_xmlobj;
@@ -613,7 +626,7 @@ class SimpleXLSX {
 		return $rows;
 	}
 
-	public function worksheet( $worksheet_id ) {
+	public function worksheet( $worksheet_id = 0 ) {
 
 		if ( $worksheet_id === 0 ) {
 			reset( $this->sheets );
