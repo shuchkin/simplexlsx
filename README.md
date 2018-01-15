@@ -83,7 +83,7 @@ if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
 }
 
 // Classic OOP style 
-$xlsx = new SimpleXLSX('book.xlsx');
+$xlsx = new SimpleXLSX('books.xlsx');
 if ($xslx->success()) {
 	print_r( $xlsx->rows() );
 } else {
