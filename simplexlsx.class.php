@@ -876,8 +876,8 @@ class SimpleXLSX {
 		}
 		foreach ( $this->workbook->sheets->sheet as $s ) {
 			/* @var SimpleXMLElement $s */
-			if ( $s->attributes( 'r', true )->id === 'rId' . $worksheet_id ) {
-				return (string) $s['name'];
+			if ( (string)$s->attributes()->id === 'rId' . $worksheet_id ) {
+				return (string)$s->attributes()->name;
 			}
 
 		}
@@ -891,8 +891,7 @@ class SimpleXLSX {
 
 		foreach ( $this->workbook->sheets->sheet as $s ) {
 			/* @var SimpleXMLElement $s */
-			$result[ substr( $s->attributes( 'r', true )->id, 3 ) ] = (string) $s['name'];
-
+			$result[ substr( $s->attributes()->id, 3 ) ] = (string)$s->attributes()->name;
 		}
 
 		return $result;
