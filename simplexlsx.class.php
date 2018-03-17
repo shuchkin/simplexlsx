@@ -614,6 +614,8 @@ class SimpleXLSX {
 		/* @var SimpleXMLElement $ws */
 		foreach ( $ws->sheetData->row as $row ) {
 
+			$rows[ $curR ] = array();
+
 			foreach ( $row->c as $c ) {
 				list( $curC, ) = $this->_columnIndex( (string) $c['r'] );
 
