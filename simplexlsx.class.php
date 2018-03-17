@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.8
+ *    SimpleXLSX php class v0.7.9
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2017 SimpleXLSX
@@ -23,7 +23,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2017 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    0.7.5, 2017-09-10
+ * @version    0.7.9, 2018-03-17
  */
 
 /** Examples & Changelog
@@ -78,6 +78,7 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.9 (2018-01-15) fixed sheetNames() (namespaced or not namespaced attr)
  * v0.7.8 (2018-01-15) remove namespace prefixes (hardcoded)
  * v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
  * v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)
@@ -161,11 +162,14 @@ class SimpleXLSX {
 	);
 	public $workbook_cell_formats = array();
 	public $datetime_format = 'Y-m-d H:i:s';
+	/* @var SimpleXMLElement $workbook */
 	private $workbook;
+	/* @var SimpleXMLElement[] $sheets */
 	private $sheets = array();
 	// scheme
 	private $styles;
 	private $hyperlinks;
+	/* @var array[] $package */
 	private $package;
 	private $datasec;
 	private $sharedstrings;
@@ -468,23 +472,24 @@ class SimpleXLSX {
 									$this->styles = $this->getEntryXML( $wrel_path );
 
 									$nf = array();
-									if ( $this->styles->numFmts->numFmt != null ) {
+									if ( $this->styles->numFmts->numFmt !== null ) {
 										foreach ( $this->styles->numFmts->numFmt as $v ) {
 											$nf[ (int) $v['numFmtId'] ] = (string) $v['formatCode'];
 										}
 									}
 
-									if ( $this->styles->cellXfs->xf != null ) {
+									if ( $this->styles->cellXfs->xf !== null ) {
 										foreach ( $this->styles->cellXfs->xf as $v ) {
 											$v           = (array) $v->attributes();
 											$v['format'] = '';
 
 											if ( isset( $v['@attributes']['numFmtId'] ) ) {
 												$v = $v['@attributes'];
-												if ( isset( self::$CF[ $v['numFmtId'] ] ) ) {
-													$v['format'] = self::$CF[ $v['numFmtId'] ];
-												} else if ( isset( $nf[ $v['numFmtId'] ] ) ) {
-													$v['format'] = $nf[ $v['numFmtId'] ];
+												$fid = (int) $v['numFmtId'];
+												if ( isset( self::$CF[ $fid ] ) ) {
+													$v['format'] = self::$CF[ $fid ];
+												} else if ( isset( $nf[ $fid ] ) ) {
+													$v['format'] = $nf[ $fid ];
 												}
 											}
 											$this->workbook_cell_formats[] = $v;
@@ -508,7 +513,10 @@ class SimpleXLSX {
 
 		return false;
 	}
-
+	/*
+	 * @param string $name Filename in archive
+	 * @return SimpleXMLElement|bool
+	*/
 	public function getEntryXML( $name ) {
 		if ( $entry_xml = $this->getEntryData( $name ) ) {
 			// dirty remove namespace prefixes
@@ -649,7 +657,7 @@ class SimpleXLSX {
 
 		return false;
 	}
-
+	// don't trust ->dimension(), so xlsx generators very lazy and don't public a dimension attribute
 	public function dimension( $worksheet_id = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheet_id ) ) === false ) {
@@ -682,6 +690,7 @@ class SimpleXLSX {
 			$index  = 0;
 
 			for ( $i = $colLen - 1; $i >= 0; $i -- ) {
+				/** @noinspection PowerOperatorCanBeUsedInspection */
 				$index += ( ord( $col{$i} ) - 64 ) * pow( 26, $colLen - $i - 1 );
 			}
 
@@ -768,6 +777,7 @@ class SimpleXLSX {
 		$d = floor( $excelDateTime ); // seconds since 1900
 		$t = $excelDateTime - $d;
 
+		/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
 		return ( abs( $d ) > 0 ) ? ( $d - 25569 ) * 86400 + round( $t * 86400 ) : round( $t * 86400 );
 //		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
 	}
@@ -855,8 +865,8 @@ class SimpleXLSX {
 		list($curC, $curR) = $this->_columnIndex((string) $cell);
 
 		$c = $ws->sheetData->row[$curR]->c[$curC];
-        return $this->value($c, $format);
-    }
+		return $this->value($c, $format);
+	}
 
 	public function href( $cell ) {
 		return isset( $this->hyperlinks[ (string) $cell['r'] ] ) ? $this->hyperlinks[ (string) $cell['r'] ] : '';
@@ -876,8 +886,8 @@ class SimpleXLSX {
 		}
 		foreach ( $this->workbook->sheets->sheet as $s ) {
 			/* @var SimpleXMLElement $s */
-			if ( $s->attributes( 'r', true )->id === 'rId' . $worksheet_id ) {
-				return (string) $s['name'];
+			if ( (int) $s->attributes()->sheetId === (int) $worksheet_id ) {
+				return (string) $s->attributes()->name;
 			}
 
 		}
@@ -891,7 +901,8 @@ class SimpleXLSX {
 
 		foreach ( $this->workbook->sheets->sheet as $s ) {
 			/* @var SimpleXMLElement $s */
-			$result[ substr( $s->attributes( 'r', true )->id, 3 ) ] = (string) $s['name'];
+			/** @noinspection AmbiguousMethodsCallsInArrayMappingInspection */
+			$result[ (int) $s->attributes()->sheetId ] = (string) $s->attributes()->name;
 
 		}
 
