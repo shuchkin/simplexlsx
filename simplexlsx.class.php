@@ -1,9 +1,9 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.9
+ *    SimpleXLSX php class v0.7.10
  *    MS Excel 2007 workbooks reader
  *
- * Copyright (c) 2012 - 2017 SimpleXLSX
+ * Copyright (c) 2012 - 2018 SimpleXLSX
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,9 @@
  *
  * @category   SimpleXLSX
  * @package    SimpleXLSX
- * @copyright  Copyright (c) 2012 - 2017 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
+ * @copyright  Copyright (c) 2012 - 2018 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    0.7.9, 2018-03-17
+ * @version    0.7.10, 2018-03-21
  */
 
 /** Examples & Changelog
@@ -78,6 +78,7 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.10 (2018-04-21) fixed getCell, returns NULL if not exits
  * v0.7.9 (2018-01-15) fixed sheetNames() (namespaced or not namespaced attr)
  * v0.7.8 (2018-01-15) remove namespace prefixes (hardcoded)
  * v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
@@ -855,7 +856,7 @@ class SimpleXLSX {
 	 *    Or just for direct cell reading. (thx EGO7000)
 	 *
 	 * @param int $worksheet_id
-	 * @param string $cell
+	 * @param string|array $cell A1 or [0,0]
 	 * @param null|int $format
 	 *
 	 * @return mixed
@@ -864,10 +865,13 @@ class SimpleXLSX {
 
 		if (($ws = $this->worksheet( $worksheet_id)) === false) { return false; }
 
-		list($curC, $curR) = $this->_columnIndex((string) $cell);
+		list( $curC, $curR ) = is_array( $cell ) ? $cell : $this->_columnIndex( (string) $cell );
 
-		$c = $ws->sheetData->row[$curR]->c[$curC];
-		return $this->value($c, $format);
+		if (isset($ws->sheetData->row[$curR], $ws->sheetData->row[$curR]->c[$curC])) {
+			$c = $ws->sheetData->row[ $curR ]->c[ $curC ];
+			return $this->value( $c, $format );
+		}
+		return null;
 	}
 
 	public function href( $cell ) {
