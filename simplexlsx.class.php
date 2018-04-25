@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.10
+ *    SimpleXLSX php class v0.7.11
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2018 SimpleXLSX
@@ -23,7 +23,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2018 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    0.7.10, 2018-03-21
+ * @version    0.7.11, 2018-03-21
  */
 
 /** Examples & Changelog
@@ -78,6 +78,7 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
  * v0.7.10 (2018-04-21) fixed getCell, returns NULL if not exits
  * v0.7.9 (2018-01-15) fixed sheetNames() (namespaced or not namespaced attr)
  * v0.7.8 (2018-01-15) remove namespace prefixes (hardcoded)
@@ -797,10 +798,15 @@ class SimpleXLSX {
 		/* @var SimpleXMLElement $ws */
 		foreach ( $ws->sheetData->row as $row ) {
 
+			$r_idx = (int) $row['r'];
+
 			foreach ( $row->c as $c ) {
-				list( $curC, ) = $this->_columnIndex( (string) $c['r'] );
+				$r = (string) $c['r'];
 				$t = (string) $c['t'];
 				$s = (int) $c['s'];
+
+				list( $curC, ) = $this->_columnIndex( $r );
+
 				if ( $s > 0 && isset( $this->workbook_cell_formats[ $s ] ) ) {
 					$format = $this->workbook_cell_formats[ $s ]['format'];
 					if ( strpos( $format, 'm' ) !== false ) {
@@ -812,11 +818,12 @@ class SimpleXLSX {
 
 				$rows[ $curR ][ $curC ] = array(
 					'type'   => $t,
-					'name'   => (string) $c['r'],
+					'name'   => $c['r'],
 					'value'  => $this->value( $c, $format ),
 					'href'   => $this->href( $c ),
 					'f'      => (string) $c->f,
-					'format' => $format
+					'format' => $format,
+					'r' => $r_idx
 				);
 			}
 
@@ -836,7 +843,8 @@ class SimpleXLSX {
 						'value'  => '',
 						'href'   => '',
 						'f'      => '',
-						'format' => ''
+						'format' => '',
+						'r' => $r_idx
 					);
 				}
 			}

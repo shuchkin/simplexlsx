@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.7.10 (Official)
+# SimpleXLSX class 0.7.11 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 
@@ -94,6 +94,7 @@ if ($xslx->success()) {
 
 ## History
 ```
+v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
 v0.7.10 (2018-04-21) fixed getCell, returns NULL if not exits
 v0.7.9 (2018-03-17) fixed sheetNames() (namespaced or not namespaced attr)
 v0.7.8 (2018-01-15) remove namespace prefixes (hardcoded)
