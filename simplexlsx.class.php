@@ -804,14 +804,14 @@ class SimpleXLSX {
 				$r = (string) $c['r'];
 				$t = (string) $c['t'];
 				$s = (int) $c['s'];
-                $fill = '';
+				$fill = '';
 
 				list( $curC, ) = $this->_columnIndex( $r );
 
 				if ( $s > 0 && isset( $this->workbook_cell_formats[ $s ] ) ) {
 					$format = $this->workbook_cell_formats[ $s ]['format'];
 					$fillID = (int)$this->workbook_cell_formats[ $s ]['fillId'];
-                    $fill = @(string)$this->styles->fills->fill[$fillID]->patternFill->fgColor->attributes()->rgb;
+					$fill = @(string)$this->styles->fills->fill[$fillID]->patternFill->fgColor->attributes()->rgb;
 					if ( strpos( $format, 'm' ) !== false ) {
 						$t = 'd';
 					}
@@ -820,8 +820,8 @@ class SimpleXLSX {
 				}
 
 				if (strlen($fill) == 8) {
-                    $fill = substr($fill, 2, 6);
-                }
+					$fill = substr($fill, 2, 6);
+				}
 
 				$rows[ $curR ][ $curC ] = array(
 					'type'   => $t,
@@ -831,7 +831,7 @@ class SimpleXLSX {
 					'f'      => (string) $c->f,
 					'format' => $format,
 					'r' => $r_idx,
-                    'bg'   => $fill
+					'bg'   => $fill
 				);
 			}
 
