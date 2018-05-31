@@ -1,3 +1,8 @@
 {
-    "name": "shuchkin/simplexlsx"
+  "name": "shuchkin/simplexlsx",
+  "autoload": {
+    "classmap": [
+      "simplexlsx.class.php"
+    ]
+  }
 }
