@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.11
+ *    SimpleXLSX php class v0.7.13
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2018 SimpleXLSX
@@ -78,6 +78,7 @@
  *   echo 'xlsx error: '.$xlsx->error();
  * }
  *
+ * v0.7.13 (2018-06-18) get sheet indexes bug fix
  * v0.7.12 (2018-06-17) $worksheet_id to $worksheet_index, sheet numeration started 0
  * v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
  * v0.7.10 (2018-04-21) fixed getCell, returns NULL if not exits
@@ -437,10 +438,12 @@ class SimpleXLSX {
 					$index = 0;
 					foreach ( $this->workbook->sheets->sheet as $s ) {
 						/* @var SimpleXMLElement $s */
-						$this->sheetNames[ $index ] = (string) $s->attributes()->name;
-						$index_rId[ $index ] = (string) $s->attributes()->rId;
+						$this->sheetNames[ $index ] = (string) $s['name'];
+						$index_rId[ $index ] = (string) $s['id'];
 						$index++;
 					}
+
+//					print_r( $index_rId );
 
 
 					if ( $workbookRelations = $this->getEntryXML( dirname( $rel_target ) . '/_rels/workbook.xml.rels' ) ) {

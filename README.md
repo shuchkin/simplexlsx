@@ -1,6 +1,8 @@
-# SimpleXLSX class 0.7.12 (Official)
+# SimpleXLSX class 0.7.13 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
+
+No addiditionsl extensions need (internal unzip + standart SimpleXML parser)
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2018
 
@@ -45,8 +47,8 @@ Array
 )
 ```
 ## Examples
+### XLSX to html table
 ```php
-// XLSX to html table
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 	echo '<table>';
 	foreach( $xlsx->rows() as $r ) {
@@ -56,33 +58,64 @@ if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 } else {
 	echo SimpleXLSX::parse_error();
 }
-
-// rowsEx() 
-$xlsx = SimpleXLSX::parse('book.xlsx');
-print_r( $xlsx->rowsEx() );
-
-// Select Sheet
+```
+### XLSX read cells, out commas and bold headers
+```php
+echo '<pre>';
+if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
+	foreach ( $xlsx->rows() as $r => $row ) {
+		foreach ( $row as $c => $cell ) {
+			echo ($c > 0) ? ', ' : '';
+			echo ( $r === 0 ) ? '<b>'.$cell.'</b>' : $cell;
+		}
+		echo '<br/>';
+	}
+} else {
+	echo SimpleXLSX::parse_error();
+}
+echo '</pre>';
+```
+### XLSX get sheet names and sheet indexes
+```php
+if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
+	print_r( $xlsx->sheetNames() );
+}
+// Sheet numeration started 0
+```
+```
+Array
+(
+    [0] => Sheet1
+    [1] => Sheet2
+    [2] => Sheet3
+)
+```
+### Gets extend cell info by ->rowsEx()
+```php
+print_r( SimpleXLSX::parse('book.xlsx')->rowsEx() );
+```
+### Select Sheet
+```php
 $xlsx = SimpleXLSX::parse('book.xlsx');
 print_r( $xlsx->rows(1) ); // Sheet numeration started 0, we select second worksheet
-
-// List sheets
-$xlsx = SimpleXLSX::parse('book.xlsx');
-print_r( $xlsx->sheetNames() ); // array( 0 => 'Sheet 1', 1 => 'Catalog' );
-
-// Sheet by id
+```
+### Get sheet by index 
+```php
 $xlsx = SimpleXLSX::parse('book.xlsx');	
 echo 'Sheet Name 2 = '.$xlsx->sheetName(1);
-
-// XLSX::parse remote data 
+```
+### XLSX::parse remote data
+```php
 $data = file_get_contents('http://www.example.com/example.xlsx');
 if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
-	list($num_cols, $num_rows) = $xlsx->dimension(1);
+	list($num_cols, $num_rows) = $xlsx->dimension(1); // don't dimension trust extracted from xml
 	echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
 } else {
 	echo SimpleXLSX::parse_error();
 }
-
-// Classic OOP style 
+```
+### Classic OOP style 
+```php
 $xlsx = new SimpleXLSX('books.xlsx');
 if ($xslx->success()) {
 	print_r( $xlsx->rows() );
@@ -91,9 +124,9 @@ if ($xslx->success()) {
 }
 ```
 	
-
 ## History
 ```
+v0.7.13 (2018-06-18) get sheet indexes bug fix
 v0.7.12 (2018-06-17) $worksheet_id to $worksheet_index, sheet numeration started 0
 v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
 v0.7.10 (2018-04-21) fixed getCell, returns NULL if not exits
