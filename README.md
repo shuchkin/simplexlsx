@@ -117,7 +117,7 @@ if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
 ### Classic OOP style 
 ```php
 $xlsx = new SimpleXLSX('books.xlsx');
-if ($xslx->success()) {
+if ($xlsx->success()) {
 	print_r( $xlsx->rows() );
 } else {
 	echo 'xlsx error: '.$xlsx->error();
