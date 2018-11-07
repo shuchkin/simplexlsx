@@ -48,7 +48,7 @@ Array
 ```
 ## Installation
 ```
-composer
+composer require shuchkin/simplexlsx
 ```
 ## Examples
 ### XLSX to html table
