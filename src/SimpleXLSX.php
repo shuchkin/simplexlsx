@@ -1,49 +1,31 @@
 <?php
 /**
- *    SimpleXLSX php class v0.7.13
+ *    SimpleXLSX php class v0.8.1
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2018 SimpleXLSX
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
  * @category   SimpleXLSX
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2018 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
- * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    0.7.11, 2018-03-21
+ * @license    MIT
+ * @version    0.8.1, 2018-11-07
  */
 
-/** Examples & Changelog
+/** Examples
  *
  * Example 1:
  * if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
  *   print_r( $xlsx->rows() );
  * } else {
- *   echo SimpleXLSX::parse_error();
+ *   echo SimpleXLSX::parseError();
  * }
  *
  * Example 2: html table
  * if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
- *   echo '<table>';
- *   foreach( $xlsx->rows() as $r ) {
- *     echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
- *   }
- *   echo '</table>';
+ *   echo $xlsx->toHTML();
  * } else {
- *   echo SimpleXLSX::parse_error();
+ *   echo SimpleXLSX::parseError();
  * }
  *
  * Example 3: rowsEx
@@ -67,7 +49,7 @@
  *   list($num_cols, $num_rows) = $xlsx->dimension(1);
  *   echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
  * } else {
- *   echo SimpleXLSX::parse_error();
+ *   echo SimpleXLSX::parseError();
  * }
  *
  * Example 8: old style
@@ -77,7 +59,10 @@
  * } else {
  *   echo 'xlsx error: '.$xlsx->error();
  * }
- *
+ */
+
+/** Changelog
+ * v0.8.1 (2018-11-07) rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
  * v0.7.13 (2018-06-18) get sheet indexes bug fix
  * v0.7.12 (2018-06-17) $worksheet_id to $worksheet_index, sheet numeration started 0
  * v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
@@ -87,7 +72,7 @@
  * v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
  * v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)
  * v0.7.5 (2017-09-10) ->getCell() - fixed
- * v0.7.4 (2017-08-22) ::parse_error() - get last error in "static style"
+ * v0.7.4 (2017-08-22) ::parseError() - get last error in "static style"
  * v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading
  * v0.7.2 (2017-05-13) ::parse( $filename ) helper method
  * v0.7.1 (2017-03-29) License added
@@ -110,7 +95,7 @@
  * v0.4 sheets(), sheetsCount(), unixstamp( $excelDateTime )
  * v0.3 - fixed empty cells (Gonzo patch)
  */
-/** @noinspection PhpUndefinedFieldInspection */
+
 class SimpleXLSX {
 	// Don't remove this string! Created by Sergey Shuchkin http://www.shuchkin.ru/simplexlsx/ 2010-2016
 	const SCHEMA_REL_OFFICEDOCUMENT = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument';
@@ -595,11 +580,11 @@ class SimpleXLSX {
 		if ( $xlsx->success() ) {
 			return $xlsx;
 		}
-		self::parse_error( $xlsx->error() );
+		self::parseError( $xlsx->error() );
 
 		return false;
 	}
-	public static function parse_error( $set = false ) {
+	public static function parseError( $set = false ) {
 		static $error = false;
 		return $set ? $error = $set : $error;
 	}
@@ -624,10 +609,16 @@ class SimpleXLSX {
 
 			$rows[ $curR ] = array();
 
+			$curC = 0;
 			foreach ( $row->c as $c ) {
-				list( $curC, ) = $this->_columnIndex( (string) $c['r'] );
+				// detect skipped cols
+				list( $x, ) = $this->_columnIndex( (string) $c['r'] );
+				if ( $x > 0 ) {
+					$curC = $x;
+				}
 
 				$rows[ $curR ][ $curC ] = $this->value( $c );
+				$curC++;
 			}
 
 			/** @noinspection ForeachInvariantsInspection */
@@ -643,6 +634,92 @@ class SimpleXLSX {
 		}
 
 		return $rows;
+	}
+
+	public function rowsEx( $worksheet_index = 0 ) {
+
+		if ( ( $ws = $this->worksheet( $worksheet_index ) ) === false ) {
+			return false;
+		}
+
+		$rows = array();
+		$curR = 0;
+		list( $cols, ) = $this->dimension( $worksheet_index );
+		/* @var SimpleXMLElement $ws */
+		foreach ( $ws->sheetData->row as $row ) {
+
+			$r_idx = (int) $row['r'];
+			$curC = 0;
+
+			foreach ( $row->c as $c ) {
+				$r = (string) $c['r'];
+				$t = (string) $c['t'];
+				$s = (int) $c['s'];
+
+				list( $x, ) = $this->_columnIndex( $r );
+				if ( $x > 0 ) {
+					$curC = $x;
+				}
+
+				if ( $s > 0 && isset( $this->workbook_cell_formats[ $s ] ) ) {
+					$format = $this->workbook_cell_formats[ $s ]['format'];
+					if ( strpos( $format, 'm' ) !== false ) {
+						$t = 'd';
+					}
+				} else {
+					$format = '';
+				}
+
+				$rows[ $curR ][ $curC ] = array(
+					'type'   => $t,
+					'name'   => (string) $c['r'],
+					'value'  => $this->value( $c, $format ),
+					'href'   => $this->href( $c ),
+					'f'      => (string) $c->f,
+					'format' => $format,
+					'r' => $r_idx
+				);
+				$curC++;
+			}
+
+			/** @noinspection ForeachInvariantsInspection */
+			for ( $i = 0; $i < $cols; $i ++ ) {
+
+				if ( ! isset( $rows[ $curR ][ $i ] ) ) {
+
+					// 0.6.8
+					for ( $c = '', $j = $i; $j >= 0; $j = (int) ( $j / 26 ) - 1 ) {
+						$c = chr( $j % 26 + 65 ) . $c;
+					}
+
+					$rows[ $curR ][ $i ] = array(
+						'type'   => '',
+//						'name' => chr($i + 65).($curR+1),
+						'name'   => $c . ( $curR + 1 ),
+						'value'  => '',
+						'href'   => '',
+						'f'      => '',
+						'format' => '',
+						'r' => $r_idx
+					);
+				}
+			}
+
+			ksort( $rows[ $curR ] );
+
+			$curR ++;
+		}
+
+		return $rows;
+
+	}
+	public function toHTML( $worksheet_index = 0 ) {
+		$s = '<table>';
+		foreach( $this->rows( $worksheet_index ) as $r ) {
+			$s .= '<tr><td>'.implode('</td><td>', $r ).'</td></tr>'."\r\n";
+		}
+		$s .= '</table>';
+		return $s;
 	}
 
 	public function worksheet( $worksheet_index = 0 ) {
@@ -703,9 +780,9 @@ class SimpleXLSX {
 
 			return array( $index - 1, $row - 1 );
 		}
-		$this->error( 'Invalid cell index ' . $cell );
+//		$this->error( 'Invalid cell index ' . $cell );
 
-		return false;
+		return array(-1,-1);
 	}
 
 	public function value( $cell, $format = null ) {
@@ -787,79 +864,6 @@ class SimpleXLSX {
 		/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
 		return ( abs( $d ) > 0 ) ? ( $d - 25569 ) * 86400 + round( $t * 86400 ) : round( $t * 86400 );
 //		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
-	}
-
-	public function rowsEx( $worksheet_index = 0 ) {
-
-		if ( ( $ws = $this->worksheet( $worksheet_index ) ) === false ) {
-			return false;
-		}
-
-		$rows = array();
-		$curR = 0;
-		list( $cols, ) = $this->dimension( $worksheet_index );
-		/* @var SimpleXMLElement $ws */
-		foreach ( $ws->sheetData->row as $row ) {
-
-			$r_idx = (int) $row['r'];
-
-			foreach ( $row->c as $c ) {
-				$r = (string) $c['r'];
-				$t = (string) $c['t'];
-				$s = (int) $c['s'];
-
-				list( $curC, ) = $this->_columnIndex( $r );
-
-				if ( $s > 0 && isset( $this->workbook_cell_formats[ $s ] ) ) {
-					$format = $this->workbook_cell_formats[ $s ]['format'];
-					if ( strpos( $format, 'm' ) !== false ) {
-						$t = 'd';
-					}
-				} else {
-					$format = '';
-				}
-
-				$rows[ $curR ][ $curC ] = array(
-					'type'   => $t,
-					'name'   => $c['r'],
-					'value'  => $this->value( $c, $format ),
-					'href'   => $this->href( $c ),
-					'f'      => (string) $c->f,
-					'format' => $format,
-					'r' => $r_idx
-				);
-			}
-
-			/** @noinspection ForeachInvariantsInspection */
-			for ( $i = 0; $i < $cols; $i ++ ) {
-
-				if ( ! isset( $rows[ $curR ][ $i ] ) ) {
-
-					// 0.6.8
-					for ( $c = '', $j = $i; $j >= 0; $j = (int) ( $j / 26 ) - 1 ) {
-						$c = chr( $j % 26 + 65 ) . $c;
-					}
-
-					$rows[ $curR ][ $i ] = array(
-						'type'   => '',
-//						'name' => chr($i + 65).($curR+1),
-						'name'   => $c . ( $curR + 1 ),
-						'value'  => '',
-						'href'   => '',
-						'f'      => '',
-						'format' => '',
-						'r' => $r_idx
-					);
-				}
-			}
-
-			ksort( $rows[ $curR ] );
-
-			$curR ++;
-		}
-
-		return $rows;
-
 	}
 
 	/** Example: xlsx->getCell(2,'B87', 0);

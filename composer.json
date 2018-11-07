@@ -1,8 +1,23 @@
 {
   "name": "shuchkin/simplexlsx",
+  "description": "Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.",
+  "keywords": ["php", "excel", "xlsx", "parser", "backend"],
+  "homepage": "https://github.com/shuchkin/simplexlsx",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sergey Shuchkin (SMSPILOT)",
+      "email": "sergey.shuchkin@gmail.com",
+      "homepage": "http://www.shuchkin.ru/"
+    }
+  ],
   "autoload": {
     "classmap": [
-      "simplexlsx.class.php"
+      "src/SimpleXLSX.php"
     ]
+  },
+  "require": {
+    "ext-simplexml": "*",
+    "ext-zlib": "*"
   }
 }

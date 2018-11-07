@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.7.13 (Official)
+# SimpleXLSX class 0.8.1 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 
@@ -11,7 +11,7 @@ No addiditionsl extensions need (internal unzip + standart SimpleXML parser)
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 	print_r( $xlsx->rows() );
 } else {
-	echo SimpleXLSX::parse_error();
+	echo SimpleXLSX::parseError();
 }
 ```
 ```
@@ -46,17 +46,21 @@ Array
 
 )
 ```
+## Installation
+```
+composer
+```
 ## Examples
 ### XLSX to html table
 ```php
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
-	echo '<table>';
+	echo '<table border="1" cellpadding="3" style="border-collapse: collapse">';
 	foreach( $xlsx->rows() as $r ) {
 		echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
 	}
 	echo '</table>';
 } else {
-	echo SimpleXLSX::parse_error();
+	echo SimpleXLSX::parseError();
 }
 ```
 ### XLSX read cells, out commas and bold headers
@@ -71,7 +75,7 @@ if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
 		echo '<br/>';
 	}
 } else {
-	echo SimpleXLSX::parse_error();
+	echo SimpleXLSX::parseError();
 }
 echo '</pre>';
 ```
@@ -106,12 +110,22 @@ echo 'Sheet Name 2 = '.$xlsx->sheetName(1);
 ```
 ### XLSX::parse remote data
 ```php
-$data = file_get_contents('http://www.example.com/example.xlsx');
-if ( $xlsx = SimpleXLSX::parse( $data, true) ) {
+if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
 	list($num_cols, $num_rows) = $xlsx->dimension(1); // don't dimension trust extracted from xml
 	echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
 } else {
-	echo SimpleXLSX::parse_error();
+	echo SimpleXLSX::parseError();
+}
+```
+### Debug
+```php
+ini_set('error_reporting', E_ALL );
+ini_set('display_errors', 1 );
+
+if ( $xlsx = SimpleXLSX::parse('books.xlsx', false, true ) ) {
+	echo $xlsx->toHTML();
+} else {
+	echo SimpleXLSX::parseError();
 }
 ```
 ### Classic OOP style 
@@ -126,6 +140,7 @@ if ($xlsx->success()) {
 	
 ## History
 ```
+v0.8.1 rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
 v0.7.13 (2018-06-18) get sheet indexes bug fix
 v0.7.12 (2018-06-17) $worksheet_id to $worksheet_index, sheet numeration started 0
 v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
