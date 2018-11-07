@@ -1,9 +1,8 @@
 # SimpleXLSX class 0.8.1 (Official)
-<p align="center">[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)</p>
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 
-No addiditionsl extensions need (internal unzip + standart SimpleXML parser)
+No addiditionals extensions need (internal unzip + standart SimpleXML parser)
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2018
 
