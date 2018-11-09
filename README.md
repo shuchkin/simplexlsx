@@ -35,15 +35,6 @@ Array
             [4] => USA
         )
 
-    [2] => Array
-        (
-            [0] => 908606664
-            [1] => Slinky Malinki
-            [2] => Lynley Dodd
-            [3] => Mallinson Rendel
-            [4] => NZ
-        )
-
 )
 ```
 ## Installation
@@ -99,6 +90,33 @@ Array
 ```php
 print_r( SimpleXLSX::parse('book.xlsx')->rowsEx() );
 ```
+```
+Array
+(
+    [0] => Array
+        (
+            [0] => Array
+                (
+                    [type] => s
+                    [name] => A1
+                    [value] => ISBN
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                )
+
+            [1] => Array
+                (
+                    [type] => s
+                    [name] => B1
+                    [value] => title
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                )
+```
 ### Select Sheet
 ```php
 $xlsx = SimpleXLSX::parse('book.xlsx');
@@ -118,6 +136,17 @@ if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
 	echo SimpleXLSX::parseError();
 }
 ```
+### DateTime helpers
+```php
+echo $xlsx->getCell(0,'C2'); // 2016-04-12 13:41:00
+$xlsx->setDateTimeFormat('d.m.Y H:i');
+echo $xlsx->getCell(0,'C2'); // 12.04.2016 13:41
+$xlsx->setDateTomeFormat('U'); // returns as unixtimestamp
+echo  $xlsx->getCell(0,'C2'); // 1460468460
+$excel_date = $xlsx->setDateTimeFormat( NULL ); // returns as excel datetime
+echo $excel_date // 42472.570138889
+echo date('m/d/Y', $xlsx->unixstamp( $excel_date )); // 04/12/2016 
+```  
 ### Debug
 ```php
 ini_set('error_reporting', E_ALL );
