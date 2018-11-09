@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ForgottenDebugOutputInspection */
 echo '<h1>rows() and rowsEx()</h1>';
 if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
 	echo '<h2>$xlsx->rows()</h2>';

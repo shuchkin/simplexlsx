@@ -96,6 +96,7 @@
  * v0.4 sheets(), sheetsCount(), unixstamp( $excelDateTime )
  * v0.3 - fixed empty cells (Gonzo patch)
  */
+/** @noinspection PhpUndefinedFieldInspection */
 
 class SimpleXLSX {
 	// Don't remove this string! Created by Sergey Shuchkin sergey.shuchkin@gmail.com
@@ -866,9 +867,10 @@ class SimpleXLSX {
 
 				// Check for numeric values
 				if ( is_numeric( $value ) && $dataType !== 's' ) {
+					/** @noinspection TypeUnsafeComparisonInspection */
 					if ( $value == (int) $value ) {
 						$value = (int) $value;
-					} elseif ( $value == (float) $value ) {
+					} /** @noinspection TypeUnsafeComparisonInspection */ elseif ( $value == (float) $value ) {
 						$value = (float) $value;
 					}
 				}
