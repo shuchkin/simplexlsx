@@ -18,6 +18,7 @@
   },
   "require": {
     "ext-simplexml": "*",
-    "ext-zlib": "*"
+    "ext-zlib": "*",
+	"ext-libxml": "*"
   }
 }
