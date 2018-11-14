@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.2 (Official)
+# SimpleXLSX class 0.8.3 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 
@@ -136,6 +136,19 @@ if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
 	echo SimpleXLSX::parseError();
 }
 ```
+### XLSX::parse memory data
+```php
+// For instance $data is a data from database or cache    
+if ( $xlsx = SimpleXLSX::parse( $data, true ) ) {
+	print_r( $xlsx->rows() );
+ else {
+	echo SimpleXLSX::parseError();
+}
+```
+### Get Cell (slow)
+```php
+echo $xlsx->getCell(0, 'B2'); // The Hobbit
+``` 
 ### DateTime helpers
 ```php
 echo $xlsx->getCell(0,'C2'); // 2016-04-12 13:41:00
@@ -170,6 +183,7 @@ if ($xlsx->success()) {
 	
 ## History
 ```
+v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
 v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
 v0.8.1 rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
 v0.7.13 (2018-06-18) get sheet indexes bug fix

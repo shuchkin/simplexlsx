@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.2
+ *    SimpleXLSX php class v0.8.3
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2018 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2018 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.2, 2018-11-09
+ * @version    0.8.3, 2018-11-09
  */
 
 /** Examples
@@ -44,7 +44,10 @@
  * $xlsx = SimpleXLSX::parse('book.xlsx');
  * echo 'Sheet Name 2 = '.$xlsx->sheetName(1);
  *
- * Example 7: read data
+ * Example 7: getCell (very slow)
+ * echo $xlsx->getCell(1,'D12'); // reads D12 cell from second sheet
+ *
+ * Example 8: read data
  * if ( $xslx = SimpleXLSX::parse( file_get_contents('http://www.example.com/example.xlsx'), true) ) {
  *   list($num_cols, $num_rows) = $xlsx->dimension(1);
  *   echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
@@ -52,7 +55,7 @@
  *   echo SimpleXLSX::parseError();
  * }
  *
- * Example 8: old style
+ * Example 9: old style
  * $xlsx = new SimpleXLSX('book.xlsx');
  * if ( $xlsx->success() ) {
  *   print_r( $xlsx->rows() );
@@ -62,6 +65,7 @@
  */
 
 /** Changelog
+ * v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
  * v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
  * v0.8.1 (2018-11-07) rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
  * v0.7.13 (2018-06-18) get sheet indexes bug fix
@@ -713,7 +717,11 @@ class SimpleXLSX {
 	public function toHTML( $worksheetIndex = 0 ) {
 		$s = '<table class="excel">';
 		foreach( $this->rows( $worksheetIndex ) as $r ) {
-			$s .= '<tr><td>'.implode('</td><td>', $r ).'</td></tr>'."\r\n";
+			$s .= '<tr>';
+			foreach ( $r as $c ) {
+				$s .= '<td>'.( $c === '' ? '&nbsp' : htmlspecialchars( $c, ENT_QUOTES )).'</td>';
+			}
+			$s .= "</tr>\r\n";
 		}
 		$s .= '</table>';
 		return $s;
@@ -888,26 +896,43 @@ class SimpleXLSX {
 //		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
 	}
 
-	/** Example: xlsx->getCell(2,'B87', 0);
-	 *    Get cell B87 from 2nd worksheet, formatted by General (see $CF for all formats).
-	 *    It's useful when we need to get a cell that has the wrong format,
-	 *    Or just for direct cell reading. (thx EGO7000)
+	/**
+	 * Returns cell value
+	 * VERY SLOW! Use ->rows() or ->rowsEx()
 	 *
 	 * @param int $worksheetIndex
-	 * @param string|array $cell A1 or [0,0]
-	 * @param null|int $format
+	 * @param string|array $cell ref or coords, D12 or [3,12]
+	 * @param null|int $format BuildIn format index, see SimpleXLSX::$CF
 	 *
-	 * @return mixed
+	 * @return mixed Returns NULL if not found
 	 */
 	public function getCell( $worksheetIndex = 0, $cell = 'A1', $format = null ) {
 
 		if (($ws = $this->worksheet( $worksheetIndex)) === false) { return false; }
 
-		list( $curC, $curR ) = is_array( $cell ) ? $cell : $this->getIndex( (string) $cell );
+		list( $C, $R ) = is_array( $cell ) ? $cell : $this->getIndex( (string) $cell );
 
-		if (isset($ws->sheetData->row[$curR], $ws->sheetData->row[$curR]->c[$curC])) {
-			$c = $ws->sheetData->row[ $curR ]->c[ $curC ];
-			return $this->value( $c, $format );
+		$curR = 0;
+		/* @var SimpleXMLElement $ws */
+		foreach ( $ws->sheetData->row as $row ) {
+			$curC = 0;
+			foreach ( $row->c as $c ) {
+				// detect skipped cols
+				list( $x, $y ) = $this->getIndex( (string) $c['r'] );
+				if ( $x > 0 ) {
+					$curC = $x;
+					$curR = $y;
+				}
+				if ( $curR === $R && $curC === $C ) {
+					return $this->value( $c, $format );
+				}
+				if ( $curR > $R || $curC > $C ){
+					return null;
+				}
+				$curC++;
+			}
+
+			$curR ++;
 		}
 		return null;
 	}
