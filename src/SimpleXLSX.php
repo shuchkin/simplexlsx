@@ -892,8 +892,8 @@ class SimpleXLSX {
 		$t = $excelDateTime - $d;
 
 		/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
-		return ( abs( $d ) > 0 ) ? ( $d - 25569 ) * 86400 + round( $t * 86400 ) : round( $t * 86400 );
-//		return floor( ($d > 0) ? ( $d - 25568 ) * 86400 + $t * 86400 : $t * 86400 ); // Yuri Nunes
+		$t = ( abs( $d ) > 0 ) ? ( $d - 25569 ) * 86400 + round( $t * 86400 ) : round( $t * 86400 );
+		return (int) $t;
 	}
 
 	/**
