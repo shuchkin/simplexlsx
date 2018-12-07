@@ -926,7 +926,7 @@ class SimpleXLSX {
 				if ( $curR === $R && $curC === $C ) {
 					return $this->value( $c, $format );
 				}
-				if ( $curR > $R && $curC > $C ){
+				if ( $curR > $R ){
 					return null;
 				}
 				$curC++;
