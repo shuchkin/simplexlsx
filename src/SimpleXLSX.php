@@ -757,7 +757,7 @@ class SimpleXLSX {
 	public function dimension( $worksheetIndex = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
-			return [0,0];
+			return array(0,0);
 		}
 		/* @var SimpleXMLElement $ws */
 
