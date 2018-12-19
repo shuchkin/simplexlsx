@@ -2,7 +2,7 @@
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 No addiditional extensions need (internal unzip + standart SimpleXML parser)
-XLSX only, MS Excel 97 php reader [here](https://packagist.org/packages/shuchkin/simplexls)  
+XLSX only, MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls)  
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2018<br/>
 
