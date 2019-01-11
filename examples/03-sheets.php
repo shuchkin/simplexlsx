@@ -1,4 +1,10 @@
 <?php
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
+require_once __DIR__.'/../src/SimpleXLSX.php';
+
 echo '<h1>Read several sheets</h1>';
 if ( $xlsx = SimpleXLSX::parse('countries_and_population.xlsx')) {
 

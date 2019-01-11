@@ -1,4 +1,10 @@
 <?php
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
+require_once __DIR__.'/../src/SimpleXLSX.php';
+
 echo '<h1>XLSX to HTML</h1>';
 
 if (isset($_FILES['file'])) {
