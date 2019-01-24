@@ -824,10 +824,9 @@ class SimpleXLSX {
 				$format = $this->cellFormats[ $s ]['format'];
 			}
 		}
-		if ( strpos( $format, 'm' ) !== false ) {
-			$dataType = 'd';
-		}
+
 		$value = '';
+
 		switch ( $dataType ) {
 			case 's':
 				// Value is a shared string
