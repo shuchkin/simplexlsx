@@ -693,9 +693,6 @@ class SimpleXLSX {
 
 				if ( $s > 0 && isset( $this->cellFormats[ $s ] ) ) {
 					$format = $this->cellFormats[ $s ]['format'];
-					if ( $this->_strpos( $format, 'm' ) !== false ) {
-						$t = 'd';
-					}
 				} else {
 					$format = '';
 				}

@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.3 (Official)
+# SimpleXLSX class 0.8.4 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 No addiditional extensions need (internal unzip + standart SimpleXML parser)
@@ -108,13 +108,13 @@ Array
 
             [1] => Array
                 (
-                    [type] => s
+                    [type] => 
                     [name] => B1
-                    [value] => title
+                    [value] => 2016-04-12 13:41:00
                     [href] => 
                     [f] => 
-                    [format] => 
-                    [r] => 1
+                    [format] => m/d/yy h:mm
+                    [r] => 2
                 )
 ```
 ### Select Sheet
@@ -183,6 +183,7 @@ if ($xlsx->success()) {
 	
 ## History
 ```
+v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
 v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
 v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
 v0.8.1 rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
