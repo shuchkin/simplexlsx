@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.3
+ *    SimpleXLSX php class v0.8.4
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2018 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2018 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.3, 2018-11-09
+ * @version    0.8.4, 2018-11-09
  */
 
 /** Examples
@@ -65,6 +65,7 @@
  */
 
 /** Changelog
+ * v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
  * v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
  * v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
  * v0.8.1 (2018-11-07) rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
@@ -101,6 +102,7 @@
  * v0.3 - fixed empty cells (Gonzo patch)
  */
 /** @noinspection PhpUndefinedFieldInspection */
+/** @noinspection PhpComposerExtensionStubsInspection */
 
 class SimpleXLSX {
 	// Don't remove this string! Created by Sergey Shuchkin sergey.shuchkin@gmail.com
@@ -235,7 +237,7 @@ class SimpleXLSX {
 
 			$this->package['filename'] = 'default.xlsx';
 			$this->package['mtime']    = time();
-			$this->package['size']     = strlen( $filename );
+			$this->package['size']     = $this->_strlen( $filename );
 
 			$vZ = $filename;
 		} else {
@@ -262,19 +264,20 @@ class SimpleXLSX {
 					return false;
 				}
 		*/
-		if ( ( $pcd = strrpos( $vZ, "\x50\x4b\x05\x06" ) ) === false ) {
+		if ( ( $pcd = $this->_strrpos( $vZ, "\x50\x4b\x05\x06" ) ) === false ) {
 			$this->error( 'Unknown archive format' );
 
 			return false;
 		}
 		$aE = array(
-			0 => substr( $vZ, 0, $pcd ),
-			1 => substr( $vZ, $pcd + 3 )
+			0 => $this->_substr( $vZ, 0, $pcd ),
+			1 => $this->_substr( $vZ, $pcd + 3 )
 		);
+		echo PHP_EOL;
 
 		// Normal way
 		$aP                       = unpack( 'x16/v1CL', $aE[1] );
-		$this->package['comment'] = substr( $aE[1], 18, $aP['CL'] );
+		$this->package['comment'] = $this->_substr( $aE[1], 18, $aP['CL'] );
 
 		// Translates end of line from other operating systems
 		$this->package['comment'] = strtr( $this->package['comment'], array( "\r\n" => "\n", "\r" => "\n" ) );
@@ -303,22 +306,22 @@ class SimpleXLSX {
 
 			// Special case : value block after the compressed data
 			if ( $aP['GPF'] & 0x0008 ) {
-				$aP1 = unpack( 'V1CRC/V1CS/V1UCS', substr( $vZ, - 12 ) );
+				$aP1 = unpack( 'V1CRC/V1CS/V1UCS', $this->_substr( $vZ, - 12 ) );
 
 				$aP['CRC'] = $aP1['CRC'];
 				$aP['CS']  = $aP1['CS'];
 				$aP['UCS'] = $aP1['UCS'];
 				// 2013-08-10
-				$vZ = substr( $vZ, 0, - 12 );
-				if ( substr( $vZ, - 4 ) === "\x50\x4b\x07\x08" ) {
-					$vZ = substr( $vZ, 0, - 4 );
+				$vZ = $this->_substr( $vZ, 0, - 12 );
+				if ( $this->_substr( $vZ, - 4 ) === "\x50\x4b\x07\x08" ) {
+					$vZ = $this->_substr( $vZ, 0, - 4 );
 				}
 			}
 
 			// Getting stored filename
-			$aI['N'] = substr( $vZ, 26, $nF );
+			$aI['N'] = $this->_substr( $vZ, 26, $nF );
 
-			if ( substr( $aI['N'], - 1 ) === '/' ) {
+			if ( $this->_substr( $aI['N'], - 1 ) === '/' ) {
 				// is a directory entry - will be skipped
 				continue;
 			}
@@ -328,9 +331,9 @@ class SimpleXLSX {
 			$aI['P'] = $aI['P'] === '.' ? '' : $aI['P'];
 			$aI['N'] = basename( $aI['N'] );
 
-			$vZ = substr( $vZ, 26 + $nF + $mF );
+			$vZ = $this->_substr( $vZ, 26 + $nF + $mF );
 
-			if ( strlen( $vZ ) !== (int) $aP['CS'] ) { // check only if availabled
+			if ( $this->_strlen( $vZ ) !== (int) $aP['CS'] ) { // check only if availabled
 				$aI['E']  = 1;
 				$aI['EM'] = 'Compressed size is not equal with the value in header information.';
 			} else if ( $bE ) {
@@ -361,7 +364,7 @@ class SimpleXLSX {
 					if ( $vZ === false ) {
 						$aI['E']  = 2;
 						$aI['EM'] = 'Decompression of data failed.';
-					} else if ( strlen( $vZ ) !== (int) $aP['UCS'] ) {
+					} else if ( $this->_strlen( $vZ ) !== (int) $aP['UCS'] ) {
 						$aI['E']  = 3;
 						$aI['EM'] = 'Uncompressed size is not equal with the value in header information.';
 					} else if ( crc32( $vZ ) !== $aP['CRC'] ) {
@@ -528,7 +531,7 @@ class SimpleXLSX {
 //			echo '<pre>'.$name."\r\n".htmlspecialchars( $entry_xml ).'</pre>'.
 
 			// XML External Entity (XXE) Prevention
-			$_old         = libxml_disable_entity_loader(true);
+			$_old         = libxml_disable_entity_loader();
 			$entry_xmlobj = simplexml_load_string( $entry_xml );
 //			echo '<pre>'.print_r( $entry_xmlobj, true).'</pre>';
 			libxml_disable_entity_loader($_old);
@@ -544,10 +547,10 @@ class SimpleXLSX {
 	}
 
 	public function getEntryData( $name ) {
-		$dir  = strtoupper( dirname( $name ) );
-		$name = strtoupper( basename( $name ) );
+		$dir  = $this->_strtoupper( dirname( $name ) );
+		$name = $this->_strtoupper( basename( $name ) );
 		foreach ( $this->package['entries'] as $entry ) {
-			if ( strtoupper( $entry['path'] ) === $dir && strtoupper( $entry['name'] ) === $name ) {
+			if ( $this->_strtoupper( $entry['path'] ) === $dir && $this->_strtoupper( $entry['name'] ) === $name ) {
 				return $entry['data'];
 			}
 		}
@@ -557,10 +560,10 @@ class SimpleXLSX {
 	}
 
 	public function entryExists( $name ) { // 0.6.6
-		$dir  = strtoupper( dirname( $name ) );
-		$name = strtoupper( basename( $name ) );
+		$dir  = $this->_strtoupper( dirname( $name ) );
+		$name = $this->_strtoupper( basename( $name ) );
 		foreach ( $this->package['entries'] as $entry ) {
-			if ( strtoupper( $entry['path'] ) === $dir && strtoupper( $entry['name'] ) === $name ) {
+			if ( $this->_strtoupper( $entry['path'] ) === $dir && $this->_strtoupper( $entry['name'] ) === $name ) {
 				return true;
 			}
 		}
@@ -690,7 +693,7 @@ class SimpleXLSX {
 
 				if ( $s > 0 && isset( $this->cellFormats[ $s ] ) ) {
 					$format = $this->cellFormats[ $s ]['format'];
-					if ( strpos( $format, 'm' ) !== false ) {
+					if ( $this->_strpos( $format, 'm' ) !== false ) {
 						$t = 'd';
 					}
 				} else {
@@ -700,7 +703,7 @@ class SimpleXLSX {
 				$rows[ $curR ][ $curC ] = array(
 					'type'   => $t,
 					'name'   => (string) $c['r'],
-					'value'  => $this->value( $c, $format ),
+					'value'  => $this->value( $c ),
 					'href'   => $this->href( $c ),
 					'f'      => (string) $c->f,
 					'format' => $format,
@@ -763,7 +766,7 @@ class SimpleXLSX {
 
 		$ref = (string) $ws->dimension['ref'];
 
-		if ( strpos( $ref, ':' ) !== false ) {
+		if ( $this->_strpos( $ref, ':' ) !== false ) {
 			$d = explode( ':', $ref );
 			$index = $this->getIndex( $d[1] );
 
@@ -799,7 +802,7 @@ class SimpleXLSX {
 		if ( preg_match( '/([A-Z]+)(\d+)/', $cell, $m ) ) {
 			list( ,$col, $row ) = $m;
 
-			$colLen = strlen( $col );
+			$colLen = $this->_strlen( $col );
 			$index  = 0;
 
 			for ( $i = $colLen - 1; $i >= 0; $i -- ) {
@@ -814,14 +817,17 @@ class SimpleXLSX {
 		return array(-1,-1);
 	}
 
-	public function value( $cell, $format = null ) {
+	public function value( $cell ) {
 		// Determine data type
 		$dataType = (string) $cell['t'];
 
-		if ( $format === null ) {
+		if ( !$dataType ) { // number
 			$s = (int) $cell['s'];
 			if ( $s > 0 && isset( $this->cellFormats[ $s ] ) ) {
 				$format = $this->cellFormats[ $s ]['format'];
+				if ( strpos( $format, 'm') !== false ) {
+					$dataType = 'd';
+				}
 			}
 		}
 
@@ -901,11 +907,10 @@ class SimpleXLSX {
 	 *
 	 * @param int $worksheetIndex
 	 * @param string|array $cell ref or coords, D12 or [3,12]
-	 * @param null|int $format BuildIn format index, see SimpleXLSX::$CF
 	 *
 	 * @return mixed Returns NULL if not found
 	 */
-	public function getCell( $worksheetIndex = 0, $cell = 'A1', $format = null ) {
+	public function getCell( $worksheetIndex = 0, $cell = 'A1' ) {
 
 		if (($ws = $this->worksheet( $worksheetIndex)) === false) { return false; }
 
@@ -923,7 +928,7 @@ class SimpleXLSX {
 					$curR = $y;
 				}
 				if ( $curR === $R && $curC === $C ) {
-					return $this->value( $c, $format );
+					return $this->value( $c );
 				}
 				if ( $curR > $R ){
 					return null;
@@ -973,4 +978,20 @@ class SimpleXLSX {
 	public function setDateTimeFormat( $value ) {
 		$this->datetimeFormat = is_string( $value) ? $value : false;
 	}
+	private function _strlen( $str ) {
+		return (ini_get('mbstring.func_overload') & 2) ? mb_strlen($str , '8bit') : strlen($str);
+	}
+	private function _strpos( $haystack, $needle, $offset = 0 ) {
+		return (ini_get('mbstring.func_overload') & 2) ? mb_strpos( $haystack, $needle, $offset , '8bit') : strpos($haystack, $needle, $offset);
+	}
+	private function _strrpos( $haystack, $needle, $offset = 0 ) {
+		return (ini_get('mbstring.func_overload') & 2) ? mb_strrpos( $haystack, $needle, $offset, '8bit') : strrpos($haystack, $needle, $offset);
+	}
+	private function _strtoupper( $str ) {
+		return (ini_get('mbstring.func_overload') & 2) ? mb_strtoupper($str , '8bit') : strtoupper($str);
+	}
+	private function _substr( $str, $start, $length = null ) {
+		return (ini_get('mbstring.func_overload') & 2) ? mb_substr( $str, $start, ($length === null) ? mb_strlen($str,'8bit') : $length, '8bit') : substr($str, $start, ($length === null) ? strlen($str) : $length );
+	}
+
 }
