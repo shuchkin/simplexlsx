@@ -273,7 +273,6 @@ class SimpleXLSX {
 			0 => $this->_substr( $vZ, 0, $pcd ),
 			1 => $this->_substr( $vZ, $pcd + 3 )
 		);
-		echo PHP_EOL;
 
 		// Normal way
 		$aP                       = unpack( 'x16/v1CL', $aE[1] );
