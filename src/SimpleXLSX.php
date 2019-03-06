@@ -1,15 +1,15 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.4
+ *    SimpleXLSX php class v0.8.5
  *    MS Excel 2007 workbooks reader
  *
- * Copyright (c) 2012 - 2018 SimpleXLSX
+ * Copyright (c) 2012 - 2019 SimpleXLSX
  *
  * @category   SimpleXLSX
  * @package    SimpleXLSX
- * @copyright  Copyright (c) 2012 - 2018 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
+ * @copyright  Copyright (c) 2012 - 2019 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.4, 2018-11-09
+ * @version    0.8.5
  */
 
 /** Examples
@@ -65,6 +65,7 @@
  */
 
 /** Changelog
+ * v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
  * v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
  * v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
  * v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
@@ -211,6 +212,7 @@ class SimpleXLSX {
 			0x30 => '%1.0f');   //"##0.0E0";
 		// }}}
 	*/
+	private $errno = 0;
 	private $error = false;
 	private $debug;
 
@@ -243,7 +245,7 @@ class SimpleXLSX {
 		} else {
 
 			if ( ! is_readable( $filename ) ) {
-				$this->error( 'File not found ' . $filename );
+				$this->error( 1, 'File not found ' . $filename );
 
 				return false;
 			}
@@ -265,7 +267,7 @@ class SimpleXLSX {
 				}
 		*/
 		if ( ( $pcd = $this->_strrpos( $vZ, "\x50\x4b\x05\x06" ) ) === false ) {
-			$this->error( 'Unknown archive format' );
+			$this->error( 2, 'Unknown archive format' );
 
 			return false;
 		}
@@ -400,15 +402,19 @@ class SimpleXLSX {
 
 	// sheets numeration: 1,2,3....
 
-	public function error( $set = false ) {
-		if ( $set ) {
-			$this->error = $set;
+	public function error( $num = null, $str = null ) {
+		if ( $num ) {
+			$this->errno = $num;
+			$this->error = $str;
 			if ( $this->debug ) {
-				trigger_error( __CLASS__ . ': ' . $set, E_USER_WARNING );
+				trigger_error( __CLASS__ . ': ' . $this->error, E_USER_WARNING );
 			}
 		}
 
 		return $this->error;
+	}
+	public function errno() {
+		return $this->errno;
 	}
 
 	private function _parse() {
@@ -538,9 +544,9 @@ class SimpleXLSX {
 				return $entry_xmlobj;
 			}
 			$e = libxml_get_last_error();
-			$this->error( 'XML-entry ' . $name.' parser error '.$e->message.' line '.$e->line );
+			$this->error( 3, 'XML-entry ' . $name.' parser error '.$e->message.' line '.$e->line );
 		} else {
-			$this->error( 'XML-entry not found: ' . $name );
+			$this->error( 4, 'XML-entry not found ' . $name );
 		}
 		return false;
 	}
@@ -553,7 +559,7 @@ class SimpleXLSX {
 				return $entry['data'];
 			}
 		}
-		$this->error( 'Entry not found: '.$name );
+		$this->error( 5, 'Entry not found '.$name );
 
 		return false;
 	}
@@ -590,12 +596,17 @@ class SimpleXLSX {
 			return $xlsx;
 		}
 		self::parseError( $xlsx->error() );
+		self::parseErrno( $xlsx->errno() );
 
 		return false;
 	}
 	public static function parseError( $set = false ) {
 		static $error = false;
 		return $set ? $error = $set : $error;
+	}
+	public static function parseErrno( $set = false ) {
+		static $errno = false;
+		return $set ? $errno = $set : $errno;
 	}
 
 	public function success() {
@@ -741,7 +752,7 @@ class SimpleXLSX {
 
 			return $ws;
 		}
-		$this->error( 'Worksheet ' . $worksheetIndex . ' not found.' );
+		$this->error( 6, 'Worksheet not found ' . $worksheetIndex );
 
 		return false;
 	}

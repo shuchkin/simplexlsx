@@ -1,10 +1,10 @@
-# SimpleXLSX class 0.8.4 (Official)
+# SimpleXLSX class 0.8.5 (Official)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 No addiditional extensions need (internal unzip + standart SimpleXML parser)
 XLSX only, MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls)  
 
-**Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2018<br/>
+**Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2019<br/>
 
 *Hey, bro, please ★ the package for a some motivation :)* 
 
@@ -182,9 +182,21 @@ if ($xlsx->success()) {
 	echo 'xlsx error: '.$xlsx->error();
 }
 ```
-	
+### Error Codes
+SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
+<table>
+<tr><th>code</th><th>message</th><th>comment</th></tr>
+<tr><td>1</td><td>File not found</td><td>Where file? UFO?</td></tr>
+<tr><td>2</td><td>Unknown archive format</td><td>ZIP?</td></tr>
+<tr><td>3</td><td>XML-entry parser error</td><td>bad XML</td></tr>
+<tr><td>4</td><td>XML-entry not found</td><td>bad ZIP archive</td></tr>
+<tr><td>5</td><td>Entry not found</td><td>File not found in ZIP archive</td></tr>
+<tr><td>6</td><td>Worksheet not found</td><td>Not exists</td></tr>
+<table>	
+
 ## History
 ```
+v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
 v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
 v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
 v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
