@@ -48,7 +48,7 @@
  * echo $xlsx->getCell(1,'D12'); // reads D12 cell from second sheet
  *
  * Example 8: read data
- * if ( $xslx = SimpleXLSX::parse( file_get_contents('http://www.example.com/example.xlsx'), true) ) {
+ * if ( $xlsx = SimpleXLSX::parse( file_get_contents('http://www.example.com/example.xlsx'), true) ) {
  *   list($num_cols, $num_rows) = $xlsx->dimension(1);
  *   echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
  * } else {
