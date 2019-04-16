@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.5
+ *    SimpleXLSX php class v0.8.6
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2019 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2019 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.5
+ * @version    0.8.6
  */
 
 /** Examples
@@ -65,6 +65,7 @@
  */
 
 /** Changelog
+ * v0.8.6 (2019-04-16) 1900/1904 bug fixed
  * v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
  * v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
  * v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
@@ -173,6 +174,7 @@ class SimpleXLSX {
 	private $package;
 	private $datasec;
 	private $sharedstrings;
+	private $date1904 = 0;
 
 	/*
 		private $date_formats = array(
@@ -441,6 +443,9 @@ class SimpleXLSX {
 						$this->sheetNames[ $index ] = (string) $s['name'];
 						$index_rId[ $index ] = (string) $s['id'];
 						$index++;
+					}
+					if ( (int) $this->workbook->workbookPr['date1904'] === 1 ) {
+						$this->date1904 = 1;
 					}
 
 //					print_r( $index_rId );
@@ -725,11 +730,11 @@ class SimpleXLSX {
 
 	}
 	public function toHTML( $worksheetIndex = 0 ) {
-		$s = '<table class="excel">';
+		$s = '<table class=excel>';
 		foreach( $this->rows( $worksheetIndex ) as $r ) {
 			$s .= '<tr>';
 			foreach ( $r as $c ) {
-				$s .= '<td>'.( $c === '' ? '&nbsp' : htmlspecialchars( $c, ENT_QUOTES )).'</td>';
+				$s .= '<td nowrap>'.( $c === '' ? '&nbsp' : htmlspecialchars( $c, ENT_QUOTES )).'</td>';
 			}
 			$s .= "</tr>\r\n";
 		}
@@ -900,11 +905,19 @@ class SimpleXLSX {
 	}
 
 	public function unixstamp( $excelDateTime ) {
-		$d = floor( $excelDateTime ); // seconds since 1900
+
+		$d = floor( $excelDateTime ); // days since 1900 or 1904
 		$t = $excelDateTime - $d;
+
+		if ( $this->date1904 ) {
+			/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
+			$d += 1462;
+		}
+
 
 		/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
 		$t = ( abs( $d ) > 0 ) ? ( $d - 25569 ) * 86400 + round( $t * 86400 ) : round( $t * 86400 );
+
 		return (int) $t;
 	}
 
