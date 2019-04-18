@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.6
+ *    SimpleXLSX php class v0.8.7
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2019 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2019 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.6
+ * @version    0.8.7
  */
 
 /** Examples
@@ -65,6 +65,7 @@
  */
 
 /** Changelog
+ * v0.8.7 (2019-04-18) empty rows fixed
  * v0.8.6 (2019-04-16) 1900/1904 bug fixed
  * v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
  * v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
@@ -642,7 +643,7 @@ class SimpleXLSX {
 			foreach ( $row->c as $c ) {
 				// detect skipped cols
 				list( $x, $y ) = $this->getIndex( (string) $c['r'] );
-				if ( $x > 0 ) {
+				if ( $x > -1 ) {
 					$curC = $x;
 					$curR = $y;
 				}
