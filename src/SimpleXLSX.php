@@ -702,7 +702,7 @@ class SimpleXLSX {
 				$s = (int) $c['s'];
 
 				list( $x,$y ) = $this->getIndex( $r );
-				if ( $x > 0 ) {
+				if ( $x > -1 ) {
 					$curC = $x;
 					$curR = $y;
 				}
