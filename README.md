@@ -143,7 +143,7 @@ if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
 // For instance $data is a data from database or cache    
 if ( $xlsx = SimpleXLSX::parse( $data, true ) ) {
 	print_r( $xlsx->rows() );
- else {
+} else {
 	echo SimpleXLSX::parseError();
 }
 ```
