@@ -593,7 +593,7 @@ class SimpleXLSX {
 			}
 		}
 
-		return implode( ' ', $value );
+		return implode( '', $value );
 	}
 
 	public static function parse( $filename, $is_data = false, $debug = false ) {
