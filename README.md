@@ -40,6 +40,9 @@ Array
 
 )
 ```
+```
+// SimpleXLSX::parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ): SimpleXLSX (or false)
+```
 ## Installation
 ```
 composer require shuchkin/simplexlsx
@@ -164,7 +167,7 @@ echo  $xlsx->getCell(0,'C2'); // 1460468460
 $excel_date = $xlsx->setDateTimeFormat( NULL ); // returns as excel datetime
 echo $excel_date // 42472.570138889
 echo date('m/d/Y', $xlsx->unixstamp( $excel_date )); // 04/12/2016 
-```  
+```
 ### Debug
 ```php
 ini_set('error_reporting', E_ALL );
@@ -178,13 +181,17 @@ if ( $xlsx = SimpleXLSX::parse('books.xlsx', false, true ) ) {
 ```
 ### Classic OOP style 
 ```php
-$xlsx = new SimpleXLSX('books.xlsx');
-if ($xlsx->success()) {
+$xlsx = new SimpleXLSX();
+$xlsx->debug = true; // display errors
+$xlsx->skipEmptyRows = true; // skip empty rows
+if ($xlsx->parseFile('books.xlsx')) {
 	print_r( $xlsx->rows() );
 } else {
 	echo 'xlsx error: '.$xlsx->error();
 }
 ```
+More examples [here](https://github.com/shuchkin/simplexlsx/tree/master/examples)
+
 ### Error Codes
 SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 <table>
@@ -199,7 +206,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 
 ## History
 ```
-v0.8.8 (2019-06-19) removed list( $x, $y ) for a PHP 5 and 7 capabitities, release 0.8.8
+v0.8.8 (2019-06-19) removed list( $x, $y ), added bool $xlsx->skipEmptyRows, $xlsx->parseFile( $filename ), $xlsx->parseData( $data ), release 0.8.8
 v0.8.7 (2019-04-18) empty rows fixed, release 0.8.7
 v0.8.6 (2019-04-16) 1900/1904 bug fixed
 v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code

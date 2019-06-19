@@ -67,7 +67,7 @@
  */
 
 /** Changelog
- * v0.8.8 (2019-06-19) removed list( $x, $y ) for a PHP 5 and 7 capabitities, release 0.8.8
+ * v0.8.8 (2019-06-19) removed list( $x, $y ), added bool $xlsx->skipEmptyRows, $xlsx->parseFile( $filename ), $xlsx->parseData( $data ), release 0.8.8
  * v0.8.7 (2019-04-18) empty rows fixed
  * v0.8.6 (2019-04-16) 1900/1904 bug fixed
  * v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
@@ -167,10 +167,13 @@ class SimpleXLSX {
 	);
 	public $cellFormats = array();
 	public $datetimeFormat = 'Y-m-d H:i:s';
+	public $skipEmptyRows = false;
+	public $debug;
+
 	/* @var SimpleXMLElement $workbook */
 	private $workbook;
 	/* @var SimpleXMLElement[] $sheets */
-	private $sheets = array();
+	private $sheets;
 	private $sheetNames = array();
 	// scheme
 	private $styles;
@@ -180,6 +183,7 @@ class SimpleXLSX {
 	private $datasec;
 	private $sharedstrings;
 	private $date1904 = 0;
+
 
 	/*
 		private $date_formats = array(
@@ -221,10 +225,12 @@ class SimpleXLSX {
 	*/
 	private $errno = 0;
 	private $error = false;
-	private $debug;
 
-	public function __construct( $filename, $is_data = false, $debug = false ) {
-		$this->debug   = $debug;
+
+	public function __construct( $filename = null, $is_data = null, $debug = null ) {
+		if ( $debug !== null ) {
+			$this->debug = $debug;
+		}
 		$this->package = array(
 			'filename' => '',
 			'mtime'    => 0,
@@ -232,9 +238,21 @@ class SimpleXLSX {
 			'comment'  => '',
 			'entries'  => array()
 		);
-		if ( $this->_unzip( $filename, $is_data ) ) {
+		if ( $filename && $this->_unzip( $filename, $is_data )) {
 			$this->_parse();
 		}
+	}
+	public function parseFile( $filename ) {
+		if ( $this->_unzip( $filename )) {
+			return $this->_parse();
+		}
+		return false;
+	}
+	public function parseData( $data ) {
+		if ( $this->_unzip($data, true )) {
+			return $this->_parse();
+		}
+		return false;
 	}
 
 	private function _unzip( $filename, $is_data = false ) {
@@ -537,11 +555,17 @@ class SimpleXLSX {
 	*/
 	public function getEntryXML( $name ) {
 		if ( $entry_xml = $this->getEntryData( $name ) ) {
-			// dirty remove namespace prefixes
+			// dirty remove namespace prefixes and empty rows
 			$entry_xml = preg_replace('/xmlns[^=]*="[^"]*"/i','', $entry_xml ); // remove namespaces
 			$entry_xml = preg_replace('/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/','$1$2', $entry_xml ); // remove namespaced attrs
 			$entry_xml = preg_replace('/<[a-zA-Z0-9]+:([^>]+)>/', '<$1>', $entry_xml); // fix namespaced openned tags
 			$entry_xml = preg_replace('/<\/[a-zA-Z0-9]+:([^>]+)>/', '</$1>', $entry_xml); // fix namespaced closed tags
+			if ( $this->skipEmptyRows && strpos($name, '/sheet') ) {
+				$entry_xml = preg_replace( '/<row[^>]+>\s*?(<c[^\/]+\/>)+\s*?<\/row>/', '', $entry_xml,-1, $cnt ); // remove empty rows
+				if ( $cnt ) {
+					$entry_xml = preg_replace('/<dimension[^\/]+\/>/', '', $entry_xml);
+				}
+			}
 
 //			echo '<pre>'.$name."\r\n".htmlspecialchars( $entry_xml ).'</pre>'.
 
@@ -600,8 +624,11 @@ class SimpleXLSX {
 		return implode( '', $value );
 	}
 
-	public static function parse( $filename, $is_data = false, $debug = false ) {
-		$xlsx = new self( $filename, $is_data, $debug );
+	public static function parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ) {
+		$xlsx = new self();
+		$xlsx->debug = $debug;
+		$xlsx->skipEmptyRows = $skip_empty_rows;
+		$is_data ? $xlsx->parseData( $filename ) : $xlsx->parseFile( $filename );
 		if ( $xlsx->success() ) {
 			return $xlsx;
 		}
@@ -760,6 +787,7 @@ class SimpleXLSX {
 	public function worksheet( $worksheetIndex = 0 ) {
 
 
+
 		if ( isset( $this->sheets[ $worksheetIndex ] ) ) {
 			$ws = $this->sheets[ $worksheetIndex ];
 
@@ -795,9 +823,9 @@ class SimpleXLSX {
 
 		if ( $this->_strpos( $ref, ':' ) !== false ) {
 			$d = explode( ':', $ref );
-			$index = $this->getIndex( $d[1] );
+			$idx = $this->getIndex( $d[1] );
 
-			return array( $index[0] + 1, $index[1] + 1 );
+			return array( $idx[0] + 1, $idx[1] + 1 );
 		}
 		if ( $ref !== '' ) { // 0.6.8
 			$index = $this->getIndex( $ref );
