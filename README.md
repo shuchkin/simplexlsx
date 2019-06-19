@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.7 (Official)
+# SimpleXLSX class 0.8.8 (Official)
 [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
@@ -133,7 +133,9 @@ echo 'Sheet Name 2 = '.$xlsx->sheetName(1);
 ### XLSX::parse remote data
 ```php
 if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
-	list($num_cols, $num_rows) = $xlsx->dimension(1); // don't dimension trust extracted from xml
+	$dim = $xlsx->dimension(1); // don't trust dimension extracted from xml
+	$num_cols = $dim[0];
+	$num_rows = $dim[1];
 	echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
 } else {
 	echo SimpleXLSX::parseError();
@@ -197,6 +199,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 
 ## History
 ```
+v0.8.8 (2019-06-19) removed list( $x, $y ) for a PHP 5 and 7 capabitities, release 0.8.8
 v0.8.7 (2019-04-18) empty rows fixed, release 0.8.7
 v0.8.6 (2019-04-16) 1900/1904 bug fixed
 v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code

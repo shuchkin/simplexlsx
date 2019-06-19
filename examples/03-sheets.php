@@ -15,7 +15,9 @@ if ( $xlsx = SimpleXLSX::parse('countries_and_population.xlsx')) {
 
 	// output worsheet 1
 
-	list( $num_cols, $num_rows ) = $xlsx->dimension();
+	$dim = $xlsx->dimension();
+	$num_cols = $dim[0];
+	$num_rows = $dim[1];
 
 	echo '<h2>'.$xlsx->sheetName(0).'</h2>';
 	echo '<table border=1>';
@@ -32,7 +34,9 @@ if ( $xlsx = SimpleXLSX::parse('countries_and_population.xlsx')) {
 
 	// output worsheet 2
 
-	list( $num_cols, $num_rows ) = $xlsx->dimension( 2 );
+	$dim = $xlsx->dimension( 2 );
+	$num_cols = $dim[0];
+	$num_rows = $dim[1];
 
 	echo '<h2>'.$xlsx->sheetName(1).'</h2>';
 	echo '<table border=1>';

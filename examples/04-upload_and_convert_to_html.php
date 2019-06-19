@@ -14,7 +14,8 @@ if (isset($_FILES['file'])) {
 		echo '<h2>Parsing Result</h2>';
 		echo '<table border="1" cellpadding="3" style="border-collapse: collapse">';
 
-		list( $cols, ) = $xlsx->dimension();
+		$dim = $xlsx->dimension();
+		$cols = $dim[0];
 
 		foreach ( $xlsx->rows() as $k => $r ) {
 			//		if ($k == 0) continue; // skip first row

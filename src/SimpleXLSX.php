@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.7
+ *    SimpleXLSX php class v0.8.8
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2019 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2019 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.7
+ * @version    0.8.8
  */
 
 /** Examples
@@ -67,6 +67,7 @@
  */
 
 /** Changelog
+ * v0.8.8 (2019-06-19) removed list( $x, $y ) for a PHP 5 and 7 capabitities, release 0.8.8
  * v0.8.7 (2019-04-18) empty rows fixed
  * v0.8.6 (2019-04-16) 1900/1904 bug fixed
  * v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
