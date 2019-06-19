@@ -49,7 +49,9 @@
  *
  * Example 8: read data
  * if ( $xlsx = SimpleXLSX::parse( file_get_contents('http://www.example.com/example.xlsx'), true) ) {
- *   list($num_cols, $num_rows) = $xlsx->dimension(1);
+ *   $dim = $xlsx->dimension(1);
+ *   $num_cols = $dim[0];
+ *   $num_rows = $dim[1];
  *   echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
  * } else {
  *   echo SimpleXLSX::parseError();
@@ -106,6 +108,7 @@
  */
 /** @noinspection PhpUndefinedFieldInspection */
 /** @noinspection PhpComposerExtensionStubsInspection */
+/** @noinspection MultiAssignmentUsageInspection */
 
 class SimpleXLSX {
 	// Don't remove this string! Created by Sergey Shuchkin sergey.shuchkin@gmail.com
@@ -624,7 +627,9 @@ class SimpleXLSX {
 		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
 			return false;
 		}
-		list( $numCols, $numRows) = $this->dimension( $worksheetIndex );
+		$dim = $this->dimension( $worksheetIndex );
+		$numCols = $dim[0];
+		$numRows = $dim[1];
 
 		$emptyRow = array();
 		for( $i = 0; $i < $numCols; $i++) {
@@ -642,7 +647,10 @@ class SimpleXLSX {
 			$curC = 0;
 			foreach ( $row->c as $c ) {
 				// detect skipped cols
-				list( $x, $y ) = $this->getIndex( (string) $c['r'] );
+				$idx = $this->getIndex( (string) $c['r'] );
+				$x = $idx[0];
+				$y = $idx[1];
+
 				if ( $x > -1 ) {
 					$curC = $x;
 					$curR = $y;
@@ -666,7 +674,9 @@ class SimpleXLSX {
 
 		$rows = array();
 
-		list( $numCols, $numRows) = $this->dimension( $worksheetIndex );
+		$dim = $this->dimension( $worksheetIndex );
+		$numCols = $dim[0];
+		$numRows = $dim[1];
 
 		/** @noinspection ForeachInvariantsInspection */
 		for ( $y = 0; $y < $numRows; $y++ ) {
@@ -701,7 +711,10 @@ class SimpleXLSX {
 				$t = (string) $c['t'];
 				$s = (int) $c['s'];
 
-				list( $x,$y ) = $this->getIndex( $r );
+				$idx = $this->getIndex( $r );
+				$x = $idx[0];
+				$y = $idx[1];
+
 				if ( $x > -1 ) {
 					$curC = $x;
 					$curR = $y;
@@ -795,7 +808,9 @@ class SimpleXLSX {
 		$maxC = $maxR = 0;
 		foreach ( $ws->sheetData->row as $row ) {
 			foreach ( $row->c as $c ) {
-				list( $x, $y ) = $this->getIndex( (string) $c['r'] );
+				$idx = $this->getIndex( (string) $c['r'] );
+				$x = $idx[0];
+				$y = $idx[1];
 				if ( $x > 0 ) {
 					if ( $x > $maxC ) {
 						$maxC = $x;
@@ -813,7 +828,8 @@ class SimpleXLSX {
 	public function getIndex( $cell = 'A1' ) {
 
 		if ( preg_match( '/([A-Z]+)(\d+)/', $cell, $m ) ) {
-			list( ,$col, $row ) = $m;
+			$col = $m[1];
+			$row = $m[2];
 
 			$colLen = $this->_strlen( $col );
 			$index  = 0;
@@ -935,7 +951,9 @@ class SimpleXLSX {
 
 		if (($ws = $this->worksheet( $worksheetIndex)) === false) { return false; }
 
-		list( $C, $R ) = is_array( $cell ) ? $cell : $this->getIndex( (string) $cell );
+		$idx = is_array( $cell ) ? $cell : $this->getIndex( (string) $cell );
+		$C = $idx[0];
+		$R = $idx[1];
 
 		$curR = 0;
 		/* @var SimpleXMLElement $ws */
@@ -943,7 +961,9 @@ class SimpleXLSX {
 			$curC = 0;
 			foreach ( $row->c as $c ) {
 				// detect skipped cols
-				list( $x, $y ) = $this->getIndex( (string) $c['r'] );
+				$idx = $this->getIndex( (string) $c['r'] );
+				$x = $idx[0];
+				$y = $idx[1];
 				if ( $x > 0 ) {
 					$curC = $x;
 					$curR = $y;
