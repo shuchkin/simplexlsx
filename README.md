@@ -7,7 +7,7 @@ XLSX only, MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls)
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2019<br/>
 
-*Hey, bro, please ★ the package for a some motivation :)* 
+*Hey, bro, please ★ the package for my motivation :)* 
 
 ## Basic Usage
 ```php
