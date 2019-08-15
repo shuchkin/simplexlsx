@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.8
+ *    SimpleXLSX php class v0.8.9
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2019 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2019 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.8
+ * @version    0.8.9
  */
 
 /** Examples
@@ -67,6 +67,7 @@
  */
 
 /** Changelog
+ * v0.8.9 (2019-08-15) fixed release version
  * v0.8.8 (2019-06-19) removed list( $x, $y ), added bool $xlsx->skipEmptyRows, $xlsx->parseFile( $filename ), $xlsx->parseData( $data ), release 0.8.8
  * v0.8.7 (2019-04-18) empty rows fixed
  * v0.8.6 (2019-04-16) 1900/1904 bug fixed

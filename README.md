@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.8 (Official)
+# SimpleXLSX class 0.8.9 (Official)
 [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
@@ -212,6 +212,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 
 ## History
 ```
+v0.8.9 (2019-08-15) fixed release version 
 v0.8.8 (2019-06-19) removed list( $x, $y ), added bool $xlsx->skipEmptyRows, $xlsx->parseFile( $filename ), $xlsx->parseData( $data ), release 0.8.8
 v0.8.7 (2019-04-18) empty rows fixed, release 0.8.7
 v0.8.6 (2019-04-16) 1900/1904 bug fixed
