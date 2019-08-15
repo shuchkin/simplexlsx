@@ -208,7 +208,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 <tr><td>4</td><td>XML-entry not found</td><td>bad ZIP archive</td></tr>
 <tr><td>5</td><td>Entry not found</td><td>File not found in ZIP archive</td></tr>
 <tr><td>6</td><td>Worksheet not found</td><td>Not exists</td></tr>
-<table>	
+</table>	
 
 ## History
 ```
