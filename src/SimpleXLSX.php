@@ -692,7 +692,18 @@ class SimpleXLSX {
 			$curR ++;
 		}
 
-		return $rows;
+		//before return, Modify original result to produce array keys as values (rather then numbers)
+		// by taking array values of 1st array element, and combine them into next arrays as array keys:
+
+		foreach ($rows as $row) {
+
+			$excel_header = array_values($rows[0]); // 1st array element is the header of the excel file.
+
+			$rowWithKey[] = array_combine($excel_header, $row); // set the array keys from numbers to header values.
+			unset($rowWithKey[0]); // to avoid returning the header as 1st array element
+		}
+		return $rowWithKey;
+		// return $rows;
 	}
 
 	public function rowsEx( $worksheetIndex = 0 ) {
