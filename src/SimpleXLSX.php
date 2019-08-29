@@ -692,6 +692,52 @@ class SimpleXLSX {
 			$curR ++;
 		}
 
+		return $rows;
+	}
+
+
+	public function rowsWithHeader( $worksheetIndex = 0 ) {
+
+		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
+			return false;
+		}
+		$dim = $this->dimension( $worksheetIndex );
+		$numCols = $dim[0];
+		$numRows = $dim[1];
+
+		$emptyRow = array();
+		for( $i = 0; $i < $numCols; $i++) {
+			$emptyRow[] = '';
+		}
+
+		$rows = array();
+		for( $i = 0; $i < $numRows; $i++) {
+			$rows[] = $emptyRow;
+		}
+
+		$curR = 0;
+		/* @var SimpleXMLElement $ws */
+		foreach ( $ws->sheetData->row as $row ) {
+			$curC = 0;
+			foreach ( $row->c as $c ) {
+				// detect skipped cols
+				$idx = $this->getIndex( (string) $c['r'] );
+				$x = $idx[0];
+				$y = $idx[1];
+
+				if ( $x > -1 ) {
+					$curC = $x;
+					$curR = $y;
+				}
+
+				$rows[ $curR ][ $curC ] = $this->value( $c );
+
+				$curC++;
+			}
+
+			$curR ++;
+		}
+
 		//before return, Modify original result to produce array keys as values (rather then numbers)
 		// by taking array values of 1st array element, and combine them into next arrays as array keys:
 
@@ -702,8 +748,8 @@ class SimpleXLSX {
 			$rowWithKey[] = array_combine($excel_header, $row); // set the array keys from numbers to header values.
 			unset($rowWithKey[0]); // to avoid returning the header as 1st array element
 		}
+
 		return $rowWithKey;
-		// return $rows;
 	}
 
 	public function rowsEx( $worksheetIndex = 0 ) {
