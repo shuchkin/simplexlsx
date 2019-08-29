@@ -695,7 +695,7 @@ class SimpleXLSX {
 		return $rows;
 	}
 
-
+	//Copied rows() with modification
 	public function rowsWithHeader( $worksheetIndex = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
@@ -738,18 +738,17 @@ class SimpleXLSX {
 			$curR ++;
 		}
 
-		//before return, Modify original result to produce array keys as values (rather then numbers)
-		// by taking array values of 1st array element, and combine them into next arrays as array keys:
+		// Produce array keys from the array values of 1st array element
 
 		foreach ($rows as $row) {
 
-			$excel_header = array_values($rows[0]); // 1st array element is the header of the excel file.
+			$excel_header = array_values($rows[0]);
 
-			$rowWithKey[] = array_combine($excel_header, $row); // set the array keys from numbers to header values.
-			unset($rowWithKey[0]); // to avoid returning the header as 1st array element
+			$rowsWithKey[] = array_combine($excel_header, $row); 
+			unset($rowsWithKey[0]); // to avoid returning the header as 1st array element
 		}
 
-		return $rowWithKey;
+		return $rowsWithKey;
 	}
 
 	public function rowsEx( $worksheetIndex = 0 ) {
