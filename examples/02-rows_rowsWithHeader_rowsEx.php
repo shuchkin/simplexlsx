@@ -13,6 +13,12 @@ if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
 	print_r( $xlsx->rows() );
 	echo '</pre>';
 
+	// ->rowsWithHeader()
+	echo '<h2>$xlsx->rowsWithHeader()</h2>';
+	echo '<pre>';
+	print_r( $xlsx->rowsWithHeader() );
+	echo '</pre>';
+
 	// ->rowsEx();
 	echo '<h2>$xlsx->rowsEx()</h2>';
 	echo '<pre>';
