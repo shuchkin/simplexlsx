@@ -43,6 +43,8 @@ Array
 ```
 // SimpleXLSX::parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ): SimpleXLSX (or false)
 ```
+
+More [examples](https://github.com/shuchkin/simplexlsx/tree/master/examples).
 ## Installation
 The recommended way to install this library is [through Composer](https://getcomposer.org).
 [New to Composer?](https://getcomposer.org/doc/00-intro.md)
