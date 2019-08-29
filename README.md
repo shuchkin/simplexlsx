@@ -9,7 +9,7 @@ XLSX only, MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls)
 
 *Hey, bro, please ★ the package for my motivation :)* 
 
-## Basic Usage
+## Basic Usage 1
 ```php
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 	print_r( $xlsx->rows() );
@@ -38,10 +38,50 @@ Array
             [4] => USA
         )
 
+    [2] => Array
+        (
+            [0] => 908606664
+            [1] => Slinky Malinki
+            [2] => Lynley Dodd
+            [3] => Mallinson Rendel
+            [4] => NZ
+        )
+
 )
 ```
 ```
 // SimpleXLSX::parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ): SimpleXLSX (or false)
+```
+
+## Basic Usage 2
+```php
+if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+    print_r( $xlsx->rowsWithHeader() );
+} else {
+    echo SimpleXLSX::parseError();
+}
+```
+```
+Array
+(
+    [1] => Array
+        (
+            [ISBN] => 618260307
+            [title] => The Hobbit
+            [author] => J. R. R. Tolkien
+            [publisher] => Houghton Mifflin
+            [ctry] => USA
+        )
+
+    [2] => Array
+        (
+            [ISBN] => 908606664
+            [title] => Slinky Malinki
+            [author] => Lynley Dodd
+            [publisher] => Mallinson Rendel
+            [ctry] => NZ
+        )
+)
 ```
 ## Installation
 The recommended way to install this library is [through Composer](https://getcomposer.org).
