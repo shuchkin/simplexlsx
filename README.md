@@ -44,7 +44,6 @@ Array
 // SimpleXLSX::parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ): SimpleXLSX (or false)
 ```
 
-More [examples](https://github.com/shuchkin/simplexlsx/tree/master/examples).
 ## Installation
 The recommended way to install this library is [through Composer](https://getcomposer.org).
 [New to Composer?](https://getcomposer.org/doc/00-intro.md)
@@ -175,6 +174,42 @@ echo  $xlsx->getCell(0,'C2'); // 1460468460
 $excel_date = $xlsx->setDateTimeFormat( NULL ); // returns as excel datetime
 echo $excel_date // 42472.570138889
 echo date('m/d/Y', $xlsx->unixstamp( $excel_date )); // 04/12/2016 
+```
+### Rows with header values as keys
+```php
+if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
+	// Produce array keys from the array values of 1st array element
+	$header_values = $rows = [];
+	foreach ( $xlsx->rows() as $k => $r ) {
+		if ( $k === 0 ) {
+			$header_values = $r;
+			continue;
+		}
+		$rows[] = array_combine( $header_values, $r );
+	}
+	print_r( $rows );
+}
+```
+```
+Array
+(
+    [0] => Array
+        (
+            [ISBN] => 618260307
+            [title] => The Hobbit
+            [author] => J. R. R. Tolkien
+            [publisher] => Houghton Mifflin
+            [ctry] => USA
+        )
+    [1] => Array
+        (
+            [ISBN] => 908606664
+            [title] => Slinky Malinki
+            [author] => Lynley Dodd
+            [publisher] => Mallinson Rendel
+            [ctry] => NZ
+        )
+)
 ```
 ### Debug
 ```php
