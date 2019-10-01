@@ -1,5 +1,5 @@
 # SimpleXLSX class 0.8.9 (Official)
-[<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin) <img src="https://img.shields.io/github/license/shuchkin/simplexlsx" /> <img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" /> <img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" /> <img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" /> 
+[<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin) [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 No addiditional extensions need (internal unzip + standart SimpleXML parser)
