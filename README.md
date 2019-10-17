@@ -166,14 +166,24 @@ echo $xlsx->getCell(0, 'B2'); // The Hobbit
 ``` 
 ### DateTime helpers
 ```php
+// default SimpleXLSX datetime format YYYY-MM-DD HH:MM:SS (MySQL)
 echo $xlsx->getCell(0,'C2'); // 2016-04-12 13:41:00
+
+// custom datetime format
 $xlsx->setDateTimeFormat('d.m.Y H:i');
 echo $xlsx->getCell(0,'C2'); // 12.04.2016 13:41
-$xlsx->setDateTimeFormat('U'); // returns as unixtimestamp
-echo  $xlsx->getCell(0,'C2'); // 1460468460
-$excel_date = $xlsx->setDateTimeFormat( NULL ); // returns as excel datetime
-echo $excel_date // 42472.570138889
-echo date('m/d/Y', $xlsx->unixstamp( $excel_date )); // 04/12/2016 
+
+// unixstamp
+$xlsx->setDateTimeFormat('U');
+$ts = $xlsx->getCell(0,'C2'); // 1460468460
+echo gmdate('Y-m-d', $ts); // 2016-04-12
+echo gmdate('H:i:s', $ts); // 13:41:00
+
+// raw excel value
+$xlsx->setDateTimeFormat( NULL ); // returns as excel datetime
+$xd = $xlsx->getCell(0,'C2'); // 42472.570138889
+echo gmdate('m/d/Y', $xlsx->unixstamp( $xd )); // 04/12/2016
+echo gmdate('H:i:s', $xlsx->unixstamp( $xd )); // 13:41:00 
 ```
 ### Rows with header values as keys
 ```php
