@@ -571,8 +571,6 @@ class SimpleXLSX {
 				}
 			}
 
-//			echo '<pre>'.$name."\r\n".htmlspecialchars( $entry_xml ).'</pre>'.
-
 			// XML External Entity (XXE) Prevention
 			$_old         = libxml_disable_entity_loader();
 			$entry_xmlobj = simplexml_load_string( $entry_xml );
