@@ -557,6 +557,7 @@ class SimpleXLSX {
 	*/
 	public function getEntryXML( $name ) {
 		if ( $entry_xml = $this->getEntryData( $name ) ) {
+			$entry_xml = trim( $entry_xml );
 			// dirty remove namespace prefixes and empty rows
 			$entry_xml = preg_replace('/xmlns[^=]*="[^"]*"/i','', $entry_xml ); // remove namespaces
 			$entry_xml = preg_replace('/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/','$1$2', $entry_xml ); // remove namespaced attrs
@@ -564,11 +565,12 @@ class SimpleXLSX {
 			$entry_xml = preg_replace('/<\/[a-zA-Z0-9]+:([^>]+)>/', '</$1>', $entry_xml); // fix namespaced closed tags
 
 			if ( $this->skipEmptyRows && strpos($name, '/sheet') ) {
-				$entry_xml = preg_replace( '/<row[^>]+>\s*?(<c[^\/]+\/>)+\s*?<\/row>/', '', $entry_xml,-1, $cnt ); // remove empty rows
-				$entry_xml = preg_replace( '/<row[^\/]*\/>/', '', $entry_xml, -1, $cnt2 );
+				$entry_xml = preg_replace( '/<row[^>]+>\s*(<c[^\/]+\/>\s*)+<\/row>/', '', $entry_xml,-1, $cnt ); // remove empty rows
+				$entry_xml = preg_replace( '/<row[^\/>]*\/>/', '', $entry_xml, -1, $cnt2 );
 				if ( $cnt || $cnt2 ) {
 					$entry_xml = preg_replace('/<dimension[^\/]+\/>/', '', $entry_xml);
 				}
+//				file_put_contents( basename( $name ), $entry_xml ); // @to do comment!!!
 			}
 
 			// XML External Entity (XXE) Prevention
