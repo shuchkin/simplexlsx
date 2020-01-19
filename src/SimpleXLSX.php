@@ -711,9 +711,7 @@ class SimpleXLSX {
 		$numCols = $dim[0];
 		$numRows = $dim[1];
 
-		/** @noinspection ForeachInvariantsInspection */
 		for ( $y = 0; $y < $numRows; $y++ ) {
-			/** @noinspection ForeachInvariantsInspection */
 			for ( $x = 0; $x < $numCols; $x++ ) {
 				// 0.6.8
 				$c = '';
@@ -961,12 +959,9 @@ class SimpleXLSX {
 		$t = $excelDateTime - $d;
 
 		if ( $this->date1904 ) {
-			/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
 			$d += 1462;
 		}
 
-
-		/** @noinspection SummerTimeUnsafeTimeManipulationInspection */
 		$t = ( abs( $d ) > 0 ) ? ( $d - 25569 ) * 86400 + round( $t * 86400 ) : round( $t * 86400 );
 
 		return (int) $t;
