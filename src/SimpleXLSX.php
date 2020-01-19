@@ -1,15 +1,15 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.10
+ *    SimpleXLSX php class v0.8.11
  *    MS Excel 2007 workbooks reader
  *
- * Copyright (c) 2012 - 2019 SimpleXLSX
+ * Copyright (c) 2012 - 2020 SimpleXLSX
  *
  * @category   SimpleXLSX
  * @package    SimpleXLSX
- * @copyright  Copyright (c) 2012 - 2019 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
+ * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.10
+ * @version    0.8.11
  */
 
 /** Examples
@@ -67,6 +67,7 @@
  */
 
 /** Changelog
+ * v0.8.11 (2020-01-20) changed formats source priority
  * v0.8.10 (2019-11-07) skipEmptyRows improved
  * v0.8.9 (2019-08-15) fixed release version
  * v0.8.8 (2019-06-19) removed list( $x, $y ), added bool $xlsx->skipEmptyRows, $xlsx->parseFile( $filename ), $xlsx->parseData( $data ), release 0.8.8
