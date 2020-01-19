@@ -525,10 +525,11 @@ class SimpleXLSX {
 										if ( isset( $v['@attributes']['numFmtId'] ) ) {
 											$v = $v['@attributes'];
 											$fid = (int) $v['numFmtId'];
-											if ( isset( self::$CF[ $fid ] ) ) {
-												$v['format'] = self::$CF[ $fid ];
-											} else if ( isset( $nf[ $fid ] ) ) {
+											// formats priority
+											if ( isset( $nf[ $fid ] ) ) {
 												$v['format'] = $nf[ $fid ];
+											} else if ( isset( self::$CF[ $fid ] ) ) {
+												$v['format'] = self::$CF[ $fid ];
 											}
 										}
 										$this->cellFormats[] = $v;
