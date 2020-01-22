@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.11
+ *    SimpleXLSX php class v0.8.12
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2020 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.11
+ * @version    0.8.12
  */
 
 /** Examples
@@ -67,6 +67,7 @@
  */
 
 /** Changelog
+ * v0.8.12 (2020-01-22) remove empty rows (opencalc)
  * v0.8.11 (2020-01-20) changed formats source priority
  * v0.8.10 (2019-11-07) skipEmptyRows improved
  * v0.8.9 (2019-08-15) fixed release version
