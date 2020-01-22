@@ -569,7 +569,8 @@ class SimpleXLSX {
 			if ( $this->skipEmptyRows && strpos($name, '/sheet') ) {
 				$entry_xml = preg_replace( '/<row[^>]+>\s*(<c[^\/]+\/>\s*)+<\/row>/', '', $entry_xml,-1, $cnt ); // remove empty rows
 				$entry_xml = preg_replace( '/<row[^\/>]*\/>/', '', $entry_xml, -1, $cnt2 );
-				if ( $cnt || $cnt2 ) {
+				$entry_xml = preg_replace( '/<row[^>]*><\/row>/', '', $entry_xml, -1, $cnt3 );
+				if ( $cnt || $cnt2 || $cnt3  ) {
 					$entry_xml = preg_replace('/<dimension[^\/]+\/>/', '', $entry_xml);
 				}
 //				file_put_contents( basename( $name ), $entry_xml ); // @to do comment!!!
