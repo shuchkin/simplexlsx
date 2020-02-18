@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.12
+ *    SimpleXLSX php class v0.8.13
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2020 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.12
+ * @version    0.8.13
  */
 
 /** Examples
@@ -66,51 +66,6 @@
  * }
  */
 
-/** Changelog
- * v0.8.12 (2020-01-22) remove empty rows (opencalc)
- * v0.8.11 (2020-01-20) changed formats source priority
- * v0.8.10 (2019-11-07) skipEmptyRows improved
- * v0.8.9 (2019-08-15) fixed release version
- * v0.8.8 (2019-06-19) removed list( $x, $y ), added bool $xlsx->skipEmptyRows, $xlsx->parseFile( $filename ), $xlsx->parseData( $data ), release 0.8.8
- * v0.8.7 (2019-04-18) empty rows fixed
- * v0.8.6 (2019-04-16) 1900/1904 bug fixed
- * v0.8.5 (2019-03-07) SimpleXLSX::ParseErrno(), $xlsx->errno() returns error code
- * v0.8.4 (2019-02-14) detect datetime values, mb_string.func_overload=2 support .!. Bitrix
- * v0.8.3 (2018-11-14) getCell - fixed empty cells and rows, safe now, but very slow
- * v0.8.2 (2018-11-09) fix empty cells and rows in rows() and rowsEx(), added setDateTimeFormat( $see_php_date_func )
- * v0.8.1 (2018-11-07) rename simplexlsx.php to SimpleXLSX.php, rename parse_error to parseError fix _columnIndex, add ->toHTML(), GNU to MIT license
- * v0.7.13 (2018-06-18) get sheet indexes bug fix
- * v0.7.12 (2018-06-17) $worksheet_id to $worksheetIndex, sheet numeration started 0
- * v0.7.11 (2018-04-25) rowsEx(), added row index "r" to cell info
- * v0.7.10 (2018-04-21) fixed getCell, returns NULL if not exits
- * v0.7.9 (2018-01-15) fixed sheetNames() (namespaced or not namespaced attr)
- * v0.7.8 (2018-01-15) remove namespace prefixes (hardcoded)
- * v0.7.7 (2017-10-02) XML External Entity (XXE) Prevention (<!ENTITY xxe SYSTEM "file: ///etc/passwd" >]>)
- * v0.7.6 (2017-09-26) if worksheet_id === 0 (default) then detect first sheet (for LibreOffice capabilities)
- * v0.7.5 (2017-09-10) ->getCell() - fixed
- * v0.7.4 (2017-08-22) ::parseError() - get last error in "static style"
- * v0.7.3 (2017-08-14) ->_parse fixed relations reader, added ->getCell( sheet_id, address, format ) for direct cell reading
- * v0.7.2 (2017-05-13) ::parse( $filename ) helper method
- * v0.7.1 (2017-03-29) License added
- * v0.6.11 (2016-07-27) fixed timestamp()
- * v0.6.10 (2016-06-10) fixed search entries (UPPERCASE)
- * v0.6.9 (2015-04-12) $xlsx->datetimeFormat to force dates out
- * v0.6.8 (2013-10-13) fixed dimension() where 1 row only, fixed rowsEx() empty cells indexes (Daniel Stastka)
- * v0.6.7 (2013-08-10) fixed unzip (mac), added $debug param to _constructor to display errors
- * v0.6.6 (2013-06-03) +entryExists(),
- * v0.6.5 (2013-03-18) fixed sheetName()
- * v0.6.4 (2013-03-13) rowsEx(), _parse(): fixed date column type & format detection
- * v0.6.3 (2013-03-13) rowsEx(): fixed formulas, added date type 'd', added format 'format'
- * dimension(): fixed empty sheet dimension
- * + sheetNames() - returns array( sheet_id => sheet_name, sheet_id2 => sheet_name2 ...)
- * v0.6.2 (2012-10-04) fixed empty cells, rowsEx() returns type and formulas now
- * v0.6.1 (2012-09-14) removed "raise exception" and fixed _unzip
- * v0.6 (2012-09-13) success(), error(), __constructor( $filename, $is_data = false )
- * v0.5.1 (2012-09-13) sheetName() fixed
- * v0.5 (2012-09-12) sheetName()
- * v0.4 sheets(), sheetsCount(), unixstamp( $excelDateTime )
- * v0.3 - fixed empty cells (Gonzo patch)
- */
 /** @noinspection PhpUndefinedFieldInspection */
 /** @noinspection PhpComposerExtensionStubsInspection */
 /** @noinspection MultiAssignmentUsageInspection */
@@ -171,7 +126,6 @@ class SimpleXLSX {
 	);
 	public $cellFormats = array();
 	public $datetimeFormat = 'Y-m-d H:i:s';
-	public $skipEmptyRows = false;
 	public $debug;
 
 	/* @var SimpleXMLElement $workbook */
@@ -246,17 +200,33 @@ class SimpleXLSX {
 			$this->_parse();
 		}
 	}
-	public function parseFile( $filename ) {
-		if ( $this->_unzip( $filename )) {
-			return $this->_parse();
+	public static function parseFile( $filename, $debug = false ) {
+		return self::parse( $filename, false, $debug );
+	}
+	public static function parseData( $data, $debug = false ) {
+		return self::parse( $data, true, $debug );
+	}
+	public static function parse( $filename, $is_data = false, $debug = false ) {
+		$xlsx = new self();
+		$xlsx->debug = $debug;
+		if ( $xlsx->_unzip($filename, $is_data )) {
+			$xlsx->_parse();
 		}
+		if ( $xlsx->success() ) {
+			return $xlsx;
+		}
+		self::parseError( $xlsx->error() );
+		self::parseErrno( $xlsx->errno() );
+
 		return false;
 	}
-	public function parseData( $data ) {
-		if ( $this->_unzip($data, true )) {
-			return $this->_parse();
-		}
-		return false;
+	public static function parseError( $set = false ) {
+		static $error = false;
+		return $set ? $error = $set : $error;
+	}
+	public static function parseErrno( $set = false ) {
+		static $errno = false;
+		return $set ? $errno = $set : $errno;
 	}
 
 	private function _unzip( $filename, $is_data = false ) {
@@ -567,7 +537,8 @@ class SimpleXLSX {
 			$entry_xml = preg_replace('/<[a-zA-Z0-9]+:([^>]+)>/', '<$1>', $entry_xml); // fix namespaced openned tags
 			$entry_xml = preg_replace('/<\/[a-zA-Z0-9]+:([^>]+)>/', '</$1>', $entry_xml); // fix namespaced closed tags
 
-			if ( $this->skipEmptyRows && strpos($name, '/sheet') ) {
+//			if ( $this->skipEmptyRows && strpos($name, '/sheet') ) {
+			if ( strpos($name, '/sheet') ) { // dirty skip empty rows
 				$entry_xml = preg_replace( '/<row[^>]+>\s*(<c[^\/]+\/>\s*)+<\/row>/', '', $entry_xml,-1, $cnt ); // remove empty rows
 				$entry_xml = preg_replace( '/<row[^\/>]*\/>/', '', $entry_xml, -1, $cnt2 );
 				$entry_xml = preg_replace( '/<row[^>]*><\/row>/', '', $entry_xml, -1, $cnt3 );
@@ -630,28 +601,6 @@ class SimpleXLSX {
 		}
 
 		return implode( '', $value );
-	}
-
-	public static function parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ) {
-		$xlsx = new self();
-		$xlsx->debug = $debug;
-		$xlsx->skipEmptyRows = $skip_empty_rows;
-		$is_data ? $xlsx->parseData( $filename ) : $xlsx->parseFile( $filename );
-		if ( $xlsx->success() ) {
-			return $xlsx;
-		}
-		self::parseError( $xlsx->error() );
-		self::parseErrno( $xlsx->errno() );
-
-		return false;
-	}
-	public static function parseError( $set = false ) {
-		static $error = false;
-		return $set ? $error = $set : $error;
-	}
-	public static function parseErrno( $set = false ) {
-		static $errno = false;
-		return $set ? $errno = $set : $errno;
 	}
 
 	public function success() {

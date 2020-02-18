@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.12 (Official)
+# SimpleXLSX class 0.8.13 (Official)
 [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin) [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
@@ -41,7 +41,9 @@ Array
 )
 ```
 ```
-// SimpleXLSX::parse( $filename, $is_data = false, $debug = false, $skip_empty_rows = false ): SimpleXLSX (or false)
+// SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or false)
+// SimpleXLSX::parseFile( $filename, $debug = false ): SimpleXLSX (or false)
+// SimpleXLSX::parseData( $data, $debug = false ): SimpleXLSX (or false)
 ```
 
 ## Installation
@@ -154,7 +156,7 @@ if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
 ### XLSX::parse memory data
 ```php
 // For instance $data is a data from database or cache    
-if ( $xlsx = SimpleXLSX::parse( $data, true ) ) {
+if ( $xlsx = SimpleXLSX::parseData( $data ) ) {
 	print_r( $xlsx->rows() );
 } else {
 	echo SimpleXLSX::parseError();
@@ -226,7 +228,7 @@ Array
 ini_set('error_reporting', E_ALL );
 ini_set('display_errors', 1 );
 
-if ( $xlsx = SimpleXLSX::parse('books.xlsx', false, true ) ) {
+if ( $xlsx = SimpleXLSX::parseFile('books.xlsx', true ) ) {
 	echo $xlsx->toHTML();
 } else {
 	echo SimpleXLSX::parseError();
@@ -234,10 +236,8 @@ if ( $xlsx = SimpleXLSX::parse('books.xlsx', false, true ) ) {
 ```
 ### Classic OOP style 
 ```php
-$xlsx = new SimpleXLSX();
-$xlsx->debug = true; // display errors
-$xlsx->skipEmptyRows = true; // skip empty rows
-if ($xlsx->parseFile('books.xlsx')) {
+$xlsx = new SimpleXLSX('books.xlsx'); // try...catch
+if ( $xlsx->success() ) {
 	print_r( $xlsx->rows() );
 } else {
 	echo 'xlsx error: '.$xlsx->error();
@@ -259,6 +259,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 
 ## History
 ```
+v0.8.13 (2020-02-19) removed skipEmptyRows property (xml optimization always), added static parseFile & parseData
 v0.8.12 (2020-01-22) remove empty rows (opencalc)
 v0.8.11 (2020-01-20) changed formats source priority
 v0.8.10 (2019-11-07) skipEmptyRows improved
