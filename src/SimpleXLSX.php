@@ -882,8 +882,10 @@ class SimpleXLSX {
 
 				break;
 			case 'd':
-				// Value is a date
-				$value = $this->datetimeFormat ? gmdate( $this->datetimeFormat, $this->unixstamp( (float) $cell->v ) ) : (float) $cell->v;
+				// Value is a date and non-empty
+				if ( ! empty($cell->v) ) {
+					$value = $this->datetimeFormat ? gmdate( $this->datetimeFormat, $this->unixstamp( (float) $cell->v ) ) : (float) $cell->v;
+				}
 				break;
 
 
