@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.13
+ *    SimpleXLSX php class v0.8.14
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2020 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.13
+ * @version    0.8.14
  */
 
 /** Examples
@@ -72,10 +72,6 @@
 
 class SimpleXLSX {
 	// Don't remove this string! Created by Sergey Shuchkin sergey.shuchkin@gmail.com
-	const SCHEMA_REL_OFFICEDOCUMENT = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument';
-	const SCHEMA_REL_SHAREDSTRINGS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings';
-	const SCHEMA_REL_WORKSHEET = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet';
-	const SCHEMA_REL_STYLES = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles';
 	public static $CF = array( // Cell formats
 		0  => 'General',
 		1  => '0',
@@ -265,29 +261,29 @@ class SimpleXLSX {
 					return false;
 				}
 		*/
-		if ( ( $pcd = $this->_strrpos( $vZ, "\x50\x4b\x05\x06" ) ) === false ) {
-			$this->error( 2, 'Unknown archive format' );
+		// Explode to each part
+		$aE = explode( "\x50\x4b\x03\x04", $vZ );
+		array_shift( $aE );
 
+		$aEL = count($aE);
+		if ( $aEL === 0 ) {
+			$this->error( 2, 'Unknown archive format' );
 			return false;
 		}
-		$aE = array(
-			0 => $this->_substr( $vZ, 0, $pcd ),
-			1 => $this->_substr( $vZ, $pcd + 3 )
-		);
-
-		// Normal way
-		$aP                       = unpack( 'x16/v1CL', $aE[1] );
-		$this->package['comment'] = $this->_substr( $aE[1], 18, $aP['CL'] );
-
-		// Translates end of line from other operating systems
-		$this->package['comment'] = strtr( $this->package['comment'], array( "\r\n" => "\n", "\r" => "\n" ) );
-
-		// Cut the entries from the central directory
-		$aE = explode( "\x50\x4b\x01\x02", $vZ );
-		// Explode to each part
-		$aE = explode( "\x50\x4b\x03\x04", $aE[0] );
-		// Shift out spanning signature or empty entry
-		array_shift( $aE );
+		// Search central directory end record
+		$last = $aE[ $aEL - 1 ];
+		$last = explode( "\x50\x4b\x05\x06", $last );
+		if ( count($last) !== 2 ) {
+			$this->error( 2, 'Unknown archive format' );
+			return false;
+		}
+		// Search central directory
+		$last = explode( "\x50\x4b\x01\x02", $last[0] );
+		if ( count($last) < 2 ) {
+			$this->error( 2, 'Unknown archive format' );
+			return false;
+		}
+		$aE[ $aEL - 1 ] = $last[0];
 
 		// Loop through the entries
 		foreach ( $aE as $vZ ) {
@@ -427,10 +423,10 @@ class SimpleXLSX {
 
 			foreach ( $relations->Relationship as $rel ) {
 
-				$rel_type = trim( (string) $rel['Type'] );
+				$rel_type = basename( trim( (string) $rel['Type'] ) );
 				$rel_target = trim( (string) $rel['Target'] );
 
-				if ( $rel_type === self::SCHEMA_REL_OFFICEDOCUMENT && $this->workbook = $this->getEntryXML( $rel_target ) ) {
+				if ( $rel_type === 'officeDocument' && $this->workbook = $this->getEntryXML( $rel_target ) ) {
 
 					$index_rId = array(); // [0 => rId1]
 
@@ -453,21 +449,21 @@ class SimpleXLSX {
 						// Loop relations for workbook and extract sheets...
 						foreach ( $workbookRelations->Relationship as $workbookRelation ) {
 
-							$wrel_type = trim( (string) $workbookRelation['Type'] );
+							$wrel_type = basename( trim( (string) $workbookRelation['Type'] ) );
 							$wrel_path = dirname( trim( (string) $rel['Target'] ) ) . '/' . trim( (string) $workbookRelation['Target'] );
 							if ( ! $this->entryExists( $wrel_path ) ) {
 								continue;
 							}
 
 
-							if ( $wrel_type === self::SCHEMA_REL_WORKSHEET ) { // Sheets
+							if ( $wrel_type === 'worksheet' ) { // Sheets
 
 								if ( $sheet = $this->getEntryXML( $wrel_path ) ) {
 									$index = array_search( (string) $workbookRelation['Id'], $index_rId, false );
 									$this->sheets[ $index ] = $sheet;
 								}
 
-							} else if ( $wrel_type === self::SCHEMA_REL_SHAREDSTRINGS ) {
+							} else if ( $wrel_type === 'sharedStrings' ) {
 
 								if ( $sharedStrings = $this->getEntryXML( $wrel_path ) ) {
 									foreach ( $sharedStrings->si as $val ) {
@@ -478,7 +474,7 @@ class SimpleXLSX {
 										}
 									}
 								}
-							} else if ( $wrel_type === self::SCHEMA_REL_STYLES ) {
+							} else if ( $wrel_type === 'styles' ) {
 
 								$this->styles = $this->getEntryXML( $wrel_path );
 
@@ -1008,9 +1004,10 @@ class SimpleXLSX {
 	private function _strpos( $haystack, $needle, $offset = 0 ) {
 		return (ini_get('mbstring.func_overload') & 2) ? mb_strpos( $haystack, $needle, $offset , '8bit') : strpos($haystack, $needle, $offset);
 	}
+/*
 	private function _strrpos( $haystack, $needle, $offset = 0 ) {
 		return (ini_get('mbstring.func_overload') & 2) ? mb_strrpos( $haystack, $needle, $offset, '8bit') : strrpos($haystack, $needle, $offset);
-	}
+	}*/
 	private function _strtoupper( $str ) {
 		return (ini_get('mbstring.func_overload') & 2) ? mb_strtoupper($str , '8bit') : strtoupper($str);
 	}
