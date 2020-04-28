@@ -1,9 +1,9 @@
-# SimpleXLSX class 0.8.14 (Official)
+# SimpleXLSX class 0.8.15 (Official)
 [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin) [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 No addiditional extensions need (internal unzip + standart SimpleXML parser)
-(!) XLSX only, see MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls)  
+(!) XLSX only, see MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls).  
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2020<br/>
 
@@ -258,7 +258,8 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 </table>	
 
 ## History
-```
+<pre>
+v0.8.15 (2020-04-28) fixed LibreOffice xml specificity, thx [stephengmatthews](https://github.com/shuchkin/simplexlsx/issues/77)
 v0.8.14 (2020-04-03) fixed Office for Mac relations
 v0.8.13 (2020-02-19) removed skipEmptyRows property (xml optimization always), added static parseFile & parseData
 v0.8.12 (2020-01-22) remove empty rows (opencalc)
@@ -304,4 +305,4 @@ v0.5.1 (2012-09-13) sheetName() fixed
 v0.5 (2012-09-12) sheetName()
 v0.4 sheets(), sheetsCount(), unixstamp( $excelDateTime )
 v0.3 - fixed empty cells (Gonzo patch)
-```
+</pre>
