@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.14
+ *    SimpleXLSX php class v0.8.15
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2020 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.14
+ * @version    0.8.15
  */
 
 /** Examples
@@ -124,8 +124,6 @@ class SimpleXLSX {
 	public $datetimeFormat = 'Y-m-d H:i:s';
 	public $debug;
 
-	/* @var SimpleXMLElement $workbook */
-	private $workbook;
 	/* @var SimpleXMLElement[] $sheets */
 	private $sheets;
 	private $sheetNames = array();
@@ -134,7 +132,6 @@ class SimpleXLSX {
 	private $hyperlinks;
 	/* @var array[] $package */
 	private $package;
-	private $datasec;
 	private $sharedstrings;
 	private $date1904 = 0;
 
@@ -226,9 +223,6 @@ class SimpleXLSX {
 	}
 
 	private function _unzip( $filename, $is_data = false ) {
-
-		// Clear current file
-		$this->datasec = array();
 
 		if ( $is_data ) {
 
@@ -426,18 +420,17 @@ class SimpleXLSX {
 				$rel_type = basename( trim( (string) $rel['Type'] ) );
 				$rel_target = trim( (string) $rel['Target'] );
 
-				if ( $rel_type === 'officeDocument' && $this->workbook = $this->getEntryXML( $rel_target ) ) {
+				if ( $rel_type === 'officeDocument' && $workbook = $this->getEntryXML( $rel_target ) ) {
 
 					$index_rId = array(); // [0 => rId1]
 
 					$index = 0;
-					foreach ( $this->workbook->sheets->sheet as $s ) {
-						/* @var SimpleXMLElement $s */
+					foreach ( $workbook->sheets->sheet as $s ) {
 						$this->sheetNames[ $index ] = (string) $s['name'];
 						$index_rId[ $index ] = (string) $s['id'];
 						$index++;
 					}
-					if ( (int) $this->workbook->workbookPr['date1904'] === 1 ) {
+					if ( (int) $workbook->workbookPr['date1904'] === 1 ) {
 						$this->date1904 = 1;
 					}
 
@@ -830,11 +823,11 @@ class SimpleXLSX {
 		// Determine data type
 		$dataType = (string) $cell['t'];
 
-		if ( !$dataType ) { // number
+		if ( $dataType === '' || $dataType === 'n' ) { // number
 			$s = (int) $cell['s'];
 			if ( $s > 0 && isset( $this->cellFormats[ $s ] ) ) {
 				$format = $this->cellFormats[ $s ]['format'];
-				if ( strpos( $format, 'm') !== false ) {
+				if ( preg_match('/[mM]/', $format) ) { // [m]onth
 					$dataType = 'd';
 				}
 			}
