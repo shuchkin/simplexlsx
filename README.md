@@ -2,8 +2,11 @@
 [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin) [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
-No addiditional extensions need (internal unzip + standart SimpleXML parser)
-(!) XLSX only, see MS Excel 97 php reader [here](https://github.com/shuchkin/simplexls).  
+No addiditional extensions need (internal unzip + standart SimpleXML parser).
+
+See also:<br/>
+[SimpleXLS](https://github.com/shuchkin/simplexls) old format MS Excel 97 php reader.<br/>
+[SimpleXLSXGen](https://github.com/shuchkin/simplexlsxgen) xlsx php writer.  
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> 2010-2020<br/>
 
