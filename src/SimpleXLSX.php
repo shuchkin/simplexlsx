@@ -310,6 +310,7 @@ class SimpleXLSX {
 
 			// Getting stored filename
 			$aI['N'] = $this->_substr( $vZ, 26, $nF );
+			$aI['N'] = str_replace('\\','/', $aI['N'] );
 
 			if ( $this->_substr( $aI['N'], - 1 ) === '/' ) {
 				// is a directory entry - will be skipped
@@ -317,8 +318,8 @@ class SimpleXLSX {
 			}
 
 			// Truncate full filename in path and filename
-			$aI['P'] = dirname( $aI['N'] );
-			$aI['P'] = $aI['P'] === '.' ? '' : $aI['P'];
+			$aI['P'] =  dirname( $aI['N'] );
+			$aI['P'] = ($aI['P'] === '.' ) ? '' : $aI['P'];
 			$aI['N'] = basename( $aI['N'] );
 
 			$vZ = $this->_substr( $vZ, 26 + $nF + $mF );
@@ -417,8 +418,8 @@ class SimpleXLSX {
 
 			foreach ( $relations->Relationship as $rel ) {
 
-				$rel_type = basename( trim( (string) $rel['Type'] ) );
-				$rel_target = trim( (string) $rel['Target'] );
+				$rel_type = basename( trim( (string) $rel['Type'] ) ); // officeDocument
+				$rel_target = $this->_getTarget( '', (string) $rel['Target'] ); // /xl/workbook.xml or xl/workbook.xml
 
 				if ( $rel_type === 'officeDocument' && $workbook = $this->getEntryXML( $rel_target ) ) {
 
@@ -434,8 +435,6 @@ class SimpleXLSX {
 						$this->date1904 = 1;
 					}
 
-//					print_r( $index_rId );
-
 
 					if ( $workbookRelations = $this->getEntryXML( dirname( $rel_target ) . '/_rels/workbook.xml.rels' ) ) {
 
@@ -443,7 +442,7 @@ class SimpleXLSX {
 						foreach ( $workbookRelations->Relationship as $workbookRelation ) {
 
 							$wrel_type = basename( trim( (string) $workbookRelation['Type'] ) );
-							$wrel_path = dirname( trim( (string) $rel['Target'] ) ) . '/' . trim( (string) $workbookRelation['Target'] );
+							$wrel_path = $this->_getTarget( dirname( $rel_target ),  (string) $workbookRelation['Target'] );
 							if ( ! $this->entryExists( $wrel_path ) ) {
 								continue;
 							}
@@ -540,7 +539,7 @@ class SimpleXLSX {
 			// XML External Entity (XXE) Prevention
 			$_old         = libxml_disable_entity_loader();
 			$entry_xmlobj = simplexml_load_string( $entry_xml );
-//			echo '<pre>'.print_r( $entry_xmlobj, true).'</pre>';
+
 			libxml_disable_entity_loader($_old);
 			if ( $entry_xmlobj ) {
 				return $entry_xmlobj;
@@ -554,6 +553,7 @@ class SimpleXLSX {
 	}
 
 	public function getEntryData( $name ) {
+		$name = ltrim( str_replace('\\','/', $name),'/');
 		$dir  = $this->_strtoupper( dirname( $name ) );
 		$name = $this->_strtoupper( basename( $name ) );
 		foreach ( $this->package['entries'] as $entry ) {
@@ -561,7 +561,7 @@ class SimpleXLSX {
 				return $entry['data'];
 			}
 		}
-		$this->error( 5, 'Entry not found '.$name );
+		$this->error( 5, 'Entry not found '.($dir ? $dir.'/' : '').$name );
 
 		return false;
 	}
@@ -1006,6 +1006,13 @@ class SimpleXLSX {
 	}
 	private function _substr( $str, $start, $length = null ) {
 		return (ini_get('mbstring.func_overload') & 2) ? mb_substr( $str, $start, ($length === null) ? mb_strlen($str,'8bit') : $length, '8bit') : substr($str, $start, ($length === null) ? strlen($str) : $length );
+	}
+	private function _getTarget( $base, $target ) {
+		$target = trim( $target );
+		if ( strpos( $target, '/' ) === 0 ) {
+			return $this->_substr( $target,1);
+		}
+		return ($base ? $base.'/' : '').$target;
 	}
 
 }
