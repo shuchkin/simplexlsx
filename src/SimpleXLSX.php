@@ -1031,7 +1031,7 @@ class SimpleXLSX {
 		return ( ini_get( 'mbstring.func_overload' ) & 2 ) ? mb_substr( $str, $start, ( $length === null ) ? mb_strlen( $str, '8bit' ) : $length, '8bit' ) : substr( $str, $start, ( $length === null ) ? strlen( $str ) : $length );
 	}
 
-	public function _getTarget( $base, $target ) {
+	private function _getTarget( $base, $target ) {
 		$target = trim( $target );
 		if ( strpos( $target, '/' ) === 0 ) {
 			return $this->_substr( $target, 1 );
