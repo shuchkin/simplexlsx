@@ -127,6 +127,7 @@ class SimpleXLSX {
 	/* @var SimpleXMLElement[] $sheets */
 	private $sheets;
 	private $sheetNames = [];
+	private $sheetFiles = [];
 	// scheme
 	private $styles;
 	private $hyperlinks;
@@ -464,6 +465,7 @@ class SimpleXLSX {
 								if ( $sheet = $this->getEntryXML( $wrel_path ) ) {
 									$index                  = array_search( (string) $workbookRelation['Id'], $index_rId, false );
 									$this->sheets[ $index ] = $sheet;
+									$this->sheetFiles[ $index ] = $wrel_path;
 								}
 
 							} else if ( $wrel_type === 'sharedStrings' ) {
@@ -715,7 +717,7 @@ class SimpleXLSX {
 					'type'   => $t,
 					'name'   => (string) $c['r'],
 					'value'  => $this->value( $c ),
-					'href'   => $this->href( $c ),
+					'href'   => $this->href( $worksheetIndex, $c ),
 					'f'      => (string) $c->f,
 					'format' => $format,
 					'r'      => $r_idx
@@ -749,10 +751,31 @@ class SimpleXLSX {
 		if ( isset( $this->sheets[ $worksheetIndex ] ) ) {
 			$ws = $this->sheets[ $worksheetIndex ];
 
-			if ( isset( $ws->hyperlinks ) ) {
-				$this->hyperlinks = [];
-				foreach ( $ws->hyperlinks->hyperlink as $hyperlink ) {
-					$this->hyperlinks[ (string) $hyperlink['ref'] ] = (string) $hyperlink['display'];
+			if ( !isset($this->hyperlinks[ $worksheetIndex ]) && isset( $ws->hyperlinks ) ) {
+				$this->hyperlinks[ $worksheetIndex ] = [];
+				$sheet_rels = str_replace('worksheets','worksheets/_rels', $this->sheetFiles[$worksheetIndex]).'.rels';
+				$link_ids = [];
+
+				if ( $rels = $this->getEntryXML( $sheet_rels ) ) {
+					// hyperlink
+//					$rel_base = dirname( $sheet_rels );
+					foreach ( $rels->Relationship as $rel ) {
+						$rel_type   = basename( trim( (string) $rel['Type'] ) );
+						if ( $rel_type === 'hyperlink' ) {
+							$rel_id = (string) $rel['Id'];
+							$rel_target = (string) $rel['Target'];
+							$link_ids[ $rel_id ] = $rel_target;
+						}
+					}
+					foreach ( $ws->hyperlinks->hyperlink as $hyperlink ) {
+						$ref = (string) $hyperlink['ref'];
+						if ( $this->_strpos($ref,':') > 0 ) { // A1:A8 -> A1
+							$ref = explode(':', $ref);
+							$ref = $ref[0];
+						}
+//						$this->hyperlinks[ $worksheetIndex ][ $ref ] = (string) $hyperlink['display'];
+						$this->hyperlinks[ $worksheetIndex ][ $ref ] = $link_ids[ (string) $hyperlink['id'] ];
+					}
 				}
 			}
 
@@ -972,8 +995,9 @@ class SimpleXLSX {
 		return null;
 	}
 
-	public function href( $cell ) {
-		return isset( $this->hyperlinks[ (string) $cell['r'] ] ) ? $this->hyperlinks[ (string) $cell['r'] ] : '';
+	public function href( $worksheetIndex, $cell ) {
+		$ref = (string) $cell['r'];
+		return isset( $this->hyperlinks[ $worksheetIndex ][ $ref ] ) ? $this->hyperlinks[ $worksheetIndex ][ $ref ] : '';
 	}
 
 	public function sheets() {
