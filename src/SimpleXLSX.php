@@ -896,14 +896,14 @@ class SimpleXLSX {
 		return $s;
 	}
 
-  public function toStyledHTML( $worksheetIndex = 0 ) {
+  	public function toStyledHTML( $worksheetIndex = 0 ) {
 		$s = '<table class="excel" style="border-spacing : 0px; border-collapse : collapse;">';
 
 		foreach ( $this->rowsEx( $worksheetIndex ) as $r ) {
 			$s .= '<tr>';
 
 			foreach ( $r as $c ) {
-				$s .= '<td nowrap style="min-width : 200px; height : 1.6rem;';
+				$s .= '<td nowrap style="min-width : 140px; height : 1.6rem;';
 
 				$s .= isset($c['background']['color']) ? 'background-color: ' . $c['background']['color'] . ';' : '';
 
