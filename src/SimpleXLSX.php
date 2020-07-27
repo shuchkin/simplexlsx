@@ -553,7 +553,7 @@ class SimpleXLSX {
 											$colorIndex      = (int) $f->patternFill->bgColor['indexed'];
 											$fill['color2'] = $colorIndex > 0 ? $colors[$colorIndex] : '';
 										}
-		
+
 										$fills[] = $fill;
 									}
 								}
@@ -593,9 +593,9 @@ class SimpleXLSX {
 
 								if ( $this->styles->cellXfs->xf !== null ) {
 									foreach ( $this->styles->cellXfs->xf as $v ) {
-                    								$alignment      = isset($v->alignment) ? (array) $v->alignment->attributes() : [];
-										$v              = (array) $v->attributes();
-										$v['format']    = '';
+										$alignment   = isset($v->alignment) ? (array) $v->alignment->attributes() : [];
+										$v           = (array) $v->attributes();
+										$v['format'] = '';
 
 										if ( isset( $v['@attributes']['numFmtId'] ) ) {
 											$v   = $v['@attributes'];
@@ -615,6 +615,8 @@ class SimpleXLSX {
 												$v['background'] = $fills[ $fid ];
 											}
 
+										} else {
+											$v['background'] = [];
 										}
 
 										if ( isset( $v['borderId'] ) ) {
@@ -624,6 +626,8 @@ class SimpleXLSX {
 												$v['border'] = $borders[ $bid ];
 											}
 
+										} else {
+											$v['border'] = [];
 										}
 
 										if ( isset( $v['fontId'] ) ) {
@@ -633,6 +637,8 @@ class SimpleXLSX {
 												$v['font'] = $fonts[ $fid ];
 											}
 
+										} else {
+											$v['font'] = [];
 										}
 
 										if ( $v['applyAlignment'] == 1) {
@@ -642,6 +648,8 @@ class SimpleXLSX {
 											if ( $v['alignment']['vertical'] == 'center' ) {
 												$v['alignment']['vertical'] = 'middle';
 											}
+										} else {
+											$v['alignment'] = [];
 										}
 
 										$this->cellFormats[] = $v;
@@ -896,7 +904,7 @@ class SimpleXLSX {
 		return $s;
 	}
 
-  	public function toStyledHTML( $worksheetIndex = 0 ) {
+  public function toStyledHTML( $worksheetIndex = 0 ) {
 		$s = '<table class="excel" style="border-spacing : 0px; border-collapse : collapse;">';
 
 		foreach ( $this->rowsEx( $worksheetIndex ) as $r ) {
