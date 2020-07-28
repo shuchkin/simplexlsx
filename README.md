@@ -118,6 +118,50 @@ Array
                     [type] => s
                     [name] => A1
                     [value] => ISBN
+		    [background] => Array
+                        (
+                            [color] => #ffffffff
+                        )
+                    [font] => Array
+                        (
+                            [style] => normal
+                            [weight] => normal
+                            [color] => #000000ff
+                            [family] => Helvetica
+                            [size] => 12pt
+                        )
+                    [border] => Array
+                        (
+                            [left] => Array
+                                (
+                                    [color] => #000000ff
+                                    [style] => solid
+                                    [width] => thick
+                                )
+                            [right] => Array
+                                (
+                                    [color] => #aaaaaaff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                            [top] => Array
+                                (
+                                    [color] => #aaaaaaff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                            [bottom] => Array
+                                (
+                                    [color] => #a5a5a5ff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                        )
+                    [alignment] => Array
+                        (
+                            [horizontal] => center
+                            [vertical] => middle
+                        )
                     [href] => 
                     [f] => 
                     [format] => 
@@ -129,6 +173,51 @@ Array
                     [type] => 
                     [name] => B1
                     [value] => 2016-04-12 13:41:00
+		    [background] => Array
+                        (
+                            [color] => #ffffffff
+                        )
+                    [font] => Array
+                        (
+                            [style] => italic
+                            [weight] => bold
+                            [color] => #000000ff
+                            [family] => Arial
+                            [size] => 10pt
+                        )
+                    [border] => Array
+                        (
+                            [left] => Array
+                                (
+                                    [color] => #a5a5a5ff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                            [right] => Array
+                                (
+                                    [color] => #3f3f3fff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                            [top] => Array
+                                (
+                                    [color] => #a5a5a5ff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                            [bottom] => Array
+                                (
+                                    [color] => #a5a5a5ff
+                                    [style] => solid
+                                    [width] => thin
+                                )
+                        )
+                    [alignment] => Array
+                        (
+                            [horizontal] => center
+                            [vertical] => top
+                            [wrapText] => 1
+                        )
                     [href] => 
                     [f] => 
                     [format] => m/d/yy h:mm
