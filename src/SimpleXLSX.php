@@ -257,6 +257,7 @@ class SimpleXLSX {
 		}
 		// Cut end of central directory
 		/*		$aE = explode("\x50\x4b\x05\x06", $vZ);
+
 				if (count($aE) == 1) {
 					$this->error('Unknown format');
 					return false;
@@ -482,118 +483,15 @@ class SimpleXLSX {
 
 								$this->styles = $this->getEntryXML( $wrel_path );
 
-								$nf      = [];
-								$fills   = [];
-								$colors  = [];
-								$borders = [];
-								$fonts   = [];
-
+								$nf = [];
 								if ( $this->styles->numFmts->numFmt !== null ) {
 									foreach ( $this->styles->numFmts->numFmt as $v ) {
 										$nf[ (int) $v['numFmtId'] ] = (string) $v['formatCode'];
 									}
 								}
 
-								if ( $this->styles->colors->indexedColors !== null ) {
-									if ( $this->styles->colors->indexedColors->rgbColor !== null ) {
-										foreach ( $this->styles->colors->indexedColors->rgbColor as $index => $c ) {
-											$rgb      = (string) $c['rgb'];
-											$rgb      = substr($rgb, 2) . substr($rgb, 0, 2);
-											$colors[] = '#' . $rgb;
-										}
-									}
-								}
-
-								if ( $this->styles->borders->border !== null ) {
-
-									foreach ( $this->styles->borders->border as $b ) {
-										$border = [
-											'left' => [], 'right'  => [],
-											'top'  => [], 'bottom' => []
-										];
-
-										foreach ($b as $side => $val) {
-											if ($side == 'diagonal') continue;
-
-											$c  = $val->color;
-											$bs = &$border[$side];
-
-											$bs['color'] = isset($c) ? $colors[(int) $c['indexed']] : '';
-											$bs['style'] = (string) $val['style'];
-											$bs['width'] = (string) $val['style'];
-
-											// Translate to css value
-											if ($bs['style'] == 'thin' ||
-												$bs['style'] == 'thick') {
-												$bs['style'] = 'solid';
-											}
-
-											if ($bs['style'] == 'dotted') {
-												$bs['width'] = 'thin';
-											}
-
-										}
-
-										$borders[] = $border;
-									}
-
-								}
-
-								if ( $this->styles->fills->fill !== null ) {
-									foreach ( $this->styles->fills->fill as $index => $f ) {
-										$fill = [];
-
-										if ($f->patternFill->fgColor != null) {
-											$colorIndex    = (int) $f->patternFill->fgColor['indexed'];
-									 		$fill['color'] = $colorIndex > 0 ? $colors[$colorIndex] : '';
-										}
-
-										// Where is this ever used and how? Is it avialable as css?
-										if ($f->patternFill->bgColor != null) {
-											$colorIndex      = (int) $f->patternFill->bgColor['indexed'];
-											$fill['color2'] = $colorIndex > 0 ? $colors[$colorIndex] : '';
-										}
-
-										$fills[] = $fill;
-									}
-								}
-
-								if ( $this->styles->fonts->font !== null ) {
-
-									foreach ( $this->styles->fonts->font  as $index => $f ) {
-										$font = [
-											'style'  => 'normal',
-											'weight' => 'normal'
-										];
-
-										if ($f->color != null) {
-											$colorIndex     = (int) $f->color['indexed'];
-											$font['color']  = $colorIndex > 0 ? $colors[$colorIndex] : '';
-										}
-
-										if ($f->i != null && ((int) $f->i['val']) == 1) {
-											$font['style']  = 'italic';
-										}
-
-										if ($f->b != null && ((int) $f->b['val']) == 1) {
-											$font['weight'] = 'bold';
-										}
-
-										if ($f->name != null) {
-											$font['family'] = (string) $f->name['val'];
-										}
-
-										if ($f->sz != null) {
-											$font['size']   = (string) $f->sz['val'] . 'pt';
-										}
-
-										$fonts[] = $font;
-									}
-								}
-
 								if ( $this->styles->cellXfs->xf !== null ) {
 									foreach ( $this->styles->cellXfs->xf as $v ) {
-										$alignment   = isset($v->alignment) ? (array) $v->alignment->attributes() : [];
 										$v           = (array) $v->attributes();
 										$v['format'] = '';
 
@@ -607,51 +505,6 @@ class SimpleXLSX {
 												$v['format'] = self::$CF[ $fid ];
 											}
 										}
-
-										if ( isset( $v['fillId'] ) ) {
-											$fid = (int) $v['fillId'];
-
-											if ( isset( $fills[ $fid ] ) && $v['applyFill'] == 1 ) {
-												$v['background'] = $fills[ $fid ];
-											}
-
-										} else {
-											$v['background'] = [];
-										}
-
-										if ( isset( $v['borderId'] ) ) {
-											$bid = (int) $v['borderId'];
-
-											if ( isset( $borders[ $bid ] ) && $v['applyBorder'] == 1 ) {
-												$v['border'] = $borders[ $bid ];
-											}
-
-										} else {
-											$v['border'] = [];
-										}
-
-										if ( isset( $v['fontId'] ) ) {
-											$fid = (int) $v['fontId'];
-
-											if ( isset( $fonts[ $fid ] ) && $v['applyFont'] == 1 ) {
-												$v['font'] = $fonts[ $fid ];
-											}
-
-										} else {
-											$v['font'] = [];
-										}
-
-										if ( $v['applyAlignment'] == 1) {
-											$v['alignment'] = $alignment['@attributes'];
-
-											// CSS compatible
-											if ( $v['alignment']['vertical'] == 'center' ) {
-												$v['alignment']['vertical'] = 'middle';
-											}
-										} else {
-											$v['alignment'] = [];
-										}
-
 										$this->cellFormats[] = $v;
 									}
 								}
@@ -855,31 +708,19 @@ class SimpleXLSX {
 				}
 
 				if ( $s > 0 && isset( $this->cellFormats[ $s ] ) ) {
-					$format      = $this->cellFormats[ $s ]['format'];
-					$background  = $this->cellFormats[ $s ]['background'];
-					$border      = $this->cellFormats[ $s ]['border'];
-					$alignment   = $this->cellFormats[ $s ]['alignment'];
-					$font        = $this->cellFormats[ $s ]['font'];
+					$format = $this->cellFormats[ $s ]['format'];
 				} else {
-					$format      = '';
-					$background  = [];
-					$font        = [];
-					$border      = [];
-					$alignment   = [];
+					$format = '';
 				}
 
 				$rows[ $curR ][ $curC ] = [
-					'type'       => $t,
-					'name'       => (string) $c['r'],
-					'value'      => $this->value( $c ),
-					'background' => $background,
-					'font'       => $font,
-					'border'     => $border,
-					'alignment'  => $alignment,
-					'href'       => $this->href( $worksheetIndex, $c ),
-					'f'          => (string) $c->f,
-					'format'     => $format,
-					'r'          => $r_idx
+					'type'   => $t,
+					'name'   => (string) $c['r'],
+					'value'  => $this->value( $c ),
+					'href'   => $this->href( $worksheetIndex, $c ),
+					'f'      => (string) $c->f,
+					'format' => $format,
+					'r'      => $r_idx
 				];
 				$curC ++;
 			}
@@ -899,55 +740,6 @@ class SimpleXLSX {
 			}
 			$s .= "</tr>\r\n";
 		}
-		$s .= '</table>';
-
-		return $s;
-	}
-
-  public function toStyledHTML( $worksheetIndex = 0 ) {
-		$s = '<table class="excel" style="border-spacing : 0px; border-collapse : collapse;">';
-
-		foreach ( $this->rowsEx( $worksheetIndex ) as $r ) {
-			$s .= '<tr>';
-
-			foreach ( $r as $c ) {
-				$s .= '<td nowrap style="min-width : 140px; height : 1.6rem;';
-
-				$s .= isset($c['background']['color']) ? 'background-color: ' . $c['background']['color'] . ';' : '';
-
-				if (isset($c['font'])) {
-					$s .= 'font-family : ' . $c['font']['family'] . ';';
-					$s .= 'font-size: '    . $c['font']['size']   . ';';
-					$s .= 'font-weight: '  . $c['font']['weight'] . ';';
-					$s .= 'font-style: '   . $c['font']['style']  . ';';
-					$s .= 'color: '        . $c['font']['color']  . ';';
-				}
-
-				if (isset($c['border'])) {
-					foreach ($c['border'] as $side => $border) {
-						$s .= ' border-' . $side . ' : ' . $border['style'] . ' ' . $border['width'] .' ' . $border['color'] . ';';
-					}
-				}
-
-				if (isset($c['alignment'])) {
-					$al = $c['alignment'];
-
-					if (isset($al['vertical'])) {
-						$s .=  'vertical-align : ' . $al['vertical'] . ';';
-					}
-
-					if (isset($al['horizontal'])) {
-						$s .=  'text-align : ' . $al['horizontal'] . ';';
-					}
-
-				}
-
-				$s .= '">' . ( $c['value'] === '' ? '&nbsp' : htmlspecialchars( $c['value'], ENT_QUOTES ) ) . '</td>';
-			}
-
-			$s .= "</tr>\r\n";
-		}
-
 		$s .= '</table>';
 
 		return $s;
