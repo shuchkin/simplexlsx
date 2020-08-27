@@ -261,7 +261,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 </table>	
 
 ## History
-v0.8.18 (2020-07-28) fixed empty shared strings xml<br/>
+v0.8.19 (2020-07-28) fixed empty shared strings xml<br/>
 v0.8.18 (2020-07-21) fixed hyperlinks<br/>
 v0.8.17 (2020-06-15) fixed version number, added relative pathes a/../b support in relations<br/>
 v0.8.16 (2020-06-14) fixed abs pathes in relations<br/>
