@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.18 (Official)
+# SimpleXLSX class 0.8.19 (Official)
 [<img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fshuchkin" />](https://www.patreon.com/shuchkin) [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
@@ -261,6 +261,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 </table>	
 
 ## History
+v0.8.18 (2020-07-28) fixed empty shared strings xml<br/>
 v0.8.18 (2020-07-21) fixed hyperlinks<br/>
 v0.8.17 (2020-06-15) fixed version number, added relative pathes a/../b support in relations<br/>
 v0.8.16 (2020-06-14) fixed abs pathes in relations<br/>

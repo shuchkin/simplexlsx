@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.17
+ *    SimpleXLSX php class v0.8.19
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2020 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.17
+ * @version    0.8.19
  */
 
 /** Examples
@@ -338,7 +338,7 @@ class SimpleXLSX {
 			if ( $this->_strlen( $vZ ) !== (int) $aP['CS'] ) { // check only if availabled
 				$aI['E']  = 1;
 				$aI['EM'] = 'Compressed size is not equal with the value in header information.';
-			} else if ( $bE ) {
+			} elseif ( $bE ) {
 				$aI['E']  = 5;
 				$aI['EM'] = 'File is encrypted, which is not supported from this class.';
 			} else {
@@ -366,10 +366,10 @@ class SimpleXLSX {
 					if ( $vZ === false ) {
 						$aI['E']  = 2;
 						$aI['EM'] = 'Decompression of data failed.';
-					} else if ( $this->_strlen( $vZ ) !== (int) $aP['UCS'] ) {
+					} elseif ( $this->_strlen( $vZ ) !== (int) $aP['UCS'] ) {
 						$aI['E']  = 3;
 						$aI['EM'] = 'Uncompressed size is not equal with the value in header information.';
-					} else if ( crc32( $vZ ) !== $aP['CRC'] ) {
+					} elseif ( crc32( $vZ ) !== $aP['CRC'] ) {
 						$aI['E']  = 4;
 						$aI['EM'] = 'CRC32 checksum is not equal with the value in header information.';
 					}
@@ -468,7 +468,7 @@ class SimpleXLSX {
 									$this->sheetFiles[ $index ] = $wrel_path;
 								}
 
-							} else if ( $wrel_type === 'sharedStrings' ) {
+							} elseif ( $wrel_type === 'sharedStrings' ) {
 
 								if ( $sharedStrings = $this->getEntryXML( $wrel_path ) ) {
 									foreach ( $sharedStrings->si as $val ) {
@@ -479,7 +479,7 @@ class SimpleXLSX {
 										}
 									}
 								}
-							} else if ( $wrel_type === 'styles' ) {
+							} elseif ( $wrel_type === 'styles' ) {
 
 								$this->styles = $this->getEntryXML( $wrel_path );
 
@@ -501,7 +501,7 @@ class SimpleXLSX {
 											// formats priority
 											if ( isset( $nf[ $fid ] ) ) {
 												$v['format'] = $nf[ $fid ];
-											} else if ( isset( self::$CF[ $fid ] ) ) {
+											} elseif ( isset( self::$CF[ $fid ] ) ) {
 												$v['format'] = self::$CF[ $fid ];
 											}
 										}
@@ -559,7 +559,9 @@ class SimpleXLSX {
 				return $entry_xmlobj;
 			}
 			$e = libxml_get_last_error();
-			$this->error( 3, 'XML-entry ' . $name . ' parser error ' . $e->message . ' line ' . $e->line );
+			if ( $e ) {
+				$this->error( 3, 'XML-entry ' . $name . ' parser error ' . $e->message . ' line ' . $e->line );
+			}
 		} else {
 			$this->error( 4, 'XML-entry not found ' . $name );
 		}
@@ -598,7 +600,7 @@ class SimpleXLSX {
 
 		if ( isset( $is->t ) ) {
 			$value[] = (string) $is->t;
-		} else if ( isset( $is->r ) ) {
+		} elseif ( isset( $is->r ) ) {
 			foreach ( $is->r as $run ) {
 				$value[] = (string) $run->t;
 			}
@@ -887,7 +889,7 @@ class SimpleXLSX {
 				$value = (string) $cell->v;
 				if ( $value === '0' ) {
 					$value = false;
-				} else if ( $value === '1' ) {
+				} elseif ( $value === '1' ) {
 					$value = true;
 				} else {
 					$value = (bool) $cell->v;
