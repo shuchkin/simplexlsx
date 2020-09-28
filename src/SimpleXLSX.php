@@ -866,9 +866,14 @@ class SimpleXLSX {
 		if ( $dataType === '' || $dataType === 'n' ) { // number
 			$s = (int) $cell['s'];
 			if ( $s > 0 && isset( $this->cellFormats[ $s ] ) ) {
-				$format = $this->cellFormats[ $s ]['format'];
-				if ( preg_match( '/[mM]/', $format ) ) { // [m]onth
-					$dataType = 'd';
+				if (array_key_exists('format', $this->cellFormats[ $s ])) {
+					$format = $this->cellFormats[ $s ]['format'];
+					if ( preg_match( '/[mM]/', $format ) ) { // [m]onth
+						$dataType = 'd';
+					}
+				}
+				else {
+					$dataType = 's';
 				}
 			}
 		}
