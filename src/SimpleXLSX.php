@@ -1,15 +1,15 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.20
+ *    SimpleXLSX php class v0.8.21
  *    MS Excel 2007 workbooks reader
  *
- * Copyright (c) 2012 - 2020 SimpleXLSX
+ * Copyright (c) 2012 - 2021 SimpleXLSX
  *
  * @category   SimpleXLSX
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.20
+ * @version    0.8.21
  */
 
 /** Examples
