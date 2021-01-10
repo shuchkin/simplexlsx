@@ -263,7 +263,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 </table>	
 
 ## History
-v0.8.20 (2021-01-11) libxml_disable_entity_loader and PHP 8, thx [iKlsR](https://github.com/shuchkin/simplexlsx/issues/96) <br/>
+v0.8.21 (2021-01-11) libxml_disable_entity_loader and PHP 8, thx [iKlsR](https://github.com/shuchkin/simplexlsx/issues/96) <br/>
 v0.8.19 (2020-07-28) fixed empty shared strings xml<br/>
 v0.8.18 (2020-07-21) fixed hyperlinks<br/>
 v0.8.17 (2020-06-15) fixed version number, added relative pathes a/../b support in relations<br/>
