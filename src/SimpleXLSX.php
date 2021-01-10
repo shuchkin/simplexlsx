@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.19
+ *    SimpleXLSX php class v0.8.20
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2020 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.19
+ * @version    0.8.20
  */
 
 /** Examples
@@ -550,11 +550,15 @@ class SimpleXLSX {
 //				file_put_contents( basename( $name ), $entry_xml ); // @to do comment!!!
 			}
 
-			// XML External Entity (XXE) Prevention
-			$_old         = libxml_disable_entity_loader();
+			// XML External Entity (XXE) Prevention, libxml_disable_entity_loader deprecated in PHP 8
+			if ( LIBXML_VERSION < 20900 ) {
+				$_old = libxml_disable_entity_loader();
+			}
 			$entry_xmlobj = simplexml_load_string( $entry_xml );
-
-			libxml_disable_entity_loader( $_old );
+			if ( LIBXML_VERSION < 20900 ) {
+				/** @noinspection PhpUndefinedVariableInspection */
+				libxml_disable_entity_loader( $_old );
+			}
 			if ( $entry_xmlobj ) {
 				return $entry_xmlobj;
 			}
