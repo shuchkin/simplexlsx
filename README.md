@@ -64,13 +64,16 @@ or download class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/
 ## Examples
 ### XLSX to html table
 ```php
+echo SimpleXLSX::parse('book.xlsx')->toHTML();
+```
+or
+```php
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 	echo '<table border="1" cellpadding="3" style="border-collapse: collapse">';
 	foreach( $xlsx->rows() as $r ) {
 		echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
 	}
 	echo '</table>';
-	// or $xlsx->toHTML();	
 } else {
 	echo SimpleXLSX::parseError();
 }
