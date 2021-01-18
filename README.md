@@ -10,7 +10,7 @@ See also:<br/>
 [SimpleXLS](https://github.com/shuchkin/simplexls) old format MS Excel 97 php reader.<br/>
 [SimpleXLSXGen](https://github.com/shuchkin/simplexlsxgen) xlsx php writer.  
 
-**Sergey Shuchkin** <sergey.shuchkin@gmail.com>  2010-2021 <br/>
+**Sergey Shuchkin** <sergey.shuchkin@gmail.com> <br/>
 
 *Hey, bro, please ★ the package for my motivation :)*<br/>
 
