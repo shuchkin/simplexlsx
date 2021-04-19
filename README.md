@@ -1,4 +1,4 @@
-# SimpleXLSX class 0.8.21 (Official)
+# SimpleXLSX class 0.8.22 (Official)
 [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 [<img src="https://img.shields.io/opencollective/all/simplexlsx" />](https://opencollective.com/simplexlsx)
 [<img src="https://img.shields.io/badge/patreon-_-_" />](https://www.patreon.com/shuchkin)
@@ -266,6 +266,7 @@ SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 </table>	
 
 ## History
+v0.8.22 (2021-04-20) fixed lost hash of hyperlinks 
 v0.8.21 (2021-01-11) libxml_disable_entity_loader and PHP 8, thx [iKlsR](https://github.com/shuchkin/simplexlsx/issues/96) <br/>
 v0.8.19 (2020-07-28) fixed empty shared strings xml<br/>
 v0.8.18 (2020-07-21) fixed hyperlinks<br/>

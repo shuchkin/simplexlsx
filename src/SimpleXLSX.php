@@ -1,6 +1,6 @@
 <?php
 /**
- *    SimpleXLSX php class v0.8.21
+ *    SimpleXLSX php class v0.8.22
  *    MS Excel 2007 workbooks reader
  *
  * Copyright (c) 2012 - 2021 SimpleXLSX
@@ -9,7 +9,7 @@
  * @package    SimpleXLSX
  * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
- * @version    0.8.21
+ * @version    0.8.22
  */
 
 /** Examples
@@ -780,7 +780,10 @@ class SimpleXLSX {
 							$ref = $ref[0];
 						}
 //						$this->hyperlinks[ $worksheetIndex ][ $ref ] = (string) $hyperlink['display'];
-						$this->hyperlinks[ $worksheetIndex ][ $ref ] = $link_ids[ (string) $hyperlink['id'] ];
+
+						$href = $link_ids[ (string) $hyperlink['id'] ];
+						$hash = (string) $hyperlink['location'];
+						$this->hyperlinks[ $worksheetIndex ][ $ref ] = $href . ( $hash ? '#' . $hash : '');
 					}
 				}
 			}
