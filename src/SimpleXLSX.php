@@ -963,11 +963,17 @@ class SimpleXLSX {
 		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
 			return false;
 		}
-		if ( is_string( $cell ) ) {
-			$cell = $this->getIndex($cell);
+		if ( is_array( $cell )) {
+			$cell = $this->_num2name($cell[0]).$cell[1];// [3,21] -> D21
 		}
-		$result = $ws->sheetData->row[$cell[1]]->c[$cell[0]];
-		return !empty($result) ? $this->value($result) : null;
+		if ( is_string( $cell ) ) {
+			$result = $ws->sheetData->xpath( "row/c[@r='" . $cell . "']" );
+			if ( !empty($result) ) {
+				return $this->value( $result[0] );
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -995,7 +1001,7 @@ class SimpleXLSX {
 		$dim = $this->dimension( $worksheetIndex );
 
 		if ($dim[0] < $from[0] || $dim[1] < $from[1]) {
-			return null;
+			return false;
 		}
 
 		$data = [];
@@ -1003,8 +1009,8 @@ class SimpleXLSX {
 		for ($r = $from[1]; $r <= min($to[1], $dim[1] - 1); $r++) {
 			$col = 0;
 			for ($c = $from[0]; $c <= min($to[0], $dim[0] - 1); $c++) {
-				$result = $ws->sheetData->row[$r]->c[$c];
-				$data[$row][$col] = !empty($result) ? $this->value($result) : null;
+				$result = $ws->sheetData->xpath( "row/c[@r='" . $this->_num2name($c+1).($r+1) . "']" );
+				$data[$row][$col] = !empty($result) ? $this->value($result[0]) : null;
 				$col++;
 			}
 			$row++;
