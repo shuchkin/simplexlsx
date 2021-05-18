@@ -752,25 +752,29 @@ class SimpleXLSX {
 					// hyperlink
 //					$rel_base = dirname( $sheet_rels );
 					foreach ( $rels->Relationship as $rel ) {
-						$rel_type   = basename( trim( (string) $rel['Type'] ) );
+						$rel_type = basename( trim( (string)$rel['Type'] ) );
 						if ( $rel_type === 'hyperlink' ) {
-							$rel_id = (string) $rel['Id'];
-							$rel_target = (string) $rel['Target'];
+							$rel_id = (string)$rel['Id'];
+							$rel_target = (string)$rel['Target'];
 							$link_ids[ $rel_id ] = $rel_target;
 						}
 					}
-					foreach ( $ws->hyperlinks->hyperlink as $hyperlink ) {
-						$ref = (string) $hyperlink['ref'];
-						if ( $this->_strpos($ref,':') > 0 ) { // A1:A8 -> A1
-							$ref = explode(':', $ref);
-							$ref = $ref[0];
-						}
-//						$this->hyperlinks[ $worksheetIndex ][ $ref ] = (string) $hyperlink['display'];
-
-						$href = $link_ids[ (string) $hyperlink['id'] ];
-						$hash = (string) $hyperlink['location'];
-						$this->hyperlinks[ $worksheetIndex ][ $ref ] = $href . ( $hash ? '#' . $hash : '');
+				}
+				foreach ( $ws->hyperlinks->hyperlink as $hyperlink ) {
+					$ref = (string) $hyperlink['ref'];
+					if ( $this->_strpos($ref,':') > 0 ) { // A1:A8 -> A1
+						$ref = explode(':', $ref);
+						$ref = $ref[0];
 					}
+//						$this->hyperlinks[ $worksheetIndex ][ $ref ] = (string) $hyperlink['display'];
+					$loc = (string) $hyperlink['location'];
+					$id = (string) $hyperlink['id'];
+					if ( $id ) {
+						$href = $link_ids[ $id ] . ( $loc ? '#' . $loc : '');
+					} else {
+						$href = $loc;
+					}
+					$this->hyperlinks[ $worksheetIndex ][ $ref ] = $href;
 				}
 			}
 
