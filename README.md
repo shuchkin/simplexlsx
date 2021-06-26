@@ -11,9 +11,9 @@ See also:<br/>
 [SimpleXLS](https://github.com/shuchkin/simplexls) old format MS Excel 97 php reader.<br/>
 [SimpleXLSXGen](https://github.com/shuchkin/simplexlsxgen) xlsx php writer.  
 
-**Sergey Shuchkin** <sergey.shuchkin@gmail.com> <br/>
-
 *Hey, bro, please ★ the package for my motivation :) and [donate](https://opencollective.com/simplexlsx) for more motivation!*
+
+**Sergey Shuchkin** <sergey.shuchkin@gmail.com>
 
 ## Basic Usage
 ```php
