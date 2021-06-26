@@ -1,4 +1,5 @@
 # SimpleXLSX class 0.8.24 (Official)
+[<img src="https://img.shields.io/packagist/dt/shuchkin/simplexlsx" />](https://packagist.org/packages/shuchkin/simplexlsx)
 [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 [<img src="https://img.shields.io/opencollective/all/simplexlsx" />](https://opencollective.com/simplexlsx)
 [<img src="https://img.shields.io/badge/patreon-_-_" />](https://www.patreon.com/shuchkin)
@@ -12,7 +13,7 @@ See also:<br/>
 
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com> <br/>
 
-*Hey, bro, please ★ the package for my motivation :)*<br/>
+*Hey, bro, please ★ the package for my motivation :) and [donate](https://opencollective.com/simplexlsx) for more motivation!*
 
 ## Basic Usage
 ```php
