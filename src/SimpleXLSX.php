@@ -956,7 +956,6 @@ class SimpleXLSX {
 
 	/**
 	 * Returns cell value
-	 * VERY SLOW! Use ->rows() or ->rowsEx()
 	 *
 	 * @param int $worksheetIndex
 	 * @param string|array $cell ref or coords, D12 or [3,12]
@@ -973,12 +972,54 @@ class SimpleXLSX {
 		}
 		if ( is_string( $cell ) ) {
 			$result = $ws->sheetData->xpath( "row/c[@r='" . $cell . "']" );
-			if ( count($result) ) {
+			if ( !empty($result) ) {
 				return $this->value( $result[0] );
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * Returns cell range value
+	 *
+	 * @param int $worksheetIndex
+	 * @param string|array $range ref (e.g. 'D12:F24' or ['D12', 'F24'])
+	 *
+	 * @return mixed Returns NULL if range out of sheet dimension
+	 */
+	public function getRange( $worksheetIndex = 0, $range = 'A1:XFD1048576' ) {
+		// XFD is max column value and 1048576 is max row value since Excel 2007
+		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
+			return false;
+		}
+		if ( is_string( $range ) ) {
+			if ( strpos($range, ':') === false ) {
+				return false;
+			}
+			$range = explode( ':', $range );
+		}
+
+		$from = $this->getIndex( $range[0] );
+		$to = $this->getIndex( $range[1] );
+		$dim = $this->dimension( $worksheetIndex );
+
+		if ($dim[0] < $from[0] || $dim[1] < $from[1]) {
+			return false;
+		}
+
+		$data = [];
+		$row = 0;
+		for ($r = $from[1]; $r <= min($to[1], $dim[1] - 1); $r++) {
+			$col = 0;
+			for ($c = $from[0]; $c <= min($to[0], $dim[0] - 1); $c++) {
+				$result = $ws->sheetData->xpath( "row/c[@r='" . $this->_num2name($c+1).($r+1) . "']" );
+				$data[$row][$col] = !empty($result) ? $this->value($result[0]) : null;
+				$col++;
+			}
+			$row++;
+		}
+		return $data;
 	}
 
 	public function href( $worksheetIndex, $cell ) {
