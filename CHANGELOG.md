@@ -2,7 +2,7 @@
 
 ## 0.8.25 (2021-07-28)
 
-* ::getRowsEx() - returns *hidden* flag, for hidden cells 
+* ::rowsEx() - returns *hidden* flag, for hidden cells 
 
 ## 0.8.24 (2021-05-18)
 
