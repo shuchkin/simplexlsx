@@ -658,7 +658,16 @@ class SimpleXLSX {
 		$dim     = $this->dimension( $worksheetIndex );
 		$numCols = $dim[0];
 		$numRows = $dim[1];
+
 		$hiddenCols = [];
+		/* @var SimpleXMLElement $ws */
+		foreach( $ws->cols->col as $col ) {
+			for ( $i = (int) $col['min']; $i <= (int) $col['max']; $i++ ) {
+				if ( $col['hidden'] ) {
+					$hiddenCols[] = $i - 1;
+				}
+			}
+		}
 
 		for ( $y = 0; $y < $numRows; $y ++ ) {
 			for ( $x = 0; $x < $numCols; $x ++ ) {
@@ -675,26 +684,20 @@ class SimpleXLSX {
 					'f'      => '',
 					'format' => '',
 					'r'      => $y,
-					'hidden'      => false,
+					'hidden'      => count($hiddenCols) && in_array($x, $hiddenCols, true )
 				];
 			}
 		}
-		/* @var SimpleXMLElement $ws */
-		foreach( $ws->cols->col as $col ) {
-			for ( $i = (int) $col['min']; $i <= (int) $col['max']; $i++ ) {
-				if ( $col['hidden'] ) {
-					$hiddenCols[] = $i - 1;
-				}
-			}
-		}
+
 
 		$curR = 0;
 
 		foreach ( $ws->sheetData->row as $row ) {
 
+			$curC  = 0;
+
 			$r_idx = (int) $row['r'];
 			$r_hidden = (bool) $row['hidden'];
-			$curC  = 0;
 
 			foreach ( $row->c as $c ) {
 				$r = (string) $c['r'];
