@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.26 (2021-08-24)
+
+* Fixed datetime type detection 
+
 ## 0.8.25 (2021-07-28)
 
 * ::rowsEx() - returns *hidden* flag, for hidden cells 
