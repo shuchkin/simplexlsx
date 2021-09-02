@@ -53,7 +53,7 @@ Array
 
 ---
 
-## rowsEx()
+#### rowsEx()
 
 ```php
 if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
@@ -349,7 +349,7 @@ Array
 
 ---
 
-## cRowEx()
+#### cRowEx()
 
 ```php
 if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
