@@ -11,3 +11,21 @@ if ( $xlsx = SimpleXLSX::parse('books.xlsx') ) {
 	echo SimpleXLSX::parseError();
 }
 echo '<pre>';
+
+
+echo '<hr>';
+
+$columns = array(
+	'isbn',
+	'title',
+	'author',
+	'publisher',
+	'ctry'
+);
+echo '<h1>cRows (column) Parse books.xlsx</h1><pre>';
+if ( $xls = SimpleXLSX::parse('books.xlsx') ) {
+	print_r( $xls->cRows($columns) );
+} else {
+	echo SimpleXLSX::parseError();
+}
+echo '<pre>';

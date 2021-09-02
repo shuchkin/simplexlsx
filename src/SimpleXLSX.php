@@ -646,6 +646,56 @@ class SimpleXLSX {
 
 		return $rows;
 	}
+	public function cRows($columns=null){
+		$rows = $this->rows();
+
+		if(!is_array($columns)){
+
+			if(isset($rows[0])){
+				foreach ($rows[0] as $key => $col) {
+					$columns[] = $col;
+				}
+			}
+
+		}
+
+		array_shift($rows);
+
+		$values = array();
+		foreach ($rows as $key => $row) {
+			$values[$key] = array_combine(array_values($columns), array_values($row));
+		}
+
+		return $values;
+	}
+	public function cRowsEx($columns=null){
+		$values = array();
+		$rows = $this->rowsEx();
+		
+		if(isset($rows[0])){
+			foreach ($rows[0] as $key => $col) {
+				$values['title'][] = $col['value'];
+			}
+		}
+
+		if(!is_array($columns)){
+			if(isset($values['title'])){
+				$columns = $values['title'];
+			}
+		}
+		
+		array_shift($rows);
+
+		foreach ($rows as $key => $xrow) {
+			foreach ($xrow as $column => $row) {
+				$values['data'][$key][] = $row['value'];
+				$values['details'][$key][$columns[$column]] = $row;
+			}
+			$values['data'][$key] = array_combine(array_values($columns), $values['data'][$key]);
+		}
+
+		return $values;
+	}
 	// https://github.com/shuchkin/simplexlsx#gets-extend-cell-info-by--rowsex
 	public function rowsEx( $worksheetIndex = 0 ) {
 

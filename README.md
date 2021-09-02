@@ -16,6 +16,9 @@ See also:<br/>
 **Sergey Shuchkin** <sergey.shuchkin@gmail.com>
 
 ## Basic Usage
+
+#### rows()
+
 ```php
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 	print_r( $xlsx->rows() );
@@ -23,6 +26,7 @@ if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 	echo SimpleXLSX::parseError();
 }
 ```
+***Result***
 ```
 Array
 (
@@ -46,6 +50,684 @@ Array
 
 )
 ```
+
+---
+
+## rowsEx()
+
+```php
+if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
+	// ->rowsEx();
+	echo '<h2>$xlsx->rowsEx()</h2>';
+	echo '<pre>';
+	print_r( $xlsx->rowsEx() );
+	echo '</pre>';
+
+} else {
+	echo SimpleXLSX::parseError();
+}
+
+```
+***Result***
+```
+Array
+(
+    [0] => Array
+        (
+            [0] => Array
+                (
+                    [type] => s
+                    [name] => A1
+                    [value] => ISBN
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                    [hidden] => 
+                )
+
+            [1] => Array
+                (
+                    [type] => s
+                    [name] => B1
+                    [value] => title
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                    [hidden] => 
+                )
+
+            [2] => Array
+                (
+                    [type] => s
+                    [name] => C1
+                    [value] => author
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                    [hidden] => 
+                )
+
+            [3] => Array
+                (
+                    [type] => s
+                    [name] => D1
+                    [value] => publisher
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                    [hidden] => 
+                )
+
+            [4] => Array
+                (
+                    [type] => s
+                    [name] => E1
+                    [value] => ctry
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 1
+                    [hidden] => 
+                )
+
+        )
+
+    [1] => Array
+        (
+            [0] => Array
+                (
+                    [type] => 
+                    [name] => A2
+                    [value] => 618260307
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 2
+                    [hidden] => 
+                )
+
+            [1] => Array
+                (
+                    [type] => s
+                    [name] => B2
+                    [value] => The Hobbit
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 2
+                    [hidden] => 
+                )
+
+            [2] => Array
+                (
+                    [type] => s
+                    [name] => C2
+                    [value] => J. R. R. Tolkien
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 2
+                    [hidden] => 
+                )
+
+            [3] => Array
+                (
+                    [type] => s
+                    [name] => D2
+                    [value] => Houghton Mifflin
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 2
+                    [hidden] => 
+                )
+
+            [4] => Array
+                (
+                    [type] => s
+                    [name] => E2
+                    [value] => USA
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 2
+                    [hidden] => 
+                )
+
+        )
+
+    [2] => Array
+        (
+            [0] => Array
+                (
+                    [type] => 
+                    [name] => A3
+                    [value] => 908606664
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 3
+                    [hidden] => 
+                )
+
+            [1] => Array
+                (
+                    [type] => s
+                    [name] => B3
+                    [value] => Slinky Malinki
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 3
+                    [hidden] => 
+                )
+
+            [2] => Array
+                (
+                    [type] => s
+                    [name] => C3
+                    [value] => Lynley Dodd
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 3
+                    [hidden] => 
+                )
+
+            [3] => Array
+                (
+                    [type] => s
+                    [name] => D3
+                    [value] => Mallinson Rendel
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 3
+                    [hidden] => 
+                )
+
+            [4] => Array
+                (
+                    [type] => s
+                    [name] => E3
+                    [value] => NZ
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [r] => 3
+                    [hidden] => 
+                )
+
+        )
+
+)
+```
+---
+
+#### cRows()
+
+```php
+if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+	print_r( $xlsx->cRows() );
+} else {
+	echo SimpleXLSX::parseError();
+}
+```
+***Result***
+```
+Array
+(
+    [0] => Array
+        (
+            [ISBN] => 618260307
+            [title] => The Hobbit
+            [author] => J. R. R. Tolkien
+            [publisher] => Houghton Mifflin
+            [ctry] => USA
+        )
+
+    [1] => Array
+        (
+            [ISBN] => 908606664
+            [title] => Slinky Malinki
+            [author] => Lynley Dodd
+            [publisher] => Mallinson Rendel
+            [ctry] => NZ
+        )
+
+)
+```
+
+OR
+
+```php
+
+$columns = array(
+	'isbn',
+	'title',
+	'author',
+	'publisher',
+	'ctry'
+);
+echo '<h1>cRows (column) Parse books.xlsx</h1><pre>';
+if ( $xls = SimpleXLSX::parse('books.xlsx') ) {
+	print_r( $xls->cRows($columns) );
+} else {
+	echo SimpleXLSX::parseError();
+}
+echo '<pre>';
+```
+***Result***
+
+```
+Array
+(
+    [0] => Array
+        (
+            [isbn] => 618260307
+            [title] => The Hobbit
+            [author] => J. R. R. Tolkien
+            [publisher] => Houghton Mifflin
+            [ctry] => USA
+        )
+
+    [1] => Array
+        (
+            [isbn] => 908606664
+            [title] => Slinky Malinki
+            [author] => Lynley Dodd
+            [publisher] => Mallinson Rendel
+            [ctry] => NZ
+        )
+
+)
+```
+
+---
+
+## cRowEx()
+
+```php
+if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
+
+	echo '<pre>';
+
+	echo '<h2>$xlsx->cRowsEx()</h2>';
+	echo '<pre>';
+	print_r( $xlsx->cRowsEx() );
+	echo '</pre>';
+
+} else {
+	echo SimpleXLSX::parseError();
+}
+```
+***Result***
+```
+Array
+(
+    [title] => Array
+        (
+            [0] => ISBN
+            [1] => title
+            [2] => author
+            [3] => publisher
+            [4] => ctry
+        )
+
+    [data] => Array
+        (
+            [0] => Array
+                (
+                    [ISBN] => 618260307
+                    [title] => The Hobbit
+                    [author] => J. R. R. Tolkien
+                    [publisher] => Houghton Mifflin
+                    [ctry] => USA
+                )
+
+            [1] => Array
+                (
+                    [ISBN] => 908606664
+                    [title] => Slinky Malinki
+                    [author] => Lynley Dodd
+                    [publisher] => Mallinson Rendel
+                    [ctry] => NZ
+                )
+
+        )
+
+    [details] => Array
+        (
+            [0] => Array
+                (
+                    [ISBN] => Array
+                        (
+                            [type] => 
+                            [name] => A2
+                            [value] => 618260307
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [title] => Array
+                        (
+                            [type] => s
+                            [name] => B2
+                            [value] => The Hobbit
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [author] => Array
+                        (
+                            [type] => s
+                            [name] => C2
+                            [value] => J. R. R. Tolkien
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [publisher] => Array
+                        (
+                            [type] => s
+                            [name] => D2
+                            [value] => Houghton Mifflin
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [ctry] => Array
+                        (
+                            [type] => s
+                            [name] => E2
+                            [value] => USA
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [ISBN] => Array
+                        (
+                            [type] => 
+                            [name] => A3
+                            [value] => 908606664
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [title] => Array
+                        (
+                            [type] => s
+                            [name] => B3
+                            [value] => Slinky Malinki
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [author] => Array
+                        (
+                            [type] => s
+                            [name] => C3
+                            [value] => Lynley Dodd
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [publisher] => Array
+                        (
+                            [type] => s
+                            [name] => D3
+                            [value] => Mallinson Rendel
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [ctry] => Array
+                        (
+                            [type] => s
+                            [name] => E3
+                            [value] => NZ
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                )
+
+        )
+
+)
+```
+
+OR
+
+```php
+	$columns = array(
+		'isbn',
+		'title',
+		'author',
+		'publisher',
+		'ctry'
+	);
+    if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
+
+	echo '<pre>';
+
+	echo '<h2>$xlsx->cRowsEx($column)</h2>';
+	echo '<pre>';
+	print_r( $xlsx->cRowsEx($column) );
+	echo '</pre>';
+
+} else {
+	echo SimpleXLSX::parseError();
+}
+```
+***Result***
+```
+Array
+(
+    [title] => Array
+        (
+            [0] => ISBN
+            [1] => title
+            [2] => author
+            [3] => publisher
+            [4] => ctry
+        )
+
+    [data] => Array
+        (
+            [0] => Array
+                (
+                    [isbn] => 618260307
+                    [title] => The Hobbit
+                    [author] => J. R. R. Tolkien
+                    [publisher] => Houghton Mifflin
+                    [ctry] => USA
+                )
+
+            [1] => Array
+                (
+                    [isbn] => 908606664
+                    [title] => Slinky Malinki
+                    [author] => Lynley Dodd
+                    [publisher] => Mallinson Rendel
+                    [ctry] => NZ
+                )
+
+        )
+
+    [details] => Array
+        (
+            [0] => Array
+                (
+                    [isbn] => Array
+                        (
+                            [type] => 
+                            [name] => A2
+                            [value] => 618260307
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [title] => Array
+                        (
+                            [type] => s
+                            [name] => B2
+                            [value] => The Hobbit
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [author] => Array
+                        (
+                            [type] => s
+                            [name] => C2
+                            [value] => J. R. R. Tolkien
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [publisher] => Array
+                        (
+                            [type] => s
+                            [name] => D2
+                            [value] => Houghton Mifflin
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                    [ctry] => Array
+                        (
+                            [type] => s
+                            [name] => E2
+                            [value] => USA
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 2
+                            [hidden] => 
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [isbn] => Array
+                        (
+                            [type] => 
+                            [name] => A3
+                            [value] => 908606664
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [title] => Array
+                        (
+                            [type] => s
+                            [name] => B3
+                            [value] => Slinky Malinki
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [author] => Array
+                        (
+                            [type] => s
+                            [name] => C3
+                            [value] => Lynley Dodd
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [publisher] => Array
+                        (
+                            [type] => s
+                            [name] => D3
+                            [value] => Mallinson Rendel
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                    [ctry] => Array
+                        (
+                            [type] => s
+                            [name] => E3
+                            [value] => NZ
+                            [href] => 
+                            [f] => 
+                            [format] => 
+                            [r] => 3
+                            [hidden] => 
+                        )
+
+                )
+
+        )
+
+)
+```
+
 ```
 // SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or false)
 // SimpleXLSX::parseFile( $filename, $debug = false ): SimpleXLSX (or false)
