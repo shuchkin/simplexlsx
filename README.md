@@ -4,8 +4,8 @@
 [<img src="https://img.shields.io/opencollective/all/simplexlsx" />](https://opencollective.com/simplexlsx)
 [<img src="https://img.shields.io/badge/patreon-_-_" />](https://www.patreon.com/shuchkin)
 
-Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
-No addiditional extensions need (internal unzip + standart SimpleXML parser).
+Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.<br/>
+PHP 5.2 - 8.0 compatible, no extra extensions needed, internal unzip and SimpleXML parser used.
 
 See also:<br/>
 [SimpleXLS](https://github.com/shuchkin/simplexls) old format MS Excel 97 php reader.<br/>
