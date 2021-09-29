@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.27 (2021-09-30)
+* [] to array() for PHP 5.2 backward compatibility. Tested from PHP 5.2.7 to 8.0.9
+
 ## 0.8.26 (2021-08-24)
 
 * Fixed datetime type detection 
