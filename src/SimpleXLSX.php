@@ -531,23 +531,34 @@ class SimpleXLSX {
 	*/
 	public function getEntryXML( $name ) {
 		if ( $entry_xml = $this->getEntryData( $name ) ) {
-			$entry_xml = trim( $entry_xml );
+
 			// dirty remove namespace prefixes and empty rows
 			$entry_xml = preg_replace( '/xmlns[^=]*="[^"]*"/i', '', $entry_xml ); // remove namespaces
+			$entry_xml .= ' '; // force run garbage collector
 			$entry_xml = preg_replace( '/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/', '$1', $entry_xml ); // remove namespaced
+			$entry_xml .= ' ';
 			$entry_xml = preg_replace( '/<[a-zA-Z0-9]+:([^>]+)>/', '<$1>', $entry_xml ); // fix namespaced openned tags
+			$entry_xml .= ' ';
 			$entry_xml = preg_replace( '/<\/[a-zA-Z0-9]+:([^>]+)>/', '</$1>', $entry_xml ); // fix namespaced closed tags
+			$entry_xml .= ' ';
 
 			if ( strpos( $name, '/sheet' ) ) { // dirty skip empty rows
-				$entry_xml = preg_replace( '/<row[^>]+>\s*(<c[^\/]+\/>\s*)+<\/row>/', '', $entry_xml, - 1, $cnt ); // remove empty rows
+				 // remove <row...> <c /><c /></row>
+				$entry_xml = preg_replace( '/<row[^>]+>\s*(<c[^\/]+\/>\s*)+<\/row>/', '', $entry_xml, - 1, $cnt );
+				$entry_xml .= ' ';
+				// remove <row />
 				$entry_xml = preg_replace( '/<row[^\/>]*\/>/', '', $entry_xml, - 1, $cnt2 );
+				$entry_xml .= ' ';
+				// remove <row...></row>
 				$entry_xml = preg_replace( '/<row[^>]*><\/row>/', '', $entry_xml, - 1, $cnt3 );
+				$entry_xml .= ' ';
 				if ( $cnt || $cnt2 || $cnt3 ) {
 					$entry_xml = preg_replace( '/<dimension[^\/]+\/>/', '', $entry_xml );
+					$entry_xml .= ' ';
 				}
 //				file_put_contents( basename( $name ), $entry_xml ); // @to do comment!!!
 			}
-
+			$entry_xml = trim( $entry_xml );
 			// XML External Entity (XXE) Prevention, libxml_disable_entity_loader deprecated in PHP 8
 			if ( LIBXML_VERSION < 20900 && function_exists('libxml_disable_entity_loader') ) {
 				$_old = libxml_disable_entity_loader();
