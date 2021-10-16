@@ -534,11 +534,10 @@ class SimpleXLSX {
 			$entry_xml = trim( $entry_xml );
 			// dirty remove namespace prefixes and empty rows
 			$entry_xml = preg_replace( '/xmlns[^=]*="[^"]*"/i', '', $entry_xml ); // remove namespaces
-			$entry_xml = preg_replace( '/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/', '$1$2', $entry_xml ); // remove namespaced attrs
+			$entry_xml = preg_replace( '/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/', '$1', $entry_xml ); // remove namespaced
 			$entry_xml = preg_replace( '/<[a-zA-Z0-9]+:([^>]+)>/', '<$1>', $entry_xml ); // fix namespaced openned tags
 			$entry_xml = preg_replace( '/<\/[a-zA-Z0-9]+:([^>]+)>/', '</$1>', $entry_xml ); // fix namespaced closed tags
 
-//			if ( $this->skipEmptyRows && strpos($name, '/sheet') ) {
 			if ( strpos( $name, '/sheet' ) ) { // dirty skip empty rows
 				$entry_xml = preg_replace( '/<row[^>]+>\s*(<c[^\/]+\/>\s*)+<\/row>/', '', $entry_xml, - 1, $cnt ); // remove empty rows
 				$entry_xml = preg_replace( '/<row[^\/>]*\/>/', '', $entry_xml, - 1, $cnt2 );
