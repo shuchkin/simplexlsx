@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.29 (2021-10-28)
+* prevent not exists `cols` notice
+* if cell type undefined, then parse it as number 
+
 ## 0.8.27 (2021-09-30)
 * [] to array() for PHP 5.2 backward compatibility. Tested from PHP 5.2.7 to 8.0.9
 

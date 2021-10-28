@@ -671,10 +671,12 @@ class SimpleXLSX {
 
 		$hiddenCols = array();
 		/* @var SimpleXMLElement $ws */
-		foreach( $ws->cols->col as $col ) {
-			for ( $i = (int) $col['min']; $i <= (int) $col['max']; $i++ ) {
-				if ( $col['hidden'] ) {
-					$hiddenCols[] = $i - 1;
+		if ( isset( $ws->cols ) ) {
+			foreach ( $ws->cols->col as $col ) {
+				for ( $i = (int)$col['min']; $i <= (int)$col['max']; $i++ ) {
+					if ( $col['hidden'] ) {
+						$hiddenCols[] = $i - 1;
+					}
 				}
 			}
 		}
@@ -900,7 +902,7 @@ class SimpleXLSX {
 					}
 				}
 				else {
-					$dataType = 's';
+					$dataType = 'n';
 				}
 			}
 		}
@@ -913,7 +915,6 @@ class SimpleXLSX {
 				if ( (string) $cell->v !== '' ) {
 					$value = $this->sharedstrings[ (int) $cell->v ];
 				}
-
 				break;
 
 			case 'b':
@@ -955,7 +956,7 @@ class SimpleXLSX {
 				$value = (string) $cell->v;
 
 				// Check for numeric values
-				if ( is_numeric( $value ) && $dataType !== 's' ) {
+				if ( is_numeric( $value ) ) {
 					/** @noinspection TypeUnsafeComparisonInspection */
 					if ( $value == (int) $value ) {
 						$value = (int) $value;
