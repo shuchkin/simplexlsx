@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.30 (2021-12-01)
+* added $limit to $xlsx->rows( $sheetIndex = 0, $limit = 0 ) and to $xlsx->rowsEx( $seetIndex = 0, $limit = 0)
+* Anyway SimpleXML loaded all XML data, so memory economy is minimal 
 ## 0.8.29 (2021-10-28)
 * prevent not exists `cols` notice
 * if cell type undefined, then parse it as number 

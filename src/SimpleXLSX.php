@@ -613,7 +613,7 @@ class SimpleXLSX {
 		return ! $this->error;
 	}
 
-	public function rows( $worksheetIndex = 0 ) {
+	public function rows( $worksheetIndex = 0, $limit = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
 			return false;
@@ -628,11 +628,17 @@ class SimpleXLSX {
 		}
 
 		$rows = array();
+		$_limit = $limit;
 		for ( $i = 0; $i < $numRows; $i ++ ) {
 			$rows[] = $emptyRow;
+			$_limit--;
+			if ( $_limit === 0 ) {
+				break;
+			}
 		}
 
 		$curR = 0;
+		$_limit = $limit;
 		/* @var SimpleXMLElement $ws */
 		foreach ( $ws->sheetData->row as $row ) {
 			$curC = 0;
@@ -652,12 +658,16 @@ class SimpleXLSX {
 			}
 
 			$curR ++;
+			$_limit--;
+			if ( $_limit === 0 ) {
+				break;
+			}
 		}
 
 		return $rows;
 	}
 	// https://github.com/shuchkin/simplexlsx#gets-extend-cell-info-by--rowsex
-	public function rowsEx( $worksheetIndex = 0 ) {
+	public function rowsEx( $worksheetIndex = 0, $limit = 0 ) {
 
 		if ( ( $ws = $this->worksheet( $worksheetIndex ) ) === false ) {
 			return false;
@@ -680,7 +690,7 @@ class SimpleXLSX {
 				}
 			}
 		}
-
+		$_limit = $limit;
 		for ( $y = 0; $y < $numRows; $y ++ ) {
 			for ( $x = 0; $x < $numCols; $x ++ ) {
 				// 0.6.8
@@ -699,10 +709,15 @@ class SimpleXLSX {
 					'hidden'      => count($hiddenCols) && in_array($x, $hiddenCols, true )
 				);
 			}
+			$_limit--;
+			if ( $_limit === 0 ) {
+				break;
+			}
 		}
 
 
 		$curR = 0;
+		$_limit = $limit;
 
 		foreach ( $ws->sheetData->row as $row ) {
 
@@ -748,6 +763,10 @@ class SimpleXLSX {
 				$curC ++;
 			}
 			$curR ++;
+			$_limit--;
+			if ( $_limit === 0 ) {
+				break;
+			}
 		}
 
 		return $rows;
