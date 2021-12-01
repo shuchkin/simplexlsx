@@ -122,6 +122,7 @@ class SimpleXLSX {
 	public $cellFormats = array();
 	public $datetimeFormat = 'Y-m-d H:i:s';
 	public $debug;
+	public $activeSheet = 0;
 
 	/* @var SimpleXMLElement[] $sheets */
 	protected $sheets;
@@ -512,6 +513,12 @@ class SimpleXLSX {
 
 						break;
 					}
+					// reptile hack :: find active sheet from workbook.xml
+					foreach ( $workbook->bookViews->workbookView  as $s ) {
+				        if ( !empty($s['activeTab'])) {
+							$this->activeSheet = (int) $s['activeTab'];
+				        }
+				    }
 				}
 			}
 		}

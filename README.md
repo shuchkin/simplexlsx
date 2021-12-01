@@ -99,6 +99,7 @@ echo '</pre>';
 ```php
 if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
 	print_r( $xlsx->sheetNames() );
+	print_r( $xlsx->sheetName( $xlsx->activeSheet ) );
 }
 // Sheet numeration started 0
 ```
@@ -109,6 +110,7 @@ Array
     [1] => Sheet2
     [2] => Sheet3
 )
+Sheet2
 ```
 ### Gets extend cell info by ->rowsEx()
 ```php
