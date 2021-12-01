@@ -7,7 +7,7 @@
  *
  * @category   SimpleXLSX
  * @package    SimpleXLSX
- * @copyright  Copyright (c) 2012 - 2020 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
+ * @copyright  Copyright (c) 2012 - 2021 SimpleXLSX (https://github.com/shuchkin/simplexlsx/)
  * @license    MIT
  */
 
