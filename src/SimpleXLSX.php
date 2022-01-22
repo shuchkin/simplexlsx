@@ -570,7 +570,7 @@ class SimpleXLSX {
 			if ( LIBXML_VERSION < 20900 && function_exists('libxml_disable_entity_loader') ) {
 				$_old = libxml_disable_entity_loader();
 			}
-			$entry_xmlobj = simplexml_load_string( $entry_xml );
+			$entry_xmlobj = simplexml_load_string( $entry_xml, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_PARSEHUGE );
 
 			if ( LIBXML_VERSION < 20900 && function_exists('libxml_disable_entity_loader')) {
 				/** @noinspection PhpUndefinedVariableInspection */
