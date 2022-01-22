@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.32 (2022-01-22)
+
+* added LIBXML_COMPACT | LIBXML_PARSEHUGE
+
 ## 0.8.31 (2021-12-01)
 
 * added $xlsx->activeSheet (thx reptile)
