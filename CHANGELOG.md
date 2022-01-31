@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.33 (2022-01-23)
+
+* getting xml error  
+
 ## 0.8.32 (2022-01-22)
 
 * added LIBXML_COMPACT | LIBXML_PARSEHUGE
