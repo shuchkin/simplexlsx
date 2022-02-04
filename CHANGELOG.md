@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.34 (2022-02-04)
+
+* fixed reading from XML datetime as float and datetime as ISO  
+
 ## 0.8.33 (2022-01-23)
 
 * getting xml error  

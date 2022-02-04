@@ -8,7 +8,7 @@
     {
       "name": "Sergey Shuchkin (SMSPILOT)",
       "email": "sergey.shuchkin@gmail.com",
-      "homepage": "http://www.shuchkin.ru/"
+      "homepage": "https://github.com/shuchkin"
     }
   ],
   "autoload": {
@@ -19,6 +19,7 @@
   "require": {
     "ext-simplexml": "*",
     "ext-zlib": "*",
-	"ext-libxml": "*"
+    "ext-libxml": "*",
+    "ext-mbstring": "*"
   }
 }
