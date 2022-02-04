@@ -950,6 +950,12 @@ class SimpleXLSX {
                 }
                 break;
 
+            case 'str': // formula?
+                if ( (string) $cell->v !== '' ) {
+                    $value = (string) $cell->v;
+                }
+                break;
+
             case 'b':
                 // Value is boolean
                 $value = (string) $cell->v;
@@ -974,17 +980,20 @@ class SimpleXLSX {
                 if ( (string) $cell->v !== '' ) {
                     $value = (string) $cell->v;
                 }
-
                 break;
+
             case 'D':
                 // Date as float
                 if ( ! empty( $cell->v ) ) {
                     $value = $this->datetimeFormat ? gmdate( $this->datetimeFormat, $this->unixstamp( (float) $cell->v ) ) : (float) $cell->v;
                 }
                 break;
+
             case 'd':
                 // Date as ISO YYYY-MM-DD
-                $value = (string) $cell->v;
+                if ( (string) $cell->v !== '' ) {
+                    $value = (string) $cell->v;
+                }
                 break;
 
             default:
