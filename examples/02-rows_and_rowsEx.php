@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection ForgottenDebugOutputInspection */
+
+use Shuchkin\SimpleXLSX;
 
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', true);

@@ -1,4 +1,7 @@
-<?php
+<?php /** @noinspection ForgottenDebugOutputInspection */
+
+use Shuchkin\SimpleXLSX;
+
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', true);
 
@@ -8,7 +11,7 @@ echo '<h1>Rows with header values as keys</h1>';
 if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
 
 	// Produce array keys from the array values of 1st array element
-	$header_values = $rows = [];
+	$header_values = $rows = array();
 
 	foreach ( $xlsx->rows() as $k => $r ) {
 		if ( $k === 0 ) {

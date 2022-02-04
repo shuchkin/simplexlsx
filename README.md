@@ -17,10 +17,10 @@ See also:<br/>
 
 ## Basic Usage
 ```php
-if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parse('book.xlsx') ) {
 	print_r( $xlsx->rows() );
 } else {
-	echo SimpleXLSX::parseError();
+	echo Shuchkin\SimpleXLSX::parseError();
 }
 ```
 ```
@@ -47,9 +47,9 @@ Array
 )
 ```
 ```
-// SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or false)
-// SimpleXLSX::parseFile( $filename, $debug = false ): SimpleXLSX (or false)
-// SimpleXLSX::parseData( $data, $debug = false ): SimpleXLSX (or false)
+// Shuchkin\SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or false)
+// Shuchkin\SimpleXLSX::parseFile( $filename, $debug = false ): SimpleXLSX (or false)
+// Shuchkin\SimpleXLSX::parseData( $data, $debug = false ): SimpleXLSX (or false)
 ```
 
 ## Installation
@@ -65,24 +65,24 @@ or download class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/
 ## Examples
 ### XLSX to html table
 ```php
-echo SimpleXLSX::parse('book.xlsx')->toHTML();
+echo Shuchkin\SimpleXLSX::parse('book.xlsx')->toHTML();
 ```
 or
 ```php
-if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parse('book.xlsx') ) {
 	echo '<table border="1" cellpadding="3" style="border-collapse: collapse">';
 	foreach( $xlsx->rows() as $r ) {
 		echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';
 	}
 	echo '</table>';
 } else {
-	echo SimpleXLSX::parseError();
+	echo Shuchkin\SimpleXLSX::parseError();
 }
 ```
 ### XLSX read cells, out commas and bold headers
 ```php
 echo '<pre>';
-if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
 	foreach ( $xlsx->rows() as $r => $row ) {
 		foreach ( $row as $c => $cell ) {
 			echo ($c > 0) ? ', ' : '';
@@ -91,13 +91,13 @@ if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
 		echo '<br/>';
 	}
 } else {
-	echo SimpleXLSX::parseError();
+	echo Shuchkin\SimpleXLSX::parseError();
 }
 echo '</pre>';
 ```
 ### XLSX get sheet names and sheet indexes
 ```php
-if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
 	print_r( $xlsx->sheetNames() );
 	print_r( $xlsx->sheetName( $xlsx->activeSheet ) );
 }
@@ -114,7 +114,7 @@ Sheet2
 ```
 ### Gets extend cell info by ->rowsEx()
 ```php
-print_r( SimpleXLSX::parse('book.xlsx')->rowsEx() );
+print_r( Shuchkin\SimpleXLSX::parse('book.xlsx')->rowsEx() );
 ```
 ```
 Array
@@ -147,32 +147,32 @@ Array
 ```
 ### Select Sheet
 ```php
-$xlsx = SimpleXLSX::parse('book.xlsx');
+$xlsx = Shuchkin\SimpleXLSX::parse('book.xlsx');
 print_r( $xlsx->rows(1) ); // Sheet numeration started 0, we select second worksheet
 ```
 ### Get sheet by index 
 ```php
-$xlsx = SimpleXLSX::parse('book.xlsx');	
+$xlsx = Shuchkin\SimpleXLSX::parse('book.xlsx');	
 echo 'Sheet Name 2 = '.$xlsx->sheetName(1);
 ```
 ### XLSX::parse remote data
 ```php
-if ( $xlsx = SimpleXLSX::parse('http://www.example.com/example.xlsx' ) ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parse('https://www.example.com/example.xlsx' ) ) {
 	$dim = $xlsx->dimension(1); // don't trust dimension extracted from xml
 	$num_cols = $dim[0];
 	$num_rows = $dim[1];
 	echo $xlsx->sheetName(1).':'.$num_cols.'x'.$num_rows;
 } else {
-	echo SimpleXLSX::parseError();
+	echo Shuchkin\SimpleXLSX::parseError();
 }
 ```
 ### XLSX::parse memory data
 ```php
 // For instance $data is a data from database or cache    
-if ( $xlsx = SimpleXLSX::parseData( $data ) ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parseData( $data ) ) {
 	print_r( $xlsx->rows() );
 } else {
-	echo SimpleXLSX::parseError();
+	echo Shuchkin\SimpleXLSX::parseError();
 }
 ```
 ### Get Cell (slow)
@@ -181,7 +181,7 @@ echo $xlsx->getCell(0, 'B2'); // The Hobbit
 ``` 
 ### DateTime helpers
 ```php
-// default SimpleXLSX datetime format YYYY-MM-DD HH:MM:SS (MySQL)
+// default SimpleXLSX datetime format is YYYY-MM-DD HH:MM:SS (ISO, MySQL)
 echo $xlsx->getCell(0,'C2'); // 2016-04-12 13:41:00
 
 // custom datetime format
@@ -202,7 +202,7 @@ echo gmdate('H:i:s', $xlsx->unixstamp( $xd )); // 13:41:00
 ```
 ### Rows with header values as keys
 ```php
-if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parse('books.xlsx')) {
 	// Produce array keys from the array values of 1st array element
 	$header_values = $rows = [];
 	foreach ( $xlsx->rows() as $k => $r ) {
@@ -241,14 +241,16 @@ Array
 ini_set('error_reporting', E_ALL );
 ini_set('display_errors', 1 );
 
-if ( $xlsx = SimpleXLSX::parseFile('books.xlsx', true ) ) {
+if ( $xlsx = Shuchkin\SimpleXLSX::parseFile('books.xlsx', true ) ) {
 	echo $xlsx->toHTML();
 } else {
-	echo SimpleXLSX::parseError();
+	echo Shuchkin\SimpleXLSX::parseError();
 }
 ```
 ### Classic OOP style 
 ```php
+use Shuchkin\SimpleXLSX;
+
 $xlsx = new SimpleXLSX('books.xlsx'); // try...catch
 if ( $xlsx->success() ) {
 	print_r( $xlsx->rows() );
@@ -259,7 +261,7 @@ if ( $xlsx->success() ) {
 More examples [here](https://github.com/shuchkin/simplexlsx/tree/master/examples)
 
 ### Error Codes
-SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
+Shuchkin\SimpleXLSX::ParseErrno(), $xlsx->errno()<br/>
 <table>
 <tr><th>code</th><th>message</th><th>comment</th></tr>
 <tr><td>1</td><td>File not found</td><td>Where file? UFO?</td></tr>

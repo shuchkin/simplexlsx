@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection MultiAssignmentUsageInspection */
+
+use Shuchkin\SimpleXLSX;
 
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', true);
@@ -21,7 +23,7 @@ if ( $xlsx = SimpleXLSX::parse('countries_and_population.xlsx')) {
 
 	echo '<h2>'.$xlsx->sheetName( 0 ).'</h2>';
 	echo '<table border=1>';
-	foreach ( $xlsx->rows( 0 ) as $r ) {
+	foreach ( $xlsx->rows() as $r ) {
 		echo '<tr>';
 		for ( $i = 0; $i < $num_cols; $i ++ ) {
 			echo '<td>' . ( ! empty( $r[ $i ] ) ? $r[ $i ] : '&nbsp;' ) . '</td>';
