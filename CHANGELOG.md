@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.11 (2022-02-05)
+
+* type "str" (formula and value)
+
 ## 0.9.10 (2022-02-04)
 
 * class namespaced as Shuchkin\SimpleXLSX
