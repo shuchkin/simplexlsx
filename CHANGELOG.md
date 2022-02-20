@@ -3,7 +3,7 @@
 ## 1.0.10 (2022-02-21)
 
 * 1.0 VERSION: Memory and styles
-* PHP 5.5+, 4 spaces indents
+* PHP 5.5+, namespace `Shuchkin`, 4 spaces indents
 * memory: rows() and rowsEx returns Generator now
 * memory: rowsEx() huge memory usage fixed (in my tests from 880 MB, to 162 MB now)
 * memory: added SimpleXLSXEx companion class for extract styles, used in rowsEx & toHTMLEx() only
