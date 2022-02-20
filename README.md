@@ -45,6 +45,16 @@ Array
     [4] => USA
 )
 ```
+## Installation
+The recommended way to install this library is [through Composer](https://getcomposer.org).
+[New to Composer?](https://getcomposer.org/doc/00-intro.md)
+
+This will install the latest supported version:
+```bash
+$ composer require shuchkin/simplexlsx
+```
+or download class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/SimpleXLSX.php)
+
 ## Basic methods
 ```
 SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or false)
@@ -55,18 +65,9 @@ $xlsx->rows($worksheetIndex = 0, $limit = 0): Generator
 $xlsx->toArray($worksheetIndex = 0, $limit = 0): array
 $xlsx->toHTML($worksheetIndex = 0, $limit = 0): string
 $xlsx->rowsEx($worksheetIndex = 0, $limit = 0): Generator
+$xlsx->toArrayEx($worksheetIndex = 0, $limit = 0): array
 $xlsx->toHTMLEx($worksheetIndex = 0, $limit = 0): string
 ```
-
-## Installation
-The recommended way to install this library is [through Composer](https://getcomposer.org).
-[New to Composer?](https://getcomposer.org/doc/00-intro.md)
-
-This will install the latest supported version:
-```bash
-$ composer require shuchkin/simplexlsx
-```
-or download class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/SimpleXLSX.php)
 
 ## Examples
 ### XLSX to html table
