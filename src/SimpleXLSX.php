@@ -22,7 +22,9 @@ use SimpleXMLElement;
  *
  * Example 1:
  * if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
- *   print_r( $xlsx->rows() );
+ *   foreach ($xlsx->rows() as $r) {
+ *     print_r( $r );
+ *   }
  * } else {
  *   echo SimpleXLSX::parseError();
  * }
@@ -36,11 +38,15 @@ use SimpleXMLElement;
  *
  * Example 3: rowsEx
  * $xlsx = SimpleXLSX::parse('book.xlsx');
- * print_r( $xlsx->rowsEx() );
+ * foreach ( $xlsx->rowsEx() as $r ) {
+ *   print_r( $r );
+ * }
  *
  * Example 4: select worksheet
  * $xlsx = SimpleXLSX::parse('book.xlsx');
- * print_r( $xlsx->rows(1) ); // second worksheet
+ * foreach( $xlsx->rows(1) as $r  ) { // second worksheet
+ *   print_t( $r );
+ * }
  *
  * Example 5: IDs and worksheet names
  * $xlsx = SimpleXLSX::parse('book.xlsx');
@@ -66,7 +72,7 @@ use SimpleXMLElement;
  * Example 9: old style
  * $xlsx = new SimpleXLSX('book.xlsx');
  * if ( $xlsx->success() ) {
- *   print_r( $xlsx->rows() );
+ *   print_r( $xlsx->toArray() );
  * } else {
  *   echo 'xlsx error: '.$xlsx->error();
  * }
