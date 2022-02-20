@@ -8,19 +8,18 @@ ini_set('display_errors', true);
 require_once __DIR__.'/../src/SimpleXLSX.php';
 
 echo '<h1>Rows with header values as keys</h1>';
-if ( $xlsx = SimpleXLSX::parse('books.xlsx')) {
+if ($xlsx = SimpleXLSX::parse('books.xlsx')) {
+    // Produce array keys from the array values of 1st array element
+    $header_values = $rows = array();
 
-	// Produce array keys from the array values of 1st array element
-	$header_values = $rows = array();
-
-	foreach ( $xlsx->rows() as $k => $r ) {
-		if ( $k === 0 ) {
-			$header_values = $r;
-			continue;
-		}
-		$rows[] = array_combine( $header_values, $r );
-	}
-	print_r( $rows );
+    foreach ($xlsx->rows() as $k => $r) {
+        if ($k === 0) {
+            $header_values = $r;
+            continue;
+        }
+        $rows[] = array_combine($header_values, $r);
+    }
+    print_r($rows);
 /*
 Array
 (

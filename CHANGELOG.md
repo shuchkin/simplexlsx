@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.10 (2022-02-21)
+
+* 1.0 VERSION: Memory and styles
+* PHP 5.5+, 4 spaces indents
+* memory: rows() and rowsEx returns Generator now
+* memory: rowsEx() huge memory usage fixed (in my tests from 880 MB, to 162 MB now)
+* memory: added SimpleXLSXEx companion class for extract styles, used in rowsEx & toHTMLEx() only
+* styles: alignment, fonts, fills, borders
+* styles: rowsEx() return style info, cell width & height, css to apply in TD tag 
+* styles: added toHTMLEx() to export worksheet to HTML formatted table
+* added toArray() & toArrayEx() helpers
+* fixed author in license.md
+* fixed examples
+
 ## 0.9.11 (2022-02-05)
 
 * type "str" (formula and value)
