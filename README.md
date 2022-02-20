@@ -57,13 +57,15 @@ or download class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/
 
 ## Basic methods
 ```
+// open
 SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or false)
 SimpleXLSX::parseFile( $filename, $debug = false ): SimpleXLSX (or false)
 SimpleXLSX::parseData( $data, $debug = false ): SimpleXLSX (or false)
-
+// simple
 $xlsx->rows($worksheetIndex = 0, $limit = 0): Generator
 $xlsx->toArray($worksheetIndex = 0, $limit = 0): array
 $xlsx->toHTML($worksheetIndex = 0, $limit = 0): string
+// extended
 $xlsx->rowsEx($worksheetIndex = 0, $limit = 0): Generator
 $xlsx->toArrayEx($worksheetIndex = 0, $limit = 0): array
 $xlsx->toHTMLEx($worksheetIndex = 0, $limit = 0): string
