@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.10 (2022-02-21)
+## 1.0.12 (2022-02-21)
 
 * 1.0 VERSION: Memory and styles
 * PHP 5.5+, namespace `Shuchkin`, 4 spaces indents
