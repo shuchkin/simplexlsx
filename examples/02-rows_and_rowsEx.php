@@ -12,13 +12,13 @@ if ($xlsx = SimpleXLSX::parse('books.xlsx')) {
     // ->rows()
     echo '<h2>$xlsx->rows()</h2>';
     echo '<pre>';
-    print_r($xlsx->toArray());
+    print_r($xlsx->rows());
     echo '</pre>';
 
     // ->rowsEx();
     echo '<h2>$xlsx->rowsEx()</h2>';
     echo '<pre>';
-    print_r($xlsx->toArrayEx());
+    print_r($xlsx->rowsEx());
     echo '</pre>';
 } else {
     echo SimpleXLSX::parseError();

@@ -1016,7 +1016,7 @@ class SimpleXLSX
     public function toHTML($worksheetIndex = 0)
     {
         $s = '<table class=excel>';
-        foreach ($this->rows($worksheetIndex) as $r) {
+        foreach ($this->readRows($worksheetIndex) as $r) {
             $s .= '<tr>';
             foreach ($r as $c) {
                 $s .= '<td nowrap>' . ($c === '' ? '&nbsp' : htmlspecialchars($c, ENT_QUOTES)) . '</td>';
@@ -1031,7 +1031,7 @@ class SimpleXLSX
     {
         $s = '<table class=excel>';
         $y = 0;
-        foreach ($this->rowsEx($worksheetIndex) as $r) {
+        foreach ($this->readRowsEx($worksheetIndex) as $r) {
             $s .= '<tr>';
             $x = 0;
             foreach ($r as $c) {
@@ -1055,14 +1055,17 @@ class SimpleXLSX
 
         return $s;
     }
-
+    public function rows($worksheetIndex = 0, $limit = 0)
+    {
+        return iterator_to_array($this->readRows($worksheetIndex, $limit), false);
+    }
     // thx Gonzo
     /**
      * @param $worksheetIndex
      * @param $limit
      * @return \Generator
      */
-    public function rows($worksheetIndex = 0, $limit = 0)
+    public function readRows($worksheetIndex = 0, $limit = 0)
     {
 
         if (($ws = $this->worksheet($worksheetIndex)) === false) {
@@ -1120,28 +1123,24 @@ class SimpleXLSX
             }
         }
     }
-    public function toArray($worksheetIndex = 0, $limit = 0)
+
+    public function rowsEx($worksheetIndex = 0, $limit = 0)
     {
-        return iterator_to_array($this->rows($worksheetIndex, $limit), false);
-    }
-    public function toArrayEx($worksheetIndex = 0, $limit = 0)
-    {
-        return iterator_to_array($this->rowsEx($worksheetIndex, $limit), false);
+        return iterator_to_array($this->readRowsEx($worksheetIndex, $limit), false);
     }
     // https://github.com/shuchkin/simplexlsx#gets-extend-cell-info-by--rowsex
      /**
      * @param $worksheetIndex
      * @param $limit
      * @return \Generator|null
-      * @noinspection DuplicatedCode
       */
-    public function rowsEx($worksheetIndex = 0, $limit = 0)
+    public function readRowsEx($worksheetIndex = 0, $limit = 0)
     {
         if (!$this->rowsExReader) {
             require_once __DIR__ . '/SimpleXLSXEx.php';
             $this->rowsExReader = new SimpleXLSXEx($this);
         }
-        return $this->rowsExReader->rowsEx($worksheetIndex, $limit);
+        return $this->rowsExReader->readRowsEx($worksheetIndex, $limit);
     }
 
     /**
@@ -1183,7 +1182,7 @@ class SimpleXLSX
         return $letter;
     }
 
-    public function sheets()
+    public function getSheets()
     {
         return $this->sheets;
     }

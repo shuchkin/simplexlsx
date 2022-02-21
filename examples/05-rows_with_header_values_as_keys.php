@@ -10,7 +10,7 @@ require_once __DIR__.'/../src/SimpleXLSX.php';
 echo '<h1>Rows with header values as keys</h1>';
 if ($xlsx = SimpleXLSX::parse('books.xlsx')) {
     // Produce array keys from the array values of 1st array element
-    $header_values = $rows = array();
+    $header_values = $rows = [];
 
     foreach ($xlsx->rows() as $k => $r) {
         if ($k === 0) {

@@ -17,7 +17,7 @@ if (isset($_FILES['file'])) {
         $dim = $xlsx->dimension();
         $cols = $dim[0];
 
-        foreach ($xlsx->rows() as $k => $r) {
+        foreach ($xlsx->readRows() as $k => $r) {
             //      if ($k == 0) continue; // skip first row
             echo '<tr>';
             for ($i = 0; $i < $cols; $i ++) {

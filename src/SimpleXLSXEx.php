@@ -1,4 +1,4 @@
-<?php /** @noinspection DuplicatedCode */
+<?php
 
 /** @noinspection MultiAssignmentUsageInspection */
 
@@ -386,7 +386,7 @@ class SimpleXLSXEx
         }
     }
 
-    public function rowsEx($worksheetIndex = 0, $limit = 0)
+    public function readRowsEx($worksheetIndex = 0, $limit = 0)
     {
         if (($ws = $this->xlsx->worksheet($worksheetIndex)) === false) {
             return null;

@@ -4,13 +4,12 @@
 
 * 1.0 VERSION: Memory and styles
 * PHP 5.5+, namespace `Shuchkin`, 4 spaces indents
-* memory: rows() and rowsEx returns Generator now
-* memory: rowsEx() huge memory usage fixed (in my tests from 880 MB, to 162 MB now)
+* memory: added readRows() and readRowsEx() returns Generator. Help to read huge files
+* memory: in my tests ~100k rowsEx() used 880 MB, readRowsEx() used 162 MB
 * memory: added SimpleXLSXEx companion class for extract styles, used in rowsEx & toHTMLEx() only
 * styles: alignment, fonts, fills, borders
 * styles: rowsEx() return style info, cell width & height, css to apply in TD tag 
 * styles: added toHTMLEx() to export worksheet to HTML formatted table
-* added toArray() & toArrayEx() helpers
 * fixed author in license.md
 * fixed examples
 

@@ -20,8 +20,7 @@ See also:<br/>
 use Shuchkin\SimpleXLSX;
 
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
-    foreach( $xlsx->rows() as $r ) {
-        print_r( $r );
+    print_r( $xlsx->rows() );
     }
 } else {
     echo SimpleXLSX::parseError();
@@ -30,19 +29,24 @@ if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
 ```
 Array
 (
-    [0] => ISBN
-    [1] => title
-    [2] => author
-    [3] => publisher
-    [4] => ctry
-)
-Array
-(
-    [0] => 618260307
-    [1] => The Hobbit
-    [2] => J. R. R. Tolkien
-    [3] => Houghton Mifflin
-    [4] => USA
+    [0] => Array
+        (
+            [0] => ISBN
+            [1] => title
+            [2] => author
+            [3] => publisher
+            [4] => ctry
+        )
+
+    [1] => Array
+        (
+            [0] => 618260307
+            [1] => The Hobbit
+            [2] => J. R. R. Tolkien
+            [3] => Houghton Mifflin
+            [4] => USA
+        )
+
 )
 ```
 ## Installation
@@ -62,12 +66,12 @@ SimpleXLSX::parse( $filename, $is_data = false, $debug = false ): SimpleXLSX (or
 SimpleXLSX::parseFile( $filename, $debug = false ): SimpleXLSX (or false)
 SimpleXLSX::parseData( $data, $debug = false ): SimpleXLSX (or false)
 // simple
-$xlsx->rows($worksheetIndex = 0, $limit = 0): Generator
-$xlsx->toArray($worksheetIndex = 0, $limit = 0): array
+$xlsx->rows($worksheetIndex = 0, $limit = 0): array
+$xlsx->readRows($worksheetIndex = 0, $limit = 0): Generator - helps read huge xlsx
 $xlsx->toHTML($worksheetIndex = 0, $limit = 0): string
 // extended
-$xlsx->rowsEx($worksheetIndex = 0, $limit = 0): Generator
-$xlsx->toArrayEx($worksheetIndex = 0, $limit = 0): array
+$xlsx->rowsEx($worksheetIndex = 0, $limit = 0): array
+$xlsx->readRowsEx($worksheetIndex = 0, $limit = 0): Generator - helps read huge xlsx with styles
 $xlsx->toHTMLEx($worksheetIndex = 0, $limit = 0): string
 ```
 
@@ -94,21 +98,17 @@ if ( $xlsx = SimpleXLSX::parse('book_styled.xlsx') ) {
     echo $xlsx->toHTMLEx();
 }
 ```
-### XLSX read cells, out commas and bold headers
+### XLSX read huge file, xlsx to csv
 ```php
-echo '<pre>';
 if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
-	foreach ( $xlsx->rows() as $r => $row ) {
-		foreach ( $row as $c => $cell ) {
-			echo ($c > 0) ? ', ' : '';
-			echo ( $r === 0 ) ? '<b>'.$cell.'</b>' : $cell;
-		}
-		echo '<br/>';
+    $f = fopen('book.csv', 'wb');
+	foreach ( $xlsx->readRows() as $r ) {
+		fwrite($f, implode(',',$r) . PHP_EOL);
 	}
+	fclose($f);
 } else {
 	echo SimpleXLSX::parseError();
 }
-echo '</pre>';
 ```
 ### XLSX get sheet names and sheet indexes
 ```php
@@ -132,45 +132,45 @@ Sheet2
 ### Using rowsEx() to extract cell info
 ```php
 $xlsx = SimpleXLSX::parse('book.xlsx');
-// rows() & rowsEx() return Generator
-foreach( $xlsx->rowsEx() as $r ) {
-    print_r( $r );
-}
+print_r( $xlsx->rowsEx() );
+
 ```
 ```
 Array
 (
     [0] => Array
         (
-            [type] => s
-            [name] => A1
-            [value] => ISBN
-            [href] => 
-            [f] => 
-            [format] => 
-            [s] => 0
-            [css] => color: #000000;font-family: Calibri;font-size: 17px;
-            [r] => 1
-            [hidden] =>
-            [width] => 13.7109375
-            [height] => 0
-        )
-
-    [1] => Array
-        (
-            [type] => 
-            [name] => B1
-            [value] => 2016-04-12 13:41:00
-            [href] => 
-            [f] => 
-            [format] => m/d/yy h:mm
-            [s] => 0
-            [css] => color: #000000;font-family: Calibri;font-size: 17px;            
-            [r] => 2
-            [hidden] => 1
-            [width] => 16.5703125
-            [height] => 0
-        )
+            [0] => Array
+                (
+                    [type] => s
+                    [name] => A1
+                    [value] => ISBN
+                    [href] => 
+                    [f] => 
+                    [format] => 
+                    [s] => 0
+                    [css] => color: #000000;font-family: Calibri;font-size: 17px;
+                    [r] => 1
+                    [hidden] =>
+                    [width] => 13.7109375
+                    [height] => 0
+                )
+        
+            [1] => Array
+                (
+                    [type] => 
+                    [name] => B1
+                    [value] => 2016-04-12 13:41:00
+                    [href] => 
+                    [f] => 
+                    [format] => m/d/yy h:mm
+                    [s] => 0
+                    [css] => color: #000000;font-family: Calibri;font-size: 17px;            
+                    [r] => 2
+                    [hidden] => 1
+                    [width] => 16.5703125
+                    [height] => 0
+                )
 ```
 <!--suppress HttpUrlsUsage -->
 <table>
@@ -214,7 +214,7 @@ if ( $xlsx = SimpleXLSX::parse('https://www.example.com/example.xlsx' ) ) {
 ```php
 // For instance $data is a data from database or cache    
 if ( $xlsx = SimpleXLSX::parseData( $data ) ) {
-	print_r( $xlsx->toArray() );
+	print_r( $xlsx->rows() );
 } else {
 	echo SimpleXLSX::parseError();
 }
