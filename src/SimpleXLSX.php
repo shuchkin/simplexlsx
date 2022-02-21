@@ -72,7 +72,7 @@ use SimpleXMLElement;
  * Example 9: old style
  * $xlsx = new SimpleXLSX('book.xlsx');
  * if ( $xlsx->success() ) {
- *   print_r( $xlsx->toArray() );
+ *   print_r( $xlsx->rows() );
  * } else {
  *   echo 'xlsx error: '.$xlsx->error();
  * }
