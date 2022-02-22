@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.12 (2022-02-22)
+## 1.0.13 (2022-02-22)
 
 * fixed basic usage example
 
