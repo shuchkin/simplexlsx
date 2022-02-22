@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.12 (2022-02-22)
+
+* fixed basic usage example
+
 ## 1.0.12 (2022-02-21)
 
 * 1.0 VERSION: Memory and styles
