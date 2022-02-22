@@ -21,7 +21,6 @@ use Shuchkin\SimpleXLSX;
 
 if ( $xlsx = SimpleXLSX::parse('book.xlsx') ) {
     print_r( $xlsx->rows() );
-    }
 } else {
     echo SimpleXLSX::parseError();
 }
