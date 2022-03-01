@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.14 (2022-03-01)
+
+* PHP 5 generators capability, thx [maxiben](https://github.com/maxiben)
+
 ## 1.0.13 (2022-02-22)
 
 * fixed basic usage example

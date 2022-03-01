@@ -389,7 +389,7 @@ class SimpleXLSXEx
     public function readRowsEx($worksheetIndex = 0, $limit = 0)
     {
         if (($ws = $this->xlsx->worksheet($worksheetIndex)) === false) {
-            return null;
+            return;
         }
 
         $dim = $this->xlsx->dimension($worksheetIndex);
@@ -468,7 +468,7 @@ class SimpleXLSXEx
 
                         $_limit--;
                         if ($_limit === 0) {
-                            return null;
+                            return;
                         }
                     }
                 }
@@ -521,7 +521,7 @@ class SimpleXLSXEx
             $curR++;
             $_limit--;
             if ($_limit === 0) {
-                return null;
+                return;
             }
         }
     }

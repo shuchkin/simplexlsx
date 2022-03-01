@@ -1069,7 +1069,7 @@ class SimpleXLSX
     {
 
         if (($ws = $this->worksheet($worksheetIndex)) === false) {
-            return null;
+            return;
         }
         $dim = $this->dimension($worksheetIndex);
         $numCols = $dim[0];
@@ -1099,7 +1099,7 @@ class SimpleXLSX
                         $curR++;
                         $_limit--;
                         if ($_limit === 0) {
-                            return null;
+                            return;
                         }
                     }
                 }
@@ -1111,7 +1111,7 @@ class SimpleXLSX
             $curR++;
             $_limit--;
             if ($_limit === 0) {
-                return null;
+                return;
             }
         }
         while ($curR < $numRows) {
@@ -1119,7 +1119,7 @@ class SimpleXLSX
             $curR++;
             $_limit--;
             if ($_limit === 0) {
-                return null;
+                return;
             }
         }
     }
