@@ -56,7 +56,7 @@ This will install the latest supported version:
 ```bash
 $ composer require shuchkin/simplexlsx
 ```
-or download class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/SimpleXLSX.php)
+or download PHP 5.5+ class [here](https://github.com/shuchkin/simplexlsx/blob/master/src/SimpleXLSX.php)
 
 ## Basic methods
 ```

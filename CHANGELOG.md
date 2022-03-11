@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.15 (2022-03-11)
+
+* Added requirements PHP 5.5+ in composer.json and README.md
+
 ## 1.0.14 (2022-03-01)
 
 * PHP 5 generators capability, thx [maxiben](https://github.com/maxiben)

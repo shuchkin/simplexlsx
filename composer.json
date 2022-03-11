@@ -17,6 +17,7 @@
     ]
   },
   "require": {
+    "php": ">=5.5",
     "ext-simplexml": "*",
     "ext-zlib": "*",
     "ext-libxml": "*",
