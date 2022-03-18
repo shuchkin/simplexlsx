@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.16 (2022-03-18)
+
+* fixed rowsEx(), _format_ returns now
+
 ## 1.0.15 (2022-03-11)
 
 * Added requirements PHP 5.5+ in composer.json and README.md

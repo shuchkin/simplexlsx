@@ -549,6 +549,7 @@ class SimpleXLSXEx
             }
         }
         $st = &$this->xlsx->cellFormats[$r['s']];
+        $r['format'] = $st['format'];
         $r['css'] = &$this->css[ $r['s'] ];
         if ($r['value'] !== '' && !$st['align'] && !in_array($r['type'], ['s','str','inlineStr','e'], true)) {
             $r['css'] .= 'text-align: right;';
