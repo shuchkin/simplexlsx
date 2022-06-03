@@ -863,13 +863,11 @@ class SimpleXLSX
                 $idx = $this->getIndex((string)$c['r']);
                 $x = $idx[0];
                 $y = $idx[1];
-                if ($x > 0) {
-                    if ($x > $maxC) {
-                        $maxC = $x;
-                    }
-                    if ($y > $maxR) {
-                        $maxR = $y;
-                    }
+                if ($x > $maxC) {
+                    $maxC = $x;
+                }
+                if ($y > $maxR) {
+                    $maxR = $y;
                 }
             }
         }
