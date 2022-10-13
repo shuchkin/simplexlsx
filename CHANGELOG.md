@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.17 (2022-10-13)
+
+* fixed readRowsEx (Undefined index: fontId)
+
 ## 1.0.16 (2022-03-18)
 
 * fixed rowsEx(), _format_ returns now

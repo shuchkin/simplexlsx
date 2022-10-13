@@ -145,7 +145,7 @@ class SimpleXLSXEx
                 if (isset($v->u)) {
                     $u = isset($v->u['val']) ? (string) $v->u['val'] : 'single';
                 }
-                $this->fonts[] = [
+                $f = [
                     'b' => isset($v->b) && ($v->b['val'] === null || $v->b['val']),
                     'i' => isset($v->i) && ($v->i['val'] === null || $v->i['val']),
                     'u' => $u,
@@ -157,6 +157,7 @@ class SimpleXLSXEx
                     'charset' => isset($v->charset['val']) ? (int) $v->charset['val'] : 1,
                     'scheme' => isset($v->scheme['val']) ? (string) $v->scheme['val'] : 'minor'
                 ];
+                $this->fonts[] = $f;
             }
         }
     }
@@ -294,19 +295,29 @@ class SimpleXLSXEx
                 $cf['valign'] = $valign;
 
                 // font
-                $cf['font'] = $this->fonts[ $cf['fontId'] ]['name'];
-                $cf['color'] = $this->fonts[ $cf['fontId'] ]['color'];
-                $cf['f-size'] = $this->fonts[ $cf['fontId'] ]['sz'];
-                $cf['f-b'] = $this->fonts[ $cf['fontId'] ]['b'];
-                $cf['f-i'] = $this->fonts[ $cf['fontId'] ]['i'];
-                $cf['f-u'] = $this->fonts[ $cf['fontId'] ]['u'];
-                $cf['f-strike'] = $this->fonts[ $cf['fontId'] ]['strike'];
+                if (isset($cf['fontId'])) {
+                    $cf['font'] = $this->fonts[$cf['fontId']]['name'];
+                    $cf['color'] = $this->fonts[$cf['fontId']]['color'];
+                    $cf['f-size'] = $this->fonts[$cf['fontId']]['sz'];
+                    $cf['f-b'] = $this->fonts[$cf['fontId']]['b'];
+                    $cf['f-i'] = $this->fonts[$cf['fontId']]['i'];
+                    $cf['f-u'] = $this->fonts[$cf['fontId']]['u'];
+                    $cf['f-strike'] = $this->fonts[$cf['fontId']]['strike'];
+                } else {
+                    $cf['font'] = null;
+                    $cf['color'] = null;
+                    $cf['f-size'] = null;
+                    $cf['f-b'] = null;
+                    $cf['f-i'] = null;
+                    $cf['f-u'] = null;
+                    $cf['f-strike'] = null;
+                }
 
                 // fill
-                $cf['bgcolor'] = $this->fills[ $cf['fillId'] ]['fgcolor'];
+                $cf['bgcolor'] = isset($cf['fillId']) ? $this->fills[ $cf['fillId'] ]['fgcolor'] : null;
 
                 // borders
-                if (isset($this->borders[ $cf['borderId'] ])) {
+                if (isset($cf['borderId'], $this->borders[ $cf['borderId'] ])) {
                     $border = $this->borders[ $cf['borderId'] ];
 
                     $borders = ['left', 'right', 'top', 'bottom'];
@@ -324,6 +335,11 @@ class SimpleXLSXEx
                             $cf['b-' . $b.'-style'] = 'solid';
                         }
                     }
+                } else {
+                    $cf['b-top-style'] = null;
+                    $cf['b-right-style'] = null;
+                    $cf['b-bottom-style'] = null;
+                    $cf['b-left-style'] = null;
                 }
 
                 $css = '';

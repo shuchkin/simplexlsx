@@ -858,17 +858,28 @@ class SimpleXLSX
 
         // slow method
         $maxC = $maxR = 0;
+        $iR = -1;
         foreach ($ws->sheetData->row as $row) {
+            $iR++;
+            $iC = -1;
             foreach ($row->c as $c) {
+                $iC++;
                 $idx = $this->getIndex((string)$c['r']);
                 $x = $idx[0];
                 $y = $idx[1];
-                if ($x > 0) {
+                if ($x > -1) {
                     if ($x > $maxC) {
                         $maxC = $x;
                     }
                     if ($y > $maxR) {
                         $maxR = $y;
+                    }
+                } else {
+                    if ($iC > $maxC) {
+                        $maxC = $iC;
+                    }
+                    if ($iR > $maxR) {
+                        $maxR = $iR;
                     }
                 }
             }
