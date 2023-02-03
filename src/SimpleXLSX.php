@@ -137,8 +137,8 @@ class SimpleXLSX
 
     /* @var SimpleXMLElement[] $sheets */
     protected $sheets;
-    protected $sheetNames = [];
     protected $sheetFiles = [];
+    protected $sheetMetaData = [];
     // scheme
     public $styles;
     protected $hyperlinks;
@@ -425,7 +425,11 @@ class SimpleXLSX
 
                     $index = 0;
                     foreach ($workbook->sheets->sheet as $s) {
-                        $this->sheetNames[$index] = (string)$s['name'];
+                        $a = [];
+                        foreach ($s->attributes() as $k => $v) {
+                            $a[(string)$k] = (string)$v;
+                        }
+                        $this->sheetMetaData[$index] = $a;
                         $index_rId[$index] = (string)$s['id'];
                         $index++;
                     }
@@ -920,7 +924,7 @@ class SimpleXLSX
             if ($s > 0 && isset($this->cellFormats[$s])) {
                 if (array_key_exists('format', $this->cellFormats[$s])) {
                     $format = $this->cellFormats[$s]['format'];
-                    if (preg_match('/(m|AM|PM)/', preg_replace('/\"[^"]+\"/', '', $format))) { // [mm]onth,AM|PM
+                    if (preg_match('/[mM]/', preg_replace('/\"[^"]+\"/', '', $format))) { // [mm]onth,AM|PM
                         $dataType = 'D';
                     }
                 } else {
@@ -1205,8 +1209,9 @@ class SimpleXLSX
 
     public function sheetName($worksheetIndex)
     {
-        if (isset($this->sheetNames[$worksheetIndex])) {
-            return $this->sheetNames[$worksheetIndex];
+        $sn = $this->sheetNames();
+        if (isset($sn[$worksheetIndex])) {
+            return $sn[$worksheetIndex];
         }
 
         return false;
@@ -1214,8 +1219,22 @@ class SimpleXLSX
 
     public function sheetNames()
     {
-
-        return $this->sheetNames;
+        $a = [];
+        foreach ($this->sheetMetaData as $k => $v) {
+            $a[$k] = $v['name'];
+        }
+        return $a;
+    }
+    public function sheetMeta($worksheetIndex = null)
+    {
+        if ($worksheetIndex === null) {
+            return $this->sheetMetaData;
+        }
+        return isset($this->sheetMetaData[$worksheetIndex]) ? $this->sheetMetaData[$worksheetIndex] : false;
+    }
+    public function isHiddenSheet($worksheetIndex)
+    {
+        return isset($this->sheetMetaData[$worksheetIndex]['state']) && $this->sheetMetaData[$worksheetIndex]['state'] === 'hidden';
     }
 
     public function getStyles()

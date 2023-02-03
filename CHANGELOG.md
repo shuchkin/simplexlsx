@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.18 (2023-02-04)
+* fixed regex to detect date/datetime in cell
+* added $this->sheetMeta($worksheetIndex = null) to get metadata from workbook.xml
+* added $this->isHiddenSheet($worksheetIndex)
+* deleted $this->sheetNemes (use $this-sheetMetadata)
+
 ## 1.0.17 (2022-10-13)
 
 * fixed readRowsEx (Undefined index: fontId)
