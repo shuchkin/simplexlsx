@@ -315,7 +315,7 @@ class SimpleXLSX
 
             $vZ = $this->_substr($vZ, 26 + $nF + $mF);
 
-            if ($this->_strlen($vZ) !== (int)$aP['CS']) { // check only if availabled
+            if ($aP['CS'] > 0 && ($this->_strlen($vZ) !== (int)$aP['CS'])) { // check only if availabled
                 $aI['E'] = 1;
                 $aI['EM'] = 'Compressed size is not equal with the value in header information.';
             }
@@ -628,7 +628,7 @@ class SimpleXLSX
                     if ($entry['data'] === false) {
                         $entry['error'] = 2;
                         $entry['error_msg'] = 'Decompression of data failed.';
-                    } elseif ($this->_strlen($entry['data']) !== (int)$entry['ucs']) {
+                    } elseif ($entry['ucs'] > 0 && ($this->_strlen($entry['data']) !== (int)$entry['ucs'])) {
                         $entry['error'] = 3;
                         $entry['error_msg'] = 'Uncompressed size is not equal with the value in header information.';
                     } elseif (crc32($entry['data']) !== $entry['crc']) {

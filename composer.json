@@ -1,7 +1,7 @@
 {
   "name": "shuchkin/simplexlsx",
   "description": "Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.",
-  "keywords": ["php", "excel", "xlsx", "parser", "backend"],
+  "keywords": ["php", "excel", "xlsx", "parser", "reader", "backend"],
   "homepage": "https://github.com/shuchkin/simplexlsx",
   "license": "MIT",
   "authors": [

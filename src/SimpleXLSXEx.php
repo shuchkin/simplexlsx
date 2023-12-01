@@ -264,7 +264,7 @@ class SimpleXLSXEx
                     if (!empty($s['applyBorder'])) {
                         $cf['borderId'] = $s['borderId'];
                     }
-                    if (!empty($s['applyAlignment'])) {
+                    if (!empty($s['applyAlignment']) && !empty($s['alignment'])) {
                         $alignment = $s['alignment'];
                     }
                 }
