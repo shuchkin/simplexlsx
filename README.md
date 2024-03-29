@@ -109,8 +109,9 @@ if ( $xlsx = SimpleXLSX::parse('book_styled.xlsx') ) {
 ```php
 if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
     $f = fopen('book.csv', 'wb');
+    // fwrite($f, chr(0xEF) . chr(0xBB) . chr(0xBF)); // UTF-8 BOM
 	foreach ( $xlsx->readRows() as $r ) {
-		fwrite($f, implode(',',$r) . PHP_EOL);
+		fputcsv($f, $r); // fputcsv($f, $r, ';', '"', "\\", "\r\n");
 	}
 	fclose($f);
 } else {
