@@ -110,12 +110,12 @@ if ( $xlsx = SimpleXLSX::parse('book_styled.xlsx') ) {
 if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
     $f = fopen('book.csv', 'wb');
     // fwrite($f, chr(0xEF) . chr(0xBB) . chr(0xBF)); // UTF-8 BOM
-	foreach ( $xlsx->readRows() as $r ) {
-		fputcsv($f, $r); // fputcsv($f, $r, ';', '"', "\\", "\r\n");
-	}
-	fclose($f);
+    foreach ( $xlsx->readRows() as $r ) {
+        fputcsv($f, $r); // fputcsv($f, $r, ';', '"', "\\", "\r\n");
+    }
+    fclose($f);
 } else {
-	echo SimpleXLSX::parseError();
+    echo SimpleXLSX::parseError();
 }
 ```
 ### XLSX get sheet names and sheet indexes
@@ -123,8 +123,8 @@ if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
 // Sheet numeration started 0
 
 if ( $xlsx = SimpleXLSX::parse( 'xlsx/books.xlsx' ) ) {
-	print_r( $xlsx->sheetNames() );
-	print_r( $xlsx->sheetName( $xlsx->activeSheet ) );
+    print_r( $xlsx->sheetNames() );
+    print_r( $xlsx->sheetName( $xlsx->activeSheet ) );
 }
 
 ```
@@ -296,9 +296,9 @@ ini_set('error_reporting', E_ALL );
 ini_set('display_errors', 1 );
 
 if ( $xlsx = SimpleXLSX::parseFile('books.xlsx', true ) ) {
-	echo $xlsx->toHTML();
+    echo $xlsx->toHTML();
 } else {
-	echo SimpleXLSX::parseError();
+    echo SimpleXLSX::parseError();
 }
 ```
 ### Classic OOP style 
