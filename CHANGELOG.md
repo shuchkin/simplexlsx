@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.20 (2023-04-05)
+* fixed activeSheet(Tab)
+
 ## 1.0.18 (2023-02-04)
 * fixed regex to detect date/datetime in cell
 * added $this->sheetMeta($worksheetIndex = null) to get metadata from workbook.xml

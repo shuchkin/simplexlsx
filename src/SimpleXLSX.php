@@ -420,7 +420,9 @@ class SimpleXLSX
                 $rel_type = basename(trim((string)$rel['Type'])); // officeDocument
                 $rel_target = $this->_getTarget('', (string)$rel['Target']); // /xl/workbook.xml or xl/workbook.xml
 
-                if ($rel_type === 'officeDocument' && $workbook = $this->getEntryXML($rel_target)) {
+                if ($rel_type === 'officeDocument'
+                    && $workbook = $this->getEntryXML($rel_target)
+                ) {
                     $index_rId = []; // [0 => rId1]
 
                     $index = 0;
@@ -500,14 +502,16 @@ class SimpleXLSX
                             }
                         }
 
-                        break;
+//                        break;
                     }
                     // reptile hack :: find active sheet from workbook.xml
-                    foreach ($workbook->bookViews->workbookView as $s) {
-                        if (!empty($s['activeTab'])) {
-                            $this->activeSheet = (int)$s['activeTab'];
+                    foreach ($workbook->bookViews->workbookView as $v) {
+                        if (!empty($v['activeTab'])) {
+                            $this->activeSheet = (int)$v['activeTab'];
                         }
                     }
+
+                    break;
                 }
             }
         }
