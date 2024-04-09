@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.21 (2023-04-09)
+* fixed activeSheet(Tab)
+
 ## 1.0.20 (2023-04-05)
 * fixed activeSheet(Tab)
 
