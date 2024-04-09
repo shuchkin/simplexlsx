@@ -505,9 +505,11 @@ class SimpleXLSX
 //                        break;
                     }
                     // reptile hack :: find active sheet from workbook.xml
-                    foreach ($workbook->bookViews->workbookView as $v) {
-                        if (!empty($v['activeTab'])) {
-                            $this->activeSheet = (int)$v['activeTab'];
+                    if ($workbook->bookViews->workbookView) {
+                        foreach ($workbook->bookViews->workbookView as $v) {
+                            if (!empty($v['activeTab'])) {
+                                $this->activeSheet = (int)$v['activeTab'];
+                            }
                         }
                     }
 
