@@ -162,6 +162,7 @@ Array
                     [hidden] =>
                     [width] => 13.7109375
                     [height] => 0
+                    [comment] =>
                 )
         
             [1] => Array
@@ -169,7 +170,7 @@ Array
                     [type] => 
                     [name] => B1
                     [value] => 2016-04-12 13:41:00
-                    [href] => 
+                    [href] => Sheet1!A1
                     [f] => 
                     [format] => m/d/yy h:mm
                     [s] => 0
@@ -178,13 +179,16 @@ Array
                     [hidden] => 1
                     [width] => 16.5703125
                     [height] => 0
+                    [comment] => Serg: See transaction history   
+                    
                 )
 ```
 <!--suppress HttpUrlsUsage -->
 <table>
 <tr><td>type</td><td>cell <a href="http://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ST_CellType_topic_ID0E6NEFB.html#topic_ID0E6NEFB">type</a></td></tr>
 <tr><td>name</td><td>cell name (A1, B11)</td></tr>
-<tr><td>value</td><td>cell value (1233, 1233.34, 2022-02-21 00:00:00, String)</td></tr>  
+<tr><td>value</td><td>cell value (1233, 1233.34, 2022-02-21 00:00:00, String)</td></tr>
+<tr><td>href</td><td>internal and external links</td></tr>
 <tr><td>f</td><td>formula</td></tr>
 <tr><td>s</td><td>style index, use <code>$xlsx->cellFormats[ $index ]</code> to get style</td></tr>
 <tr><td>css</td><td>generated cell CSS</td></tr>
@@ -192,6 +196,7 @@ Array
 <tr><td>hidden</td><td>hidden row or column</td></tr>
 <tr><td>width</td><td>width in <a href="http://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_col_topic_ID0ELFQ4.html">custom units</a></td></tr>
 <tr><td>height</td><td>height in points (pt, 1/72 in)</td></tr>
+<tr><td>comment</td><td>Cell comment as plain text</td></tr>
 </table>
 
 ### Select Sheet

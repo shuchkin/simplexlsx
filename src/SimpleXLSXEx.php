@@ -105,6 +105,9 @@ class SimpleXLSXEx
     public $borders;
     public $cellStyles;
     public $css;
+    public $comments;
+    public $hyperlinks;
+    public $worksheetIndex;
 
     public function __construct(SimpleXLSX $xlsx)
     {
@@ -114,6 +117,8 @@ class SimpleXLSXEx
         $this->readFills();
         $this->readBorders();
         $this->readXfs();
+        $this->readHyperlinks();
+        $this->readComments();
     }
     public function readThemeColors()
     {
@@ -401,12 +406,32 @@ class SimpleXLSXEx
             }
         }
     }
+    public function readComments()
+    {
+        $this->comments = [];
+        foreach ($this->xlsx->sheetRels as $index => $xml) {
+            foreach ($xml->Relationship as $rel) {
+                $rel_type = basename(trim((string) $rel['Type']));
+                $rel_target = (string) $rel['Target'];
+                if ($rel_type === 'comments') {
+                    $d = dirname($this->xlsx->sheetFiles[$index]);
+                    $com_file = SimpleXLSX::getTarget($d, $rel_target);
+                    if ($com_xml = $this->xlsx->getEntryXML($com_file)) {
+                        foreach ($com_xml->commentList->comment as $com) {
+                            $this->comments[$index][(string)$com['ref']] = SimpleXLSX::parseRichText($com->text);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public function readRowsEx($worksheetIndex = 0, $limit = 0)
     {
         if (($ws = $this->xlsx->worksheet($worksheetIndex)) === false) {
             return;
         }
+        $this->worksheetIndex = $worksheetIndex;
 
         $dim = $this->xlsx->dimension($worksheetIndex);
         $numCols = $dim[0];
@@ -488,11 +513,11 @@ class SimpleXLSXEx
                         }
                     }
                 }
+
                 $data = [
                     'type' => $t,
                     'name' => $r,
                     'value' => $this->xlsx->value($c),
-                    'href' => $this->xlsx->href($worksheetIndex, $c),
                     'f' => (string)$c->f,
                     'r' => $r_idx,
                     's' => ($s > 0) ? $s : $cols[$curC]['s'],
@@ -557,7 +582,7 @@ class SimpleXLSXEx
             'r' => '',
             'hidden' => false,
             'width' => 0,
-            'height' => 0
+            'height' => 0,
         ];
         foreach ($data as $k => $v) {
             if (isset($r[$k])) {
@@ -579,6 +604,9 @@ class SimpleXLSXEx
             $r['name'] = $c . ($y + 1);
             $r['r'] = $y+1;
         }
+        $r['href'] = isset($this->hyperlinks[$this->worksheetIndex][$r['name']]) ? $this->hyperlinks[$this->worksheetIndex][$r['name']] : '';
+        $r['comment'] = isset($this->comments[$this->worksheetIndex][$r['name']]) ? $this->comments[$this->worksheetIndex][$r['name']] : '';
+
         return $r;
     }
     public function getColorValue(SimpleXMLElement $a = null, $default = '')
@@ -613,5 +641,41 @@ class SimpleXLSXEx
             );
         }
         return $c;
+    }
+
+    public function readHyperlinks()
+    {
+        $this->hyperlinks = [];
+        foreach ($this->xlsx->sheetRels as $index => $xml) {
+            $sheet = $this->xlsx->sheets[$index];
+            $link_ids = [];
+            // hyperlink
+            foreach ($xml->Relationship as $rel) {
+                $rel_type = basename(trim((string)$rel['Type']));
+                $rel_target = (string)$rel['Target'];
+                if ($rel_type === 'hyperlink') {
+                    $rel_id = (string)$rel['Id'];
+                    $link_ids[$rel_id] = $rel_target;
+                }
+            }
+
+            if (isset($sheet->hyperlinks)) {
+                foreach ($sheet->hyperlinks->hyperlink as $hyperlink) {
+                    $ref = (string)$hyperlink['ref'];
+                    if (SimpleXLSX::strpos($ref, ':') > 0) { // A1:A8 -> A1
+                        $ref = explode(':', $ref);
+                        $ref = $ref[0];
+                    }
+                    $loc = (string)$hyperlink['location'];
+                    $id = (string)$hyperlink['id'];
+                    if ($id) {
+                        $href = $link_ids[$id] . ($loc ? '#' . $loc : '');
+                    } else {
+                        $href = $loc;
+                    }
+                    $this->hyperlinks[$index][$ref] = $href;
+                }
+            }
+        }
     }
 }
