@@ -844,7 +844,7 @@ class SimpleXLSX
             if ($s > 0 && isset($this->cellFormats[$s])) {
                 if (array_key_exists('format', $this->cellFormats[$s])) {
                     $format = $this->cellFormats[$s]['format'];
-                    if (preg_match('/[mM]/', preg_replace('/\"[^"]+\"/', '', $format))) { // [mm]onth,AM|PM
+                    if ($format && preg_match('/[mM]/', preg_replace('/\"[^"]+\"/', '', $format))) { // [mm]onth,AM|PM
                         $dataType = 'D';
                     }
                 } else {
