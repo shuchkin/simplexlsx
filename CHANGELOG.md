@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.12 (2024-12-11)
+* fixed toHTMLEx css vulnerability 
+
 # 1.1.11 (2024-07-06)
 * fixed [#157](https://github.com/shuchkin/simplexlsx/issues/157)
 
