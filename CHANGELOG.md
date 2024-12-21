@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.13 (2024-12-21)
+* fixed css colors vulnerability
+
 # 1.1.12 (2024-12-11)
 * fixed toHTMLEx css vulnerability 
 

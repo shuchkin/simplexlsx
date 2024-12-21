@@ -128,10 +128,10 @@ class SimpleXLSXEx
                 'accent6','hlink','folHlink'];
             foreach ($colors12 as $c) {
                 $v = $this->xlsx->theme->themeElements->clrScheme->{$c};
-                if (isset($v->sysClr)) {
-                    $this->themeColors[] = substr((string) $v->sysClr['lastClr'], 0, 6);
-                } elseif (isset($v->srgbClr)) {
-                    $this->themeColors[] = substr((string) $v->srgbClr['val'], 0, 6);
+                if (isset($v->sysClr) && preg_match('/^[A-F0-9]{6}$/', (string) $v->sysClr['lastClr'])) {
+                    $this->themeColors[] = (string) $v->sysClr['lastClr'];
+                } elseif (isset($v->srgbClr) && preg_match('/^[A-F0-9]{6}$/', (string) $v->srgbClr['val'])) {
+                    $this->themeColors[] = (string) $v->srgbClr['val'];
                 } else {
                     $this->themeColors[] = null;
                 }
@@ -617,7 +617,7 @@ class SimpleXLSXEx
             return $default;
         }
         $c = $default; // auto
-        if ($a['rgb'] !== null) {
+        if ($a['rgb'] !== null && preg_match('/^[A-F0-9]{8}$/', (string) $a['rgb'])) {
             $c = substr((string) $a['rgb'], 2, 6); // FFCCBBAA -> CCBBAA
         } elseif ($a['indexed'] !== null && isset(static::$IC[ (int) $a['indexed'] ])) {
             $c = static::$IC[ (int) $a['indexed'] ];
