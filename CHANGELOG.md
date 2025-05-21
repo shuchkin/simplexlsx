@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.14 (2025-05-21)
+* fixed hidden cols/rows
+
 # 1.1.13 (2024-12-21)
 * fixed css colors vulnerability
 
