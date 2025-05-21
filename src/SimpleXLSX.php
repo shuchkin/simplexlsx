@@ -217,7 +217,7 @@ class SimpleXLSX
         if ($is_data) {
             $this->package['filename'] = 'default.xlsx';
             $this->package['mtime'] = time();
-            $this->package['size'] = SimpleXLSX::strlen($filename);
+            $this->package['size'] = self::strlen($filename);
 
             $vZ = $filename;
         } else {
@@ -287,23 +287,23 @@ class SimpleXLSX
 
             // Special case : value block after the compressed data
             if ($aP['GPF'] & 0x0008) {
-                $aP1 = unpack('V1CRC/V1CS/V1UCS', SimpleXLSX::substr($vZ, -12));
+                $aP1 = unpack('V1CRC/V1CS/V1UCS', self::substr($vZ, -12));
 
                 $aP['CRC'] = $aP1['CRC'];
                 $aP['CS'] = $aP1['CS'];
                 $aP['UCS'] = $aP1['UCS'];
                 // 2013-08-10
-                $vZ = SimpleXLSX::substr($vZ, 0, -12);
-                if (SimpleXLSX::substr($vZ, -4) === "\x50\x4b\x07\x08") {
-                    $vZ = SimpleXLSX::substr($vZ, 0, -4);
+                $vZ = self::substr($vZ, 0, -12);
+                if (self::substr($vZ, -4) === "\x50\x4b\x07\x08") {
+                    $vZ = self::substr($vZ, 0, -4);
                 }
             }
 
             // Getting stored filename
-            $aI['N'] = SimpleXLSX::substr($vZ, 26, $nF);
+            $aI['N'] = self::substr($vZ, 26, $nF);
             $aI['N'] = str_replace('\\', '/', $aI['N']);
 
-            if (SimpleXLSX::substr($aI['N'], -1) === '/') {
+            if (self::substr($aI['N'], -1) === '/') {
                 // is a directory entry - will be skipped
                 continue;
             }
@@ -313,9 +313,9 @@ class SimpleXLSX
             $aI['P'] = ($aI['P'] === '.') ? '' : $aI['P'];
             $aI['N'] = basename($aI['N']);
 
-            $vZ = SimpleXLSX::substr($vZ, 26 + $nF + $mF);
+            $vZ = self::substr($vZ, 26 + $nF + $mF);
 
-            if ($aP['CS'] > 0 && (SimpleXLSX::strlen($vZ) !== (int)$aP['CS'])) { // check only if availabled
+            if ($aP['CS'] > 0 && (self::strlen($vZ) !== (int)$aP['CS'])) { // check only if availabled
                 $aI['E'] = 1;
                 $aI['EM'] = 'Compressed size is not equal with the value in header information.';
             }
@@ -409,7 +409,7 @@ class SimpleXLSX
         if ($relations = $this->getEntryXML('_rels/.rels')) {
             foreach ($relations->Relationship as $rel) {
                 $rel_type = basename(trim((string)$rel['Type'])); // officeDocument
-                $rel_target = SimpleXLSX::getTarget('', (string)$rel['Target']); // /xl/workbook.xml or xl/workbook.xml
+                $rel_target = self::getTarget('', (string)$rel['Target']); // /xl/workbook.xml or xl/workbook.xml
 
                 if ($rel_type === 'officeDocument'
                     && $workbook = $this->getEntryXML($rel_target)
@@ -435,7 +435,7 @@ class SimpleXLSX
                         // Loop relations for workbook and extract sheets...
                         foreach ($workbookRelations->Relationship as $workbookRelation) {
                             $wrel_type = basename(trim((string)$workbookRelation['Type'])); // worksheet
-                            $wrel_target = SimpleXLSX::getTarget(dirname($rel_target), (string)$workbookRelation['Target']);
+                            $wrel_target = self::getTarget(dirname($rel_target), (string)$workbookRelation['Target']);
                             if (!$this->entryExists($wrel_target)) {
                                 continue;
                             }
@@ -458,7 +458,7 @@ class SimpleXLSX
                                         if (isset($val->t)) {
                                             $this->sharedstrings[] = (string)$val->t;
                                         } elseif (isset($val->r)) {
-                                            $this->sharedstrings[] = SimpleXLSX::parseRichText($val);
+                                            $this->sharedstrings[] = self::parseRichText($val);
                                         }
                                     }
                                 }
@@ -534,7 +534,8 @@ class SimpleXLSX
             // dirty remove namespace prefixes and empty rows
             $entry_xml = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $entry_xml); // remove namespaces
             $entry_xml .= ' '; // force run garbage collector
-            $entry_xml = preg_replace('/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/', '$1', $entry_xml); // remove namespaced attrs
+            // remove namespaced attrs
+            $entry_xml = preg_replace('/[a-zA-Z0-9]+:([a-zA-Z0-9]+="[^"]+")/', '$1', $entry_xml);
             $entry_xml .= ' ';
             $entry_xml = preg_replace('/<[a-zA-Z0-9]+:([^>]+)>/', '<$1>', $entry_xml); // fix namespaced openned tags
             $entry_xml .= ' ';
@@ -598,10 +599,10 @@ class SimpleXLSX
     public function getEntryData($name)
     {
         $name = ltrim(str_replace('\\', '/', $name), '/');
-        $dir = SimpleXLSX::strtoupper(dirname($name));
-        $name = SimpleXLSX::strtoupper(basename($name));
+        $dir = self::strtoupper(dirname($name));
+        $name = self::strtoupper(basename($name));
         foreach ($this->package['entries'] as &$entry) {
-            if (SimpleXLSX::strtoupper($entry['path']) === $dir && SimpleXLSX::strtoupper($entry['name']) === $name) {
+            if (self::strtoupper($entry['path']) === $dir && self::strtoupper($entry['name']) === $name) {
                 if ($entry['error']) {
                     return false;
                 }
@@ -630,7 +631,7 @@ class SimpleXLSX
                     if ($entry['data'] === false) {
                         $entry['error'] = 2;
                         $entry['error_msg'] = 'Decompression of data failed.';
-                    } elseif ($entry['ucs'] > 0 && (SimpleXLSX::strlen($entry['data']) !== (int)$entry['ucs'])) {
+                    } elseif ($entry['ucs'] > 0 && (self::strlen($entry['data']) !== (int)$entry['ucs'])) {
                         $entry['error'] = 3;
                         $entry['error_msg'] = 'Uncompressed size is not equal with the value in header information.';
                     } elseif (crc32($entry['data']) !== $entry['crc']) {
@@ -650,10 +651,10 @@ class SimpleXLSX
     public function deleteEntry($name)
     {
         $name = ltrim(str_replace('\\', '/', $name), '/');
-        $dir = SimpleXLSX::strtoupper(dirname($name));
-        $name = SimpleXLSX::strtoupper(basename($name));
+        $dir = self::strtoupper(dirname($name));
+        $name = self::strtoupper(basename($name));
         foreach ($this->package['entries'] as $k => $entry) {
-            if (SimpleXLSX::strtoupper($entry['path']) === $dir && SimpleXLSX::strtoupper($entry['name']) === $name) {
+            if (self::strtoupper($entry['path']) === $dir && self::strtoupper($entry['name']) === $name) {
                 unset($this->package['entries'][$k]);
                 return true;
             }
@@ -674,10 +675,10 @@ class SimpleXLSX
     public function entryExists($name)
     {
  // 0.6.6
-        $dir = SimpleXLSX::strtoupper(dirname($name));
-        $name = SimpleXLSX::strtoupper(basename($name));
+        $dir = self::strtoupper(dirname($name));
+        $name = self::strtoupper(basename($name));
         foreach ($this->package['entries'] as $entry) {
-            if (SimpleXLSX::strtoupper($entry['path']) === $dir && SimpleXLSX::strtoupper($entry['name']) === $name) {
+            if (self::strtoupper($entry['path']) === $dir && self::strtoupper($entry['name']) === $name) {
                 return true;
             }
         }
@@ -766,7 +767,7 @@ class SimpleXLSX
 
         $ref = (string)$ws->dimension['ref'];
 
-        if (SimpleXLSX::strpos($ref, ':') !== false) {
+        if (self::strpos($ref, ':') !== false) {
             $d = explode(':', $ref);
             $idx = $this->getIndex($d[1]);
 
@@ -819,7 +820,7 @@ class SimpleXLSX
             $col = $m[1];
             $row = $m[2];
 
-            $colLen = SimpleXLSX::strlen($col);
+            $colLen = self::strlen($col);
             $index = 0;
 
             for ($i = $colLen - 1; $i >= 0; $i--) {
@@ -871,20 +872,13 @@ class SimpleXLSX
 
             case 'b':
                 // Value is boolean
-                $value = (string)$cell->v;
-                if ($value === '0') {
-                    $value = false;
-                } elseif ($value === '1') {
-                    $value = true;
-                } else {
-                    $value = (bool)$cell->v;
-                }
+                $value = self::boolean((string)$cell->v);
 
                 break;
 
             case 'inlineStr':
                 // Value is rich text inline
-                $value = SimpleXLSX::parseRichText($cell->is);
+                $value = self::parseRichText($cell->is);
 
                 break;
 
@@ -898,7 +892,8 @@ class SimpleXLSX
             case 'D':
                 // Date as float
                 if (!empty($cell->v)) {
-                    $value = $this->datetimeFormat ? gmdate($this->datetimeFormat, $this->unixstamp((float)$cell->v)) : (float)$cell->v;
+                    $value = $this->datetimeFormat ?
+                        gmdate($this->datetimeFormat, $this->unixstamp((float)$cell->v)) : (float)$cell->v;
                 }
                 break;
 
@@ -974,7 +969,8 @@ class SimpleXLSX
                 if ($x === 0 && $c['height']) {
                     $css .= 'height: '.round($c['height'] * 1.3333).'px;';
                 }
-                $s .= '<'.$tag.' style="'.$css.'" nowrap>' . ($c['value'] === '' ? '&nbsp' : htmlspecialchars($c['value'], ENT_QUOTES)) . '</'.$tag.'>';
+                $s .= '<'.$tag.' style="'.$css.'" nowrap>'
+                    . ($c['value'] === '' ? '&nbsp' : htmlspecialchars($c['value'], ENT_QUOTES)) . '</'.$tag.'>';
                 $x++;
             }
             $s .= "</tr>\r\n";
@@ -1088,7 +1084,7 @@ class SimpleXLSX
             return false;
         }
         if (is_array($cell)) {
-            $cell = SimpleXLSX::num2name($cell[0]) . $cell[1];// [3,21] -> D21
+            $cell = self::num2name($cell[0]) . $cell[1];// [3,21] -> D21
         }
         if (is_string($cell)) {
             $result = $ws->sheetData->xpath("row/c[@r='" . $cell . "']");
@@ -1137,7 +1133,8 @@ class SimpleXLSX
     }
     public function isHiddenSheet($worksheetIndex)
     {
-        return isset($this->sheetMetaData[$worksheetIndex]['state']) && $this->sheetMetaData[$worksheetIndex]['state'] === 'hidden';
+        return isset($this->sheetMetaData[$worksheetIndex]['state'])
+            && $this->sheetMetaData[$worksheetIndex]['state'] === 'hidden';
     }
 
     public function getStyles()
@@ -1159,7 +1156,7 @@ class SimpleXLSX
     {
         $target = trim($target);
         if (strpos($target, '/') === 0) {
-            return SimpleXLSX::substr($target, 1);
+            return self::substr($target, 1);
         }
         $target = ($base ? $base . '/' : '') . $target;
         // a/b/../c -> a/c
@@ -1199,7 +1196,7 @@ class SimpleXLSX
         $letter = chr(65 + $numeric);
         $num2 = (int)(($num - 1) / 26);
         if ($num2 > 0) {
-            return SimpleXLSX::num2name($num2) . $letter;
+            return self::num2name($num2) . $letter;
         }
         return $letter;
     }
@@ -1211,11 +1208,22 @@ class SimpleXLSX
 
     public static function substr($str, $start, $length = null)
     {
-        return (ini_get('mbstring.func_overload') & 2) ? mb_substr($str, $start, ($length === null) ? mb_strlen($str, '8bit') : $length, '8bit') : substr($str, $start, ($length === null) ? strlen($str) : $length);
+        return (ini_get('mbstring.func_overload') & 2) ?
+            mb_substr($str, $start, ($length === null) ? mb_strlen($str, '8bit') : $length, '8bit')
+                : substr($str, $start, ($length === null) ? strlen($str) : $length);
     }
 
     public static function strpos($haystack, $needle, $offset = 0)
     {
-        return (ini_get('mbstring.func_overload') & 2) ? mb_strpos($haystack, $needle, $offset, '8bit') : strpos($haystack, $needle, $offset);
+        return (ini_get('mbstring.func_overload') & 2) ?
+            mb_strpos($haystack, $needle, $offset, '8bit') : strpos($haystack, $needle, $offset);
+    }
+    public static function boolean($value)
+    {
+        if (is_numeric($value)) {
+            return (bool) $value;
+        }
+
+        return $value === 'true' || $value === 'TRUE';
     }
 }

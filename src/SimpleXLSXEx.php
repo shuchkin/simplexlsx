@@ -157,10 +157,12 @@ class SimpleXLSXEx
                     'strike' => isset($v->strike) && ($v->strike['val'] === null || $v->strike['val']),
                     'sz' => isset($v->sz['val']) ? (int) $v->sz['val'] : 11,
                     'color' => $this->getColorValue($v->color),
-                    'name' => isset($v->name['val']) ? htmlspecialchars((string) $v->name['val'], ENT_QUOTES) : 'Calibri',
+                    'name' => isset($v->name['val']) ?
+                        htmlspecialchars((string) $v->name['val'], ENT_QUOTES) : 'Calibri',
                     'family' => isset($v->family['val']) ? (int) $v->family['val'] : 2,
                     'charset' => isset($v->charset['val']) ? (int) $v->charset['val'] : 1,
-                    'scheme' => isset($v->scheme['val']) ? htmlspecialchars((string) $v->scheme['val'], ENT_QUOTES) : 'minor'
+                    'scheme' => isset($v->scheme['val']) ?
+                        htmlspecialchars((string) $v->scheme['val'], ENT_QUOTES) : 'minor'
                 ];
                 $this->fonts[] = $f;
             }
@@ -174,7 +176,8 @@ class SimpleXLSXEx
             foreach ($this->xlsx->styles->fills->fill as $v) {
                 if (isset($v->patternFill)) {
                     $this->fills[] = [
-                        'pattern' => isset($v->patternFill['patternType']) ? htmlspecialchars((string) $v->patternFill['patternType'], ENT_QUOTES) : 'none',
+                        'pattern' => isset($v->patternFill['patternType']) ?
+                            htmlspecialchars((string) $v->patternFill['patternType'], ENT_QUOTES) : 'none',
                         'fgcolor' => $this->getColorValue($v->patternFill->fgColor),
                         'bgcolor' => $this->getColorValue($v->patternFill->bgColor)
                     ];
@@ -195,7 +198,8 @@ class SimpleXLSXEx
                         'color' => $this->getColorValue($v->left->color)
                     ],
                     'right' => [
-                        'style' => in_array((string) $v->right['style'], $styles) ? (string) $v->right['style'] : 'none',
+                        'style' => in_array((string) $v->right['style'], $styles) ?
+                            (string) $v->right['style'] : 'none',
                         'color' => $this->getColorValue($v->right->color)
                     ],
                     'top' => [
@@ -203,23 +207,27 @@ class SimpleXLSXEx
                         'color' => $this->getColorValue($v->top->color)
                     ],
                     'bottom' => [
-                        'style' => in_array((string) $v->bottom['style'], $styles) ? (string) $v->bottom['style'] : 'none',
+                        'style' => in_array((string) $v->bottom['style'], $styles) ?
+                            (string) $v->bottom['style'] : 'none',
                         'color' => $this->getColorValue($v->bottom->color)
                     ],
                     'diagonal' => [
-                        'style' => in_array((string) $v->diagonal['style'], $styles) ? (string) $v->diagonal['style'] : 'none',
+                        'style' => in_array((string) $v->diagonal['style'], $styles) ?
+                            (string) $v->diagonal['style'] : 'none',
                         'color' => $this->getColorValue($v->diagonal->color)
                     ],
                     'horizontal' => [
-                        'style' => in_array((string) $v->horizontal['style'], $styles) ? (string) $v->horizontal['style'] : 'none',
+                        'style' => in_array((string) $v->horizontal['style'], $styles) ?
+                            (string) $v->horizontal['style'] : 'none',
                         'color' => $this->getColorValue($v->horizontal->color)
                     ],
                     'vertical' => [
-                        'style' => in_array((string) $v->vertical['style'], $styles) ? (string) $v->vertical['style'] : 'none',
+                        'style' => in_array((string) $v->vertical['style'], $styles) ?
+                            (string) $v->vertical['style'] : 'none',
                         'color' => $this->getColorValue($v->vertical->color)
                     ],
-                    'diagonalUp' => (bool) $v['diagonalUp'],
-                    'diagonalDown' => (bool) $v['diagonalDown'],
+                    'diagonalUp' => SimpleXLSX::boolean((string) $v['diagonalUp']),
+                    'diagonalDown' => SimpleXLSX::boolean((string) $v['diagonalDown']),
                     'outline' => !(isset($v['outline'])) || $v['outline']
                 ];
             }
@@ -454,13 +462,14 @@ class SimpleXLSXEx
             foreach ($ws->cols->col as $col) {
                 $min = (int)$col['min'];
                 $max = (int)$col['max'];
+
                 if (($max-$min) > 100) {
                     $max = $min;
                 }
                 for ($i = $min; $i <= $max; $i++) {
                     $cols[$i-1] = [
                         's' => (int)$col['style'],
-                        'hidden' => (bool)$col['hidden'],
+                        'hidden' => SimpleXLSX::boolean((string) $col['hidden']),
                         'width' => $col['customWidth'] ? (float) $col['width'] : 0
                     ];
                 }
@@ -474,7 +483,7 @@ class SimpleXLSXEx
             $curC = 0;
 
             $r_idx = (int)$row['r'];
-            $r_style = ['s' => 0, 'hidden' => (bool)$row['hidden'], 'height' => 0];
+            $r_style = ['s' => 0, 'hidden' => SimpleXLSX::boolean((string) $row['hidden']), 'height' => 0];
             if ($row['customFormat']) {
                 $r_style['s'] = (int)$row['s'];
             }
@@ -606,8 +615,10 @@ class SimpleXLSXEx
             $r['name'] = $c . ($y + 1);
             $r['r'] = $y+1;
         }
-        $r['href'] = isset($this->hyperlinks[$this->worksheetIndex][$r['name']]) ? $this->hyperlinks[$this->worksheetIndex][$r['name']] : '';
-        $r['comment'] = isset($this->comments[$this->worksheetIndex][$r['name']]) ? $this->comments[$this->worksheetIndex][$r['name']] : '';
+        $r['href'] = isset($this->hyperlinks[$this->worksheetIndex][$r['name']]) ?
+            $this->hyperlinks[$this->worksheetIndex][$r['name']] : '';
+        $r['comment'] = isset($this->comments[$this->worksheetIndex][$r['name']]) ?
+            $this->comments[$this->worksheetIndex][$r['name']] : '';
 
         return $r;
     }
