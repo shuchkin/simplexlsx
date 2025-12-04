@@ -2,7 +2,6 @@
 [<img src="https://img.shields.io/packagist/dt/shuchkin/simplexlsx" />](https://packagist.org/packages/shuchkin/simplexlsx)
 [<img src="https://img.shields.io/github/license/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/blob/master/license.md) [<img src="https://img.shields.io/github/stars/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/stargazers) [<img src="https://img.shields.io/github/forks/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/network) [<img src="https://img.shields.io/github/issues/shuchkin/simplexlsx" />](https://github.com/shuchkin/simplexlsx/issues)
 [<img src="https://img.shields.io/opencollective/all/simplexlsx" />](https://opencollective.com/simplexlsx)
-[<img src="https://img.shields.io/badge/patreon-_-_" />](https://www.patreon.com/shuchkin)
 
 Parse and retrieve data from Excel XLSx files. MS Excel 2007 workbooks PHP reader.
 No addiditional extensions need (internal unzip + standart SimpleXML parser).
@@ -185,7 +184,7 @@ Array
 ```
 <!--suppress HttpUrlsUsage -->
 <table>
-<tr><td>type</td><td>cell <a href="http://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ST_CellType_topic_ID0E6NEFB.html#topic_ID0E6NEFB">type</a></td></tr>
+<tr><td>type</td><td>cell <a href="https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ST_CellType_topic_ID0E6NEFB.html">type</a></td></tr>
 <tr><td>name</td><td>cell name (A1, B11)</td></tr>
 <tr><td>value</td><td>cell value (1233, 1233.34, 2022-02-21 00:00:00, String)</td></tr>
 <tr><td>href</td><td>internal and external links</td></tr>
@@ -194,7 +193,7 @@ Array
 <tr><td>css</td><td>generated cell CSS</td></tr>
 <tr><td>r</td><td>row index</td></tr>
 <tr><td>hidden</td><td>hidden row or column</td></tr>
-<tr><td>width</td><td>width in <a href="http://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_col_topic_ID0ELFQ4.html">custom units</a></td></tr>
+<tr><td>width</td><td>width in <a href="http://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_col_topic_ID0ELFQ4.html">custom units</a></td></tr>
 <tr><td>height</td><td>height in points (pt, 1/72 in)</td></tr>
 <tr><td>comment</td><td>Cell comment as plain text</td></tr>
 </table>
