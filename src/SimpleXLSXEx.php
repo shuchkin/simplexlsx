@@ -622,8 +622,11 @@ class SimpleXLSXEx
 
         return $r;
     }
-    public function getColorValue(SimpleXMLElement $a)
+    public function getColorValue($a)
     {
+        if (!($a instanceof SimpleXMLElement)) {
+            return '';
+        }
         $c = '';
         if ($a['rgb'] !== null && preg_match('/^[A-F0-9]{8}$/', (string) $a['rgb'])) {
             $c = substr((string) $a['rgb'], 2, 6); // FFCCBBAA -> CCBBAA
