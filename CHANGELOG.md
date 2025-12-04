@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.15 (2025-12-04)
+* SimpleXLSXEx::getColorValue PHP 8.4 nullable capability
+
 # 1.1.14 (2025-05-21)
 * fixed hidden cols/rows
 
