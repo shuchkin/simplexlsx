@@ -257,6 +257,9 @@ class SimpleXLSXEx
         // xf
         if (isset($this->xlsx->styles->cellXfs->xf)) {
             $k = 0;
+            // map excel align to css
+            $a_h = ['general' => null, 'left' => 'left', 'center' => 'center', 'right' => 'right', 'fill' => null, 'justify' => 'justify', 'centerContinuous' => 'center', 'distributed' => 'justify'];
+            $a_v = ['top' => 'top', 'center' => 'middle', 'bottom' => 'bottom', 'justify' => 'middle', 'distributed' => 'middle'];
             foreach ($this->xlsx->styles->cellXfs->xf as $v) {
                 $cf = &$this->xlsx->cellFormats[$k];
 
@@ -284,30 +287,8 @@ class SimpleXLSXEx
                     }
                 }
                 $cf['alignment'] = $alignment;
-
-                $align = null;
-                if (isset($alignment['horizontal'])) {
-                    $align = $alignment['horizontal'];
-                    if ($align === 'centerContinuous') {
-                        $align = 'center';
-                    }
-                    if ($align === 'distributed') {
-                        $align = 'justify';
-                    }
-                    if ($align === 'general') {
-                        $align = null;
-                    }
-                }
-                $cf['align'] = $align;
-
-                $valign = null;
-                if (isset($alignment['vertical'])) {
-                    $valign = $alignment['vertical'];
-                    if ($valign === 'center' || $valign === 'distributed' || $valign === 'justify') {
-                        $valign = 'middle';
-                    }
-                }
-                $cf['valign'] = $valign;
+                $cf['align'] = isset($alignment['horizontal'], $a_h[$alignment['horizontal']]) ? $a_h[$alignment['horizontal']] : null;
+                $cf['valign'] = isset($alignment['vertical'], $a_v[$alignment['vertical']]) ? $a_v[$alignment['vertical']] : null;
 
                 // font
                 if (isset($cf['fontId'])) {

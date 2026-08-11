@@ -971,8 +971,10 @@ class SimpleXLSX
                 if ($x === 0 && $c['height']) {
                     $css .= 'height: '.round($c['height'] * 1.3333).'px;';
                 }
+                $v = htmlspecialchars($c['value'], ENT_QUOTES);
+                $v = preg_replace('/\R/', "<br>\r\n", $v);
                 $s .= '<'.$tag.' style="'.$css.'" nowrap>'
-                    . ($c['value'] === '' ? '&nbsp' : htmlspecialchars($c['value'], ENT_QUOTES)) . '</'.$tag.'>';
+                    . ($v === '' ? '&nbsp' : $v) . '</'.$tag.'>';
                 $x++;
             }
             $s .= "</tr>\r\n";

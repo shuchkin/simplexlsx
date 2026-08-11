@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.17 (2026-08-11)
+* security fix 2 (Cross-site Scripting in align/valign attrs) [CVE-2024-55878](https://github.com/shuchkin/simplexlsx/security/advisories/GHSA-x6mh-rjwm-8ph7)
+
 # 1.1.16 (2025-12-05)
 * Updated [c-rex SpreadsheetML Reference](https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_SpreadsheetML_topic_ID0EBC63.html) links
 
