@@ -287,15 +287,34 @@ class SimpleXLSX
 
             // Special case : value block after the compressed data
             if ($aP['GPF'] & 0x0008) {
-                $aP1 = unpack('V1CRC/V1CS/V1UCS', self::substr($vZ, -12));
+                // Signed ZIP64 descriptor:
+                // signature + CRC32 + 64-bit compressed size + 64-bit uncompressed size
+                if (self::substr($vZ, -24, 4) === "\x50\x4b\x07\x08") {
+                    $aP1 = unpack(
+                        'V1CRC/V1CSLow/V1CSHigh/V1UCSLow/V1UCSHigh',
+                        self::substr($vZ, -20)
+                    );
 
-                $aP['CRC'] = $aP1['CRC'];
-                $aP['CS'] = $aP1['CS'];
-                $aP['UCS'] = $aP1['UCS'];
-                // 2013-08-10
-                $vZ = self::substr($vZ, 0, -12);
-                if (self::substr($vZ, -4) === "\x50\x4b\x07\x08") {
-                    $vZ = self::substr($vZ, 0, -4);
+                    if ((int)$aP1['CSHigh'] !== 0 || (int)$aP1['UCSHigh'] !== 0) {
+                        $aI['E'] = 6;
+                        $aI['EM'] = 'ZIP64 entry is too large to process.';
+                    }
+
+                    $aP['CRC'] = $aP1['CRC'];
+                    $aP['CS'] = $aP1['CSLow'];
+                    $aP['UCS'] = $aP1['UCSLow'];
+                    $vZ = self::substr($vZ, 0, -24);
+                } else {
+                    $aP1 = unpack('V1CRC/V1CS/V1UCS', self::substr($vZ, -12));
+
+                    $aP['CRC'] = $aP1['CRC'];
+                    $aP['CS'] = $aP1['CS'];
+                    $aP['UCS'] = $aP1['UCS'];
+                    // 2013-08-10
+                    $vZ = self::substr($vZ, 0, -12);
+                    if (self::substr($vZ, -4) === "\x50\x4b\x07\x08") {
+                        $vZ = self::substr($vZ, 0, -4);
+                    }
                 }
             }
 

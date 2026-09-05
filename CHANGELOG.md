@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.18 (2026-09-05)
+* [ZIP64 support](https://github.com/shuchkin/simplexlsx/issues/169), thx [Dave](https://github.com/WebsiteInc)
+
 # 1.1.17 (2026-08-11)
 * security fix 2 (Cross-site Scripting in align/valign attrs) [CVE-2024-55878](https://github.com/shuchkin/simplexlsx/security/advisories/GHSA-x6mh-rjwm-8ph7)
 
