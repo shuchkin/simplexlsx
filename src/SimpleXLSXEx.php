@@ -1,5 +1,6 @@
 <?php
 
+/** @noinspection PhpIllegalPsrClassPathInspection */
 /** @noinspection MultiAssignmentUsageInspection */
 
 namespace Shuchkin;
