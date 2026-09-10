@@ -148,21 +148,21 @@ class SimpleXLSXEx
             foreach ($this->xlsx->styles->fonts->font as $v) {
                 $u = '';
                 if (isset($v->u)) {
-                    $u = isset($v->u['val']) ? htmlspecialchars((string) $v->u['val'], ENT_QUOTES) : 'single';
+                    $u = ((string) $v->u['val'] === 'double') ? 'double' : 'single';
                 }
                 $f = [
                     'b' => isset($v->b) && ($v->b['val'] === null || $v->b['val']),
                     'i' => isset($v->i) && ($v->i['val'] === null || $v->i['val']),
                     'u' => $u,
                     'strike' => isset($v->strike) && ($v->strike['val'] === null || $v->strike['val']),
-                    'sz' => isset($v->sz['val']) ? (int) $v->sz['val'] : 11,
+                    'sz' => isset($v->sz) ? (int) $v->sz['val'] : 11,
                     'color' => $this->getColorValue($v->color),
-                    'name' => isset($v->name['val']) ?
-                        htmlspecialchars((string) $v->name['val'], ENT_QUOTES) : 'Calibri',
-                    'family' => isset($v->family['val']) ? (int) $v->family['val'] : 2,
-                    'charset' => isset($v->charset['val']) ? (int) $v->charset['val'] : 1,
-                    'scheme' => isset($v->scheme['val']) ?
-                        htmlspecialchars((string) $v->scheme['val'], ENT_QUOTES) : 'minor'
+                    'name' => (isset($v->name) && preg_match('/^[a-zA-Z0-9 ]+$/', (string) $v->name['val'])) ?
+                        (string) $v->name['val'] : 'Calibri',
+                    'family' => isset($v->family) ? (int) $v->family['val'] : 2,
+                    'charset' => isset($v->charset) ? (int) $v->charset['val'] : 1,
+                    'scheme' => (isset($v->scheme) && in_array((string) $v->scheme['val'], ['major', 'minor', 'none'], true)) ?
+                        (string) $v->scheme['val'] : 'minor'
                 ];
                 $this->fonts[] = $f;
             }
@@ -357,7 +357,7 @@ class SimpleXLSXEx
                     $css .= 'font-style: italic;';
                 }
                 if ($cf['f-u']) {
-                    $css .= 'text-decoration: underline;';
+                    $css .= 'text-decoration: underline' . ($cf['f-u'] === 'double' ? ' double' : '') . ';';
                 }
                 if ($cf['f-strike']) {
                     $css .= 'text-decoration: line-through;';
@@ -590,6 +590,7 @@ class SimpleXLSXEx
 
         if (!$r['name']) {
             $c = '';
+            /** @noinspection UnnecessaryCastingInspection */
             for ($k = $x; $k >= 0; $k = (int)($k / 26) - 1) {
                 $c = chr($k % 26 + 65) . $c;
             }

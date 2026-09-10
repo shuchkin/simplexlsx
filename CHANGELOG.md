@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.1.19 (2026-09-10)
+* security fix (CSS injection, font-family) [CVE-2024-55878](https://nvd.nist.gov/vuln/detail/cve-2024-55878], thx Grand
+
 # 1.1.18 (2026-09-05)
 * [ZIP64 support](https://github.com/shuchkin/simplexlsx/issues/169), thx [Dave](https://github.com/WebsiteInc)
 
